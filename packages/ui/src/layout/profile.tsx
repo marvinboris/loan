@@ -1,9 +1,10 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { ChangePassword } from './change-password';
 
-export function Profile() {
+export type ProfileProps = { logout(): void };
+
+export function Profile({ logout }: ProfileProps) {
   const [changingPassword, setChangingPassword] = React.useState(false);
 
   return (
@@ -19,19 +20,20 @@ export function Profile() {
           anchor="bottom"
           className="*:py-2 *:px-4 *:truncate bg-white border outline-none rounded-md"
         >
-          <MenuItem>
-            <button
-              className="block data-focus:bg-blue-100"
-              onClick={() => setChangingPassword(true)}
-            >
-              Change password
-            </button>
+          <MenuItem
+            as="button"
+            className="block data-focus:bg-blue-100"
+            onClick={() => setChangingPassword(true)}
+          >
+            Change password
           </MenuItem>
 
-          <MenuItem>
-            <Link className="block data-focus:bg-blue-100" to="/login">
-              Logout
-            </Link>
+          <MenuItem
+            as="button"
+            onClick={logout}
+            className="block data-focus:bg-blue-100"
+          >
+            Logout
           </MenuItem>
         </MenuItems>
       </Menu>

@@ -1,11 +1,11 @@
-import { useFetchArray } from '@creditwave/hooks';
+import { usePaginatedApi } from '@creditwave/hooks';
 import { Filter, Pagination, Table, useBreadcrumb } from '@creditwave/ui';
 import React from 'react';
 
 type Item = {
   repaymentNum: string;
   loanNum: string;
-  productName: string;
+  product: string;
   name: string;
   mobile: string;
   tradingStatus: string;
@@ -22,8 +22,8 @@ type Item = {
 export function FinancialReconciliation() {
   useBreadcrumb(['Financial', 'Reconciliation']);
 
-  const { data, error, loading } = useFetchArray<Item>(
-    'financial/reconciliation'
+  const { data, error, loading } = usePaginatedApi<Item>(
+    '/financial/reconciliation'
   );
 
   return (
@@ -54,30 +54,11 @@ export function FinancialReconciliation() {
       <Table
         error={error}
         loading={loading}
-        data={
-          data?.items || [
-            {
-              repaymentNum: '612345678',
-              loanNum: '612345678',
-              productName: 'Credit Loan',
-              name: 'John DOE',
-              mobile: '612345678',
-              tradingStatus: '-',
-              repaymentCodeVaLink: '-',
-              repaymentAmt: '0.00',
-              realAmt: '0.00',
-              latestFollowUpTime: '-',
-              followUpResults: '-',
-              descFollowUp: '-',
-              whetherAssigned: 'No',
-              operation: 'Recording',
-            },
-          ]
-        }
+        data={data?.items || []}
         fields={[
           { label: 'REPAYMENT NUMBER', key: 'repaymentNum', width: 100 },
           { label: 'LOAN NUMBER', key: 'loanNum', width: 100 },
-          { label: 'PRODUCT NAME', key: 'productName' },
+          { label: 'PRODUCT NAME', key: 'product' },
           { label: 'NAME', key: 'name' },
           { label: 'MOBILE', key: 'mobile' },
           { label: 'TRADING STATUS', key: 'tradingStatus' },
@@ -92,7 +73,7 @@ export function FinancialReconciliation() {
         ]}
       />
 
-      <Pagination totalPages={data?.totalPages} />
+      <Pagination total={data?.total} />
     </>
   );
 }

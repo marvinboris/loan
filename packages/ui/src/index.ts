@@ -7,3 +7,4 @@ export * from './logo';
 export * from './modal';
 export * from './pagination';
 export * from './table';
+export * from './toast';

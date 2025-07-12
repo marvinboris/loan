@@ -1,4 +1,4 @@
-import { useFetchArray } from '@creditwave/hooks';
+import { usePaginatedApi } from '@creditwave/hooks';
 import {
   Button,
   Filter,
@@ -28,8 +28,8 @@ type Item = {
 export function TelemarketingOldCustomers() {
   useBreadcrumb(['Telemarketing', 'Cases of old customers not loaning again']);
 
-  const { data, error, loading } = useFetchArray<Item>(
-    'telemarketing/old-customers'
+  const { data, error, loading } = usePaginatedApi<Item>(
+    '/telemarketing/old-customers'
   );
 
   return (
@@ -120,26 +120,7 @@ export function TelemarketingOldCustomers() {
       <Table
         error={error}
         loading={loading}
-        data={
-          data?.items || [
-            {
-              mobile: '612345678',
-              name: 'John DOE',
-              prevRepaymentTime: '2025-01-01 00:00:00',
-              appName: 'Credit Wave',
-              followUpPerson: '-',
-              100: '-',
-              whetherApply: 'No',
-              appTime: '-',
-              allocationTime: '-',
-              latestFollowUpTime: '-',
-              followUpResults: '-',
-              descFollowUp: '-',
-              whetherAssigned: 'No',
-              operation: 'Recording',
-            },
-          ]
-        }
+        data={data?.items || []}
         fields={[
           { label: 'MOBILE', key: 'mobile', width: 100 },
           { label: 'NAME', key: 'name' },
@@ -158,7 +139,7 @@ export function TelemarketingOldCustomers() {
         ]}
       />
 
-      <Pagination totalPages={data?.totalPages} />
+      <Pagination total={data?.total} />
     </>
   );
 }

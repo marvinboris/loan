@@ -4,10 +4,10 @@ import { useSearchParams } from 'react-router-dom';
 import { Button } from './buttons';
 
 export type PaginationProps = {
-  totalPages?: number;
+  total?: number;
 };
 
-export function Pagination({ totalPages = 1 }: PaginationProps) {
+export function Pagination({ total = 1 }: PaginationProps) {
   const [params, setParams] = useSearchParams();
 
   const page = +(params.get('_page') || '1');
@@ -54,26 +54,26 @@ export function Pagination({ totalPages = 1 }: PaginationProps) {
 
       <PageBtn to={1} />
 
-      {totalPages >= 2 ? <PageBtn to={2} /> : null}
+      {total >= 2 ? <PageBtn to={2} /> : null}
 
-      {totalPages >= 3 ? <PageBtn to={3} /> : null}
+      {total >= 3 ? <PageBtn to={3} /> : null}
 
-      {totalPages > 4 ? <Dots /> : null}
+      {total > 4 ? <Dots /> : null}
 
-      {page > 4 && page < totalPages - 3 ? <PageBtn to={page} /> : null}
+      {page > 4 && page < total - 3 ? <PageBtn to={page} /> : null}
 
-      {totalPages >= 7 && page < totalPages - 3 ? <Dots /> : null}
+      {total >= 7 && page < total - 3 ? <Dots /> : null}
 
-      {totalPages >= 6 ? <PageBtn to={totalPages - 1} /> : null}
+      {total >= 6 ? <PageBtn to={total - 1} /> : null}
 
-      {totalPages >= 7 ? <PageBtn to={totalPages} /> : null}
+      {total >= 7 ? <PageBtn to={total} /> : null}
 
       <Button
         iconRight
         color="black"
         variant="clear"
         icon={ArrowRightIcon}
-        disabled={page === totalPages}
+        disabled={page === total}
         onClick={() => setPage(page + 1)}
       >
         Next

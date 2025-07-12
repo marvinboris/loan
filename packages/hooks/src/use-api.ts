@@ -1,22 +1,24 @@
+import { getHttpClient } from '@creditwave/utils';
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-export function useFetchData<T>(url: string) {
+export function useApi<T>(url: string) {
   const [params] = useSearchParams();
 
   const [data, setData] = React.useState<T>();
   const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<Error>();
+  const [error, setError] = React.useState<string>();
 
   React.useEffect(() => {
     const handle = async () => {
-      setLoading(true);
       try {
-        const res = await fetch(url);
-        const data = await res.json();
-        setData(data);
+        setLoading(true);
+        setError(undefined);
+        const httpClient = getHttpClient();
+        const result = await httpClient.get<T>(url);
+        setData(result);
       } catch (error) {
-        setError(error);
+        setError(error instanceof Error ? error.message : 'An error occured');
       } finally {
         setLoading(false);
       }

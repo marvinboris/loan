@@ -1,11 +1,5 @@
-import { useFetchArray } from '@creditwave/hooks';
-import {
-  Button,
-  Filter,
-  Pagination,
-  Table,
-  useBreadcrumb,
-} from '@creditwave/ui';
+import { usePaginatedApi } from '@creditwave/hooks';
+import { Filter, Pagination, Table, useBreadcrumb } from '@creditwave/ui';
 import React from 'react';
 
 type Item = {
@@ -15,8 +9,8 @@ type Item = {
   mobile: string;
   mark: string;
   recordContent: string;
-  dailyCollectionTimes: string;
-  collectionTimes: string;
+  dailyTimes: string;
+  times: string;
   contact: string;
   targetContact: string;
   connection: string;
@@ -29,7 +23,7 @@ type Item = {
 export function CollectionRecords() {
   useBreadcrumb(['Collection', 'Collection records']);
 
-  const { data, error, loading } = useFetchArray<Item>('collection/records');
+  const { data, error, loading } = usePaginatedApi<Item>('/collection/records');
 
   return (
     <>
@@ -119,27 +113,7 @@ export function CollectionRecords() {
       <Table
         error={error}
         loading={loading}
-        data={
-          data?.items || [
-            {
-              personnel: 'John DOE',
-              loanNum: '100000',
-              loanOrderNum: '100000000',
-              mobile: '612345678',
-              mark: 'Regular record',
-              recordContent: 'Indisponible',
-              dailyCollectionTimes: '0',
-              collectionTimes: '10',
-              contact: '',
-              targetContact: '',
-              connection: '',
-              willingnessPay: '',
-              overdueReason: '',
-              result: '',
-              recordTime: '2025-01-01 00:00:00',
-            },
-          ]
-        }
+        data={data?.items || []}
         fields={[
           { label: 'COLLECTION PERSONNEL', key: 'personnel' },
           { label: 'LOAN NUMBER', key: 'loanNum' },
@@ -147,8 +121,8 @@ export function CollectionRecords() {
           { label: 'MOBILE', key: 'mobile' },
           { label: 'COLLECTION MARK', key: 'mark' },
           { label: 'COLLECTION RECORD CONTENT', key: 'recordContent' },
-          { label: 'DAILY COLLECTION TIMES', key: 'dailyCollectionTimes' },
-          { label: 'COLLECTION TIMES', key: 'collectionTimes' },
+          { label: 'DAILY COLLECTION TIMES', key: 'dailyTimes' },
+          { label: 'COLLECTION TIMES', key: 'times' },
           { label: 'CONTACT', key: 'contact' },
           { label: 'TARGET CONTACT', key: 'targetContact' },
           { label: 'CONNECTION', key: 'connection' },
@@ -159,7 +133,7 @@ export function CollectionRecords() {
         ]}
       />
 
-      <Pagination totalPages={data?.totalPages} />
+      <Pagination total={data?.total} />
     </>
   );
 }

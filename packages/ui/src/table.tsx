@@ -11,7 +11,7 @@ export type TableProps<T extends object> = {
   data: T[];
   fields: TableField[];
   loading?: boolean;
-  error?: Error;
+  error?: string;
 };
 
 export function Table<T extends object>(props: TableProps<T>) {
@@ -59,7 +59,7 @@ export function Table<T extends object>(props: TableProps<T>) {
 
       {props.error ? (
         <div className="absolute w-full flex items-center justify-center py-10 text-red-600">
-          {props.error.message}
+          {props.error}
         </div>
       ) : null}
     </div>

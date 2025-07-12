@@ -1,6 +1,8 @@
-import { BreadcrumbProvider } from '@creditwave/ui';
+import { useAuthWatcher, useRequest } from '@creditwave/hooks';
+import { BreadcrumbProvider, Toast, toastShow } from '@creditwave/ui';
+import { initializeHttpClient } from '@creditwave/utils';
 import React from 'react';
-import { Route, Routes, Link, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import {
   AppLayout,
   AuthLayout,
@@ -28,11 +30,25 @@ import {
 } from './pages';
 
 export function App() {
+  useAuthWatcher();
+  const { error } = useRequest();
+
+  React.useEffect(() => {
+    // Initialiser l'instance HTTP au démarrage de l'app
+    initializeHttpClient(import.meta.env.VITE_API_URL);
+  }, []);
+
+  React.useEffect(() => {
+    if (error) toastShow({ type: 'error', text: error });
+  }, [error]);
+
   return (
     <BreadcrumbProvider>
       {/* START: routes */}
       {/* These routes and navigation have been generated for you */}
       {/* Feel free to move and update them to fit your needs */}
+
+      <Toast />
 
       <Routes>
         <Route element={<AppLayout />}>

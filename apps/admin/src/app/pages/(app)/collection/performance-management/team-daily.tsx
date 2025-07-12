@@ -1,4 +1,4 @@
-import { useFetchArray } from '@creditwave/hooks';
+import { usePaginatedApi } from '@creditwave/hooks';
 import { Filter, Pagination, Table, useBreadcrumb } from '@creditwave/ui';
 import React from 'react';
 
@@ -21,8 +21,8 @@ type Item = {
 export function CollectionTeamDailyReport() {
   useBreadcrumb(['Collection', 'Performance management', 'Group stats daily']);
 
-  const { data, error, loading } = useFetchArray<Item>(
-    'collection/performance-management/team-daily'
+  const { data, error, loading } = usePaginatedApi<Item>(
+    '/collection/performance-management/team-daily'
   );
 
   return (
@@ -49,25 +49,7 @@ export function CollectionTeamDailyReport() {
       <Table
         error={error}
         loading={loading}
-        data={
-          data?.items || [
-            {
-              date: '2025-06-01',
-              groupName: 'Te_apply',
-              ranking: '1',
-              totalAssignedQty: '123588',
-              newAssignedNum: '1365',
-              targetRepayRate: '25.00',
-              targetNum: '344',
-              numOfApps: '226',
-              appRate: '16.56',
-              numOfApprovedApps: '3',
-              handleNum: '468',
-              bonus: '0.00',
-              updateTime: '2025-06-30 04:01:20',
-            },
-          ]
-        }
+        data={data?.items || []}
         fields={[
           { label: 'DATE', key: 'date', width: 100 },
           { label: 'GROUP NAME', key: 'groupName' },
@@ -88,7 +70,7 @@ export function CollectionTeamDailyReport() {
         ]}
       />
 
-      <Pagination totalPages={data?.totalPages} />
+      <Pagination total={data?.total} />
     </>
   );
 }

@@ -15,6 +15,7 @@ export type ButtonProps = React.ComponentProps<'button'> & {
   variant?: 'solid' | 'clear' | 'outline';
   icon?: typeof ArrowUpIcon;
   iconRight?: boolean;
+  loading?: boolean;
 };
 
 export function Button({
@@ -24,9 +25,12 @@ export function Button({
   variant = 'solid',
   icon: Icon,
   iconRight,
+  loading,
   children,
   ...props
 }: ButtonProps) {
+  if (loading) props.onClick = undefined;
+
   if (props.disabled) color = 'disabled';
 
   const icon = Icon ? <Icon className="size-4" /> : null;
@@ -41,7 +45,8 @@ export function Button({
               'bg-primary hover:bg-primary/90': color === 'primary',
               'bg-black hover:bg-black/90': color === 'black',
               'bg-white hover:bg-stone-50': color === 'white',
-              'bg-stone-200 enabled:hover:bg-stone-200/90': color === 'disabled',
+              'bg-stone-200 enabled:hover:bg-stone-200/90':
+                color === 'disabled',
             }
           : 'bg-transparent',
         variant === 'outline' && {
@@ -67,11 +72,17 @@ export function Button({
         className
       )}
     >
-      {!iconRight ? icon : null}
+      {loading ? (
+        <div className="animate-spin size-4 rounded-full border-2 border-t-transparent text-white" />
+      ) : (
+        <>
+          {!iconRight ? icon : null}
 
-      {children}
+          {children}
 
-      {iconRight ? icon : null}
+          {iconRight ? icon : null}
+        </>
+      )}
     </button>
   );
 }

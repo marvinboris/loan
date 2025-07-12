@@ -1,0 +1,43 @@
+import { query } from 'express-validator';
+
+export const financialValidators = {
+  getRepaymentInquiries: [
+    query('mobile').optional().isString(),
+    query('name').optional().isString(),
+    query('daysOverdue').optional().isInt(),
+    query('repaymentCodeVaLink').optional().isString(),
+    query('tradingStatus').optional().isString(),
+    query('paymentChannel').optional().isString(),
+    query('repayment').optional().isDecimal(),
+    query('creationTime').optional().isISO8601(),
+    query('paybackTime').optional().isISO8601(),
+    query('loanNumber').optional().isString(),
+    query('repaymentNumber').optional().isString(),
+    query('collector').optional().isInt(),
+    query('paymentCompanySerialNumber').optional().isString(),
+    query('numPayment').optional().isInt(),
+    query('product').optional().isString(),
+  ],
+  getLoanInquiry: [
+    query('mobile').optional().isString(),
+    query('name').optional().isString(),
+    query('daysOverdue').optional().isInt(),
+    query('repaymentCodeVaLink').optional().isString(),
+    query('tradingStatus').optional().isString(),
+    query('paymentChannel').optional().isString(),
+    query('repayment').optional().isDecimal(),
+    query('creationTime').optional().isISO8601(),
+    query('paybackTime').optional().isISO8601(),
+    query('loanNumber').optional().isString(),
+    query('repaymentNumber').optional().isString(),
+    query('collector').optional().isInt(),
+    query('paymentCompanySerialNumber').optional().isString(),
+    query('numPayment').optional().isInt(),
+    query('product').optional().isString(),
+  ],
+  getReconciliation: [
+    query('mobile').optional().isString(),
+    query('loanNum').optional().isString(),
+    query('masterLoanNum').optional().isString(),
+  ],
+};

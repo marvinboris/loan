@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import Sequelize from 'sequelize';
 import { config } from '../../config';
-import { User } from '../../models';
+import { User } from '../../database/models/user';
 import { sendEmail } from '../../utils';
 import {
   LoginInput,
@@ -12,7 +12,7 @@ import {
   AuthResponse,
 } from './interfaces';
 
-export class AuthService {
+export const authService = {
   async login(input: LoginInput): Promise<AuthResponse> {
     const { email, password } = input;
 
@@ -43,7 +43,7 @@ export class AuthService {
         email: user.email,
       },
     };
-  }
+  },
 
   async forgotPassword(input: ForgotPasswordInput): Promise<AuthResponse> {
     const { email } = input;
@@ -71,7 +71,7 @@ export class AuthService {
     }
 
     // Send email with reset link
-    const resetUrl = `${config.frontendUrl}/reset-password?token=${resetToken}`;
+    const resetUrl = `${config.frontendUrl}/reset?token=${resetToken}`;
     await sendEmail({
       to: email,
       subject: 'Password Reset Request',
@@ -82,7 +82,7 @@ export class AuthService {
     });
 
     return { success: true, message: 'Password reset email sent' };
-  }
+  },
 
   async resetPassword(input: ResetPasswordInput): Promise<AuthResponse> {
     const { password, token } = input;
@@ -113,5 +113,5 @@ export class AuthService {
     });
 
     return { success: true, message: 'Password has been reset successfully' };
-  }
-}
+  },
+};

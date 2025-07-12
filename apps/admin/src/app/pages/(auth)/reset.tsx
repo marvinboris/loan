@@ -1,7 +1,10 @@
-import { Button, Card, Input } from '@creditwave/ui';
+import { Button, Card, Input, toastShow } from '@creditwave/ui';
 import { Formik } from 'formik';
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import z from 'zod';
+import { toFormikValidate } from 'zod-formik-adapter';
+import { authService } from '../../services';
 
 type FormValues = {
   password: string;
@@ -9,6 +12,7 @@ type FormValues = {
 };
 
 export function Reset() {
+  const [search] = useSearchParams();
   const navigate = useNavigate();
 
   const initialValues: FormValues = {
@@ -16,12 +20,27 @@ export function Reset() {
     passwordConfirmation: '',
   };
 
+  const Schema = z.object({
+    password: z.string().min(6),
+    passwordConfirmation: z.string().min(6),
+  });
+
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={({ password, passwordConfirmation }, { resetForm }) => {
-        console.log(password, passwordConfirmation);
-        navigate('/login');
+      validate={toFormikValidate(Schema)}
+      onSubmit={async ({ password }) => {
+        const token = search.get('token');
+        if (token) {
+          const result = await authService.reset({
+            password,
+            token,
+          });
+          if (result.success) {
+            toastShow({ type: 'success', text: result.message });
+            navigate('/login');
+          }
+        } else toastShow({ type: 'error', text: 'No token provided' });
       }}
     >
       {({ values, errors, handleChange, handleSubmit, dirty, isValid }) => (

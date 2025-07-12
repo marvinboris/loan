@@ -1,7 +1,11 @@
+import { useRequest } from '@creditwave/hooks';
 import { Button, Card, Input } from '@creditwave/ui';
 import { Formik } from 'formik';
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import z from 'zod';
+import { toFormikValidate } from 'zod-formik-adapter';
+import { authService } from '../../services';
 
 type FormValues = {
   email: string;
@@ -9,19 +13,25 @@ type FormValues = {
 };
 
 export function Login() {
-  const navigate = useNavigate();
+  const { loading, clearError } = useRequest();
 
   const initialValues: FormValues = {
     email: '',
     password: '',
   };
 
+  const Schema = z.object({
+    email: z.string().email(),
+    password: z.string().nonempty().min(6),
+  });
+
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={({ email, password }, { resetForm }) => {
-        console.log(email, password);
-        navigate('/');
+      validate={toFormikValidate(Schema)}
+      onSubmit={async (data) => {
+        clearError();
+        await authService.login(data);
       }}
     >
       {({ values, errors, handleChange, handleSubmit, dirty, isValid }) => (
@@ -34,6 +44,7 @@ export function Login() {
           <Card className="flex flex-col gap-5">
             <Input
               id="email"
+              name="email"
               type="email"
               label="E-mail"
               error={errors.email}
@@ -44,6 +55,7 @@ export function Login() {
 
             <Input
               id="password"
+              name="password"
               type="password"
               label="Password"
               placeholder="********"
@@ -52,7 +64,7 @@ export function Login() {
               onChange={handleChange('password')}
             />
 
-            <Button disabled={!isValid} type="submit">
+            <Button disabled={!isValid} loading={loading} type="submit">
               Sign In
             </Button>
 

@@ -1,4 +1,4 @@
-import { useFetchArray } from '@creditwave/hooks';
+import { usePaginatedApi } from '@creditwave/hooks';
 import {
   Button,
   Filter,
@@ -9,11 +9,13 @@ import {
   Select,
   Switch,
   Table,
+  toastShow,
   useBreadcrumb,
 } from '@creditwave/ui';
 import { Formik } from 'formik';
 import moment from 'moment';
 import React from 'react';
+import { operationService } from '../../../services';
 
 type FormValues = {
   email: string;
@@ -56,7 +58,7 @@ type Item = {
 export function OperationAccount() {
   useBreadcrumb(['Operation', 'Account']);
 
-  const { data, error, loading } = useFetchArray<Item>('operation/account');
+  const { data, error, loading } = usePaginatedApi<Item>('/operation/account');
 
   const [adding, setAdding] = React.useState(false);
 
@@ -136,35 +138,7 @@ export function OperationAccount() {
       <Table
         error={error}
         loading={loading}
-        data={
-          data?.items || [
-            {
-              serialNum: '100498',
-              account: 'johndoe',
-              email: 'johndoe@email.com',
-              name: 'John DOE',
-              workNum: '',
-              creationTime: '2025-07-04 14:23:17',
-              entryTime: '2025-07-04',
-              group: 'Admin',
-              role: 'Admin',
-              staffLvl: 'Manager',
-              collectionDistributionRules: 'Normal allocation',
-              rulesApprovingDistribution: 'All clients',
-              weights: '1',
-              voiceCollection: 'Closed',
-              updateTime: '2025-07-04 14:23:17',
-              loginIp: '',
-              changePwd: <Button>Reset password</Button>,
-              operation: (
-                <div className="flex gap-2 5">
-                  <Button>Edit</Button>
-                  <Button>Release the case</Button>
-                </div>
-              ),
-            },
-          ]
-        }
+        data={data?.items || []}
         fields={[
           { label: 'SERIAL NUMBER', key: 'serialNum' },
           { label: 'ACCOUNT', key: 'account' },
@@ -193,7 +167,7 @@ export function OperationAccount() {
         ]}
       />
 
-      <Pagination totalPages={data?.totalPages} />
+      <Pagination total={data?.total} />
     </>
   );
 }
@@ -214,7 +188,17 @@ function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
 
   return (
     <Modal title="Create account" {...props}>
-      <Formik initialValues={initialValues} onSubmit={(data) => {}}>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={async (data, { resetForm }) => {
+          const result = await operationService.createAccount(data);
+          if (result.success) {
+            toastShow({ type: 'success', text: result.message });
+            resetForm();
+            props.setShow(false);
+          }
+        }}
+      >
         {({
           values,
           errors,
@@ -258,7 +242,6 @@ function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
             <Input
               inline
               name="workNum"
-              type="workNum"
               id="create-workNum"
               label="Work number"
               error={errors.workNum}
@@ -314,7 +297,7 @@ function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
               value={values.group}
               onChange={handleChange('group')}
               labelClassName="w-1/3 text-right"
-              options={{ '': 'Select a group' }}
+              options={{ '': 'Select a group', default: 'Default group' }}
             />
 
             <Input
@@ -358,7 +341,12 @@ function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
               value={values.role}
               onChange={handleChange('role')}
               labelClassName="w-1/3 text-right"
-              options={{ '': 'Select a role' }}
+              options={{
+                '': 'Select a role',
+                admin: 'Admin',
+                telemarketer: 'Telemarketer',
+                collector: 'Collector',
+              }}
             />
 
             <Switch
@@ -381,13 +369,17 @@ function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
               error={errors.staffLvl}
               value={values.staffLvl}
               labelClassName="w-1/3 text-right"
-              options={{ '': 'Select a level' }}
+              options={{
+                '': 'Select a level',
+                junior: 'Junior',
+                mid: 'Mid',
+                senior: 'Senior',
+              }}
               onChange={handleChange('staffLvl')}
             />
 
             <Select
               inline
-              required
               name="distributionRules"
               id="create-distributionRules"
               error={errors.distributionRules}
@@ -400,7 +392,6 @@ function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
 
             <Select
               inline
-              required
               labelClassName="w-1/3 text-right"
               name="rulesApprovingDistribution"
               options={{ '': 'Select a rule' }}

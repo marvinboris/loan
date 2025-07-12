@@ -1,14 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { AuthService } from './service';
+import { authService } from './service';
 
 export class AuthController {
-  private authService: AuthService;
-
-  constructor() {
-    this.authService = new AuthService();
-  }
-
   async login(req: Request, res: Response, next: NextFunction) {
     try {
       const errors = validationResult(req);
@@ -16,7 +10,7 @@ export class AuthController {
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const result = await this.authService.login(req.body);
+      const result = await authService.login(req.body);
       if (!result.success) {
         return res.status(401).json(result);
       }
@@ -34,7 +28,7 @@ export class AuthController {
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const result = await this.authService.forgotPassword(req.body);
+      const result = await authService.forgotPassword(req.body);
       if (!result.success) {
         return res.status(400).json(result);
       }
@@ -52,7 +46,7 @@ export class AuthController {
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const result = await this.authService.resetPassword(req.body);
+      const result = await authService.resetPassword(req.body);
       if (!result.success) {
         return res.status(400).json(result);
       }

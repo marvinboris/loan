@@ -1,7 +1,10 @@
-import { Button, Card, Input } from '@creditwave/ui';
+import { Button, Card, Input, toastShow } from '@creditwave/ui';
 import { Formik } from 'formik';
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import z from 'zod';
+import { toFormikValidate } from 'zod-formik-adapter';
+import { authService } from '../../services';
 
 type FormValues = {
   email: string;
@@ -14,12 +17,20 @@ export function Forgot() {
     email: '',
   };
 
+  const Schema = z.object({
+    email: z.string().email(),
+  });
+
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={({ email }, { resetForm }) => {
-        console.log(email);
-        navigate('/reset');
+      validate={toFormikValidate(Schema)}
+      onSubmit={async (data) => {
+        const result = await authService.forgot(data);
+        if (result.success) {
+          toastShow({ type: 'success', text: result.message });
+          navigate('/login');
+        }
       }}
     >
       {({ values, errors, handleChange, handleSubmit, dirty, isValid }) => (

@@ -1,4 +1,4 @@
-import { useFetchArray } from '@creditwave/hooks';
+import { usePaginatedApi } from '@creditwave/hooks';
 import {
   Button,
   Filter,
@@ -19,12 +19,12 @@ type Item = {
   dueDate: string;
   daysOverdue: string;
   totalRepayment: string;
-  dailyCollectionTimes: string;
-  collectionTimes: string;
-  collectorLog: string;
-  collectionResult: string;
+  dailyTimes: string;
+  times: string;
+  log: string;
+  result: string;
   logUpdateTime: string;
-  productName: string;
+  product: string;
   userLvl: string;
   loanAmt: string;
   loanTenure: string;
@@ -38,7 +38,9 @@ type Item = {
 export function CollectionCaseAllocation() {
   useBreadcrumb(['Collection', 'Case allocation']);
 
-  const { data, error, loading } = useFetchArray<Item>('collection/case-allocation');
+  const { data, error, loading } = usePaginatedApi<Item>(
+    '/collection/case-allocation'
+  );
 
   return (
     <>
@@ -59,7 +61,7 @@ export function CollectionCaseAllocation() {
           },
           {
             type: 'select',
-            key: 'productName',
+            key: 'product',
             label: 'Product name',
             options: { '': 'Select a product' },
           },
@@ -110,7 +112,7 @@ export function CollectionCaseAllocation() {
           },
           {
             type: 'select',
-            key: 'collectionResult',
+            key: 'result',
             label: 'Collection result',
             options: {
               '': 'Select a result',
@@ -118,7 +120,7 @@ export function CollectionCaseAllocation() {
           },
           {
             type: 'select',
-            key: 'largeCollectionGroup',
+            key: 'largeGroup',
             label: 'Large collection group',
             options: {
               '': 'Select a group',
@@ -169,35 +171,7 @@ export function CollectionCaseAllocation() {
       <Table
         error={error}
         loading={loading}
-        data={
-          data?.items || [
-            {
-              loanNum: '102822',
-              loanOrderNum: '175181271023',
-              appName: 'Credit Wave',
-              name: 'John DOE',
-              district: 'Littoral',
-              mobile: '612345678',
-              dueDate: '2025-07-16',
-              daysOverdue: '-7',
-              totalRepayment: '14000',
-              dailyCollectionTimes: '0',
-              collectionTimes: '0',
-              collectorLog: '',
-              collectionResult: '',
-              logUpdateTime: '',
-              productName: 'Credit Loan',
-              userLvl: 'Level 1',
-              loanAmt: '14000',
-              loanTenure: '10D',
-              loanType: 'payday',
-              appStatus: 'Repayment period',
-              appChannel: 'default',
-              amtRepaid: '0',
-              collector: '',
-            },
-          ]
-        }
+        data={data?.items || []}
         fields={[
           { label: 'LOAN NUMBER', key: 'loanNum' },
           { label: 'LOAN ORDER NUMBER', key: 'loanOrderNum' },
@@ -208,12 +182,12 @@ export function CollectionCaseAllocation() {
           { label: 'DUE DATE', key: 'dueDate' },
           { label: 'DAYS OVERDUE', key: 'daysOverdue' },
           { label: 'TOTAL REPAYMENT', key: 'totalRepayment' },
-          { label: 'DAILY COLLECTION TIMES', key: 'dailyCollectionTimes' },
-          { label: 'COLLECTION TIMES', key: 'collectionTimes' },
-          { label: 'COLLECTOR LOG', key: 'collectorLog' },
-          { label: 'COLLECTION RESULT', key: 'collectionResult' },
+          { label: 'DAILY COLLECTION TIMES', key: 'dailyTimes' },
+          { label: 'COLLECTION TIMES', key: 'times' },
+          { label: 'COLLECTOR LOG', key: 'log' },
+          { label: 'COLLECTION RESULT', key: 'result' },
           { label: 'LOG UPDATE TIME', key: 'logUpdateTime' },
-          { label: 'PRODUCT NAME', key: 'productName' },
+          { label: 'PRODUCT NAME', key: 'product' },
           { label: 'USER LEVEL', key: 'userLvl' },
           { label: 'LOAN AMOUNT', key: 'loanAmt' },
           { label: 'LOAN TENURE', key: 'loanTenure' },
@@ -225,7 +199,7 @@ export function CollectionCaseAllocation() {
         ]}
       />
 
-      <Pagination totalPages={data?.totalPages} />
+      <Pagination total={data?.total} />
     </>
   );
 }

@@ -1,11 +1,11 @@
-import { useFetchArray } from '@creditwave/hooks';
+import { usePaginatedApi } from '@creditwave/hooks';
 import { Filter, Pagination, Table, useBreadcrumb } from '@creditwave/ui';
 import React from 'react';
 
 type Item = {
   repaymentNum: string;
   loanNum: string;
-  productName: string;
+  product: string;
   name: string;
   mobile: string;
   tradingStatus: string;
@@ -22,8 +22,8 @@ type Item = {
 export function FinancialRepaymentInquiries() {
   useBreadcrumb(['Financial', 'Repayment inquiries']);
 
-  const { data, error, loading } = useFetchArray<Item>(
-    'financial/repayment-inquiries'
+  const { data, error, loading } = usePaginatedApi<Item>(
+    '/financial/repayment-inquiries'
   );
 
   return (
@@ -44,17 +44,17 @@ export function FinancialRepaymentInquiries() {
           {
             type: 'number',
             key: 'daysOverdue',
-            label: 'Days Overdue',
+            label: 'Days overdue',
           },
           {
             type: 'text',
             key: 'repaymentCodeVaLink',
-            label: 'Repayment Code(VA)/Link',
+            label: 'Repayment code(VA)/link',
           },
           {
             type: 'select',
             key: 'tradingStatus',
-            label: 'Trading Status',
+            label: 'Trading status',
             options: {
               '': 'Select a status',
             },
@@ -62,7 +62,7 @@ export function FinancialRepaymentInquiries() {
           {
             type: 'select',
             key: 'paymentChannel',
-            label: 'Payment Channel',
+            label: 'Payment channel',
             options: {
               '': 'Select a channel',
             },
@@ -75,22 +75,22 @@ export function FinancialRepaymentInquiries() {
           {
             type: 'date',
             key: 'creationTime',
-            label: 'Creation Time',
+            label: 'Creation time',
           },
           {
             type: 'date',
             key: 'paybackTime',
-            label: 'Payback Time',
+            label: 'Payback time',
           },
           {
             type: 'text',
             key: 'loanNumber',
-            label: 'Loan Number',
+            label: 'Loan number',
           },
           {
             type: 'text',
             key: 'repaymentNumber',
-            label: 'Repayment Number',
+            label: 'Repayment number',
           },
           {
             type: 'select',
@@ -103,17 +103,17 @@ export function FinancialRepaymentInquiries() {
           {
             type: 'text',
             key: 'paymentCompanySerialNumber',
-            label: 'Payment Company Serial Number',
+            label: 'Payment company serial number',
           },
           {
             type: 'number',
             key: 'numPayment',
-            label: 'Number of the Payment',
+            label: 'Number of the payment',
           },
           {
             type: 'text',
-            key: 'productName',
-            label: 'Product Name',
+            key: 'product',
+            label: 'Product name',
           },
           null,
           null,
@@ -123,30 +123,11 @@ export function FinancialRepaymentInquiries() {
       <Table
         error={error}
         loading={loading}
-        data={
-          data?.items || [
-            {
-              repaymentNum: '612345678',
-              loanNum: '612345678',
-              productName: 'Credit Loan',
-              name: 'John DOE',
-              mobile: '612345678',
-              tradingStatus: '-',
-              repaymentCodeVaLink: '-',
-              repaymentAmt: '0.00',
-              realAmt: '0.00',
-              latestFollowUpTime: '-',
-              followUpResults: '-',
-              descFollowUp: '-',
-              whetherAssigned: 'No',
-              operation: 'Recording',
-            },
-          ]
-        }
+        data={data?.items || []}
         fields={[
           { label: 'REPAYMENT NUMBER', key: 'repaymentNum', width: 100 },
           { label: 'LOAN NUMBER', key: 'loanNum', width: 100 },
-          { label: 'PRODUCT NAME', key: 'productName' },
+          { label: 'PRODUCT NAME', key: 'product' },
           { label: 'NAME', key: 'name' },
           { label: 'MOBILE', key: 'mobile' },
           { label: 'TRADING STATUS', key: 'tradingStatus' },
@@ -161,7 +142,7 @@ export function FinancialRepaymentInquiries() {
         ]}
       />
 
-      <Pagination totalPages={data?.totalPages} />
+      <Pagination total={data?.total} />
     </>
   );
 }

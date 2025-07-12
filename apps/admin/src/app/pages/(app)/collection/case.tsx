@@ -1,11 +1,5 @@
-import { useFetchArray } from '@creditwave/hooks';
-import {
-  Button,
-  Filter,
-  Pagination,
-  Table,
-  useBreadcrumb,
-} from '@creditwave/ui';
+import { usePaginatedApi } from '@creditwave/hooks';
+import { Filter, Pagination, Table, useBreadcrumb } from '@creditwave/ui';
 import React from 'react';
 
 type Item = {
@@ -13,18 +7,18 @@ type Item = {
   name: string;
   loanNum: string;
   loanOrderNum: string;
-  collectionStage: string;
+  stage: string;
   collector: string;
-  productName: string;
+  product: string;
   loanTenure: string;
   loanAmt: string;
   dueDate: string;
   loanType: string;
-  collectionResult: string;
+  result: string;
   appName: string;
-  dailyCollectionTimes: string;
-  collectionTimes: string;
-  collectorLog: string;
+  dailyTimes: string;
+  times: string;
+  log: string;
   logUpdateTime: string;
   lendingTime: string;
   paymentTime: string;
@@ -35,7 +29,7 @@ type Item = {
 export function CollectionCase() {
   useBreadcrumb(['Collection', 'Collection case']);
 
-  const { data, error, loading } = useFetchArray<Item>('collection/case');
+  const { data, error, loading } = usePaginatedApi<Item>('/collection/case');
 
   return (
     <>
@@ -64,7 +58,7 @@ export function CollectionCase() {
           },
           {
             type: 'select',
-            key: 'collectionStage',
+            key: 'stage',
             label: 'Collection stage',
             options: { '': 'Select a stage' },
           },
@@ -78,7 +72,7 @@ export function CollectionCase() {
           },
           {
             type: 'text',
-            key: 'productName',
+            key: 'product',
             label: 'Product name',
           },
           {
@@ -141,7 +135,7 @@ export function CollectionCase() {
           },
           {
             type: 'number',
-            key: 'collectionResult',
+            key: 'result',
             label: 'Collection result',
           },
           {
@@ -170,33 +164,7 @@ export function CollectionCase() {
       <Table
         error={error}
         loading={loading}
-        data={
-          data?.items || [
-            {
-              loanNum: '100000',
-              loanOrderNum: '175181271023',
-              appName: 'Credit Wave',
-              name: 'John DOE',
-              mobile: '612345678',
-              dueDate: '2025-07-16',
-              productName: 'Credit Loan',
-              collector: '',
-              collectionStage: '',
-              dailyCollectionTimes: '0',
-              collectionTimes: '0',
-              collectorLog: '',
-              collectionResult: '',
-              logUpdateTime: '',
-              lendingTime: '2025-07-06 15:38:54',
-              paymentTime: '2025-07-09 00:22:28',
-              totalRepayment: '14000',
-              loanAmt: '14000',
-              loanTenure: '10D',
-              loanType: 'payday',
-              appStatus: 'Repayment period',
-            },
-          ]
-        }
+        data={data?.items || []}
         fields={[
           { label: 'LOAN NUMBER', key: 'loanNum' },
           { label: 'LOAN ORDER NUMBER', key: 'loanOrderNum' },
@@ -204,13 +172,13 @@ export function CollectionCase() {
           { label: 'NAME', key: 'name' },
           { label: 'MOBILE', key: 'mobile' },
           { label: 'DUE DATE', key: 'dueDate' },
-          { label: 'PRODUCT NAME', key: 'productName' },
+          { label: 'PRODUCT NAME', key: 'product' },
           { label: "COLLECTOR'S NAME", key: 'collector' },
-          { label: 'COLLECTION STAGE', key: 'collectionStage' },
-          { label: 'DAILY COLLECTION TIMES', key: 'dailyCollectionTimes' },
-          { label: 'COLLECTION TIMES', key: 'collectionTimes' },
-          { label: 'COLLECTOR LOG', key: 'collectorLog' },
-          { label: 'COLLECTION RESULT', key: 'collectionResult' },
+          { label: 'COLLECTION STAGE', key: 'stage' },
+          { label: 'DAILY COLLECTION TIMES', key: 'dailyTimes' },
+          { label: 'COLLECTION TIMES', key: 'times' },
+          { label: 'COLLECTOR LOG', key: 'log' },
+          { label: 'COLLECTION RESULT', key: 'result' },
           { label: 'LOG UPDATE TIME', key: 'logUpdateTime' },
           { label: 'LENDING TIME', key: 'lendingTime' },
           { label: 'PAYMENT TIME', key: 'paymentTime' },
@@ -222,7 +190,7 @@ export function CollectionCase() {
         ]}
       />
 
-      <Pagination totalPages={data?.totalPages} />
+      <Pagination total={data?.total} />
     </>
   );
 }

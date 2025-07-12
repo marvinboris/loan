@@ -73,7 +73,7 @@ export function FormGroup({
       </div>
 
       {error ? (
-        <p className={cn('text-red-600', errorClassName)}>{error}</p>
+        <p className={cn('text-red-600 text-sm', errorClassName)}>{error}</p>
       ) : null}
     </div>
   );
