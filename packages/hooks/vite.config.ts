@@ -1,7 +1,8 @@
 /// <reference types='vitest' />
+import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import * as path from 'path';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
-import * as path from 'path';
 
 export default defineConfig(() => ({
   root: __dirname,
@@ -11,7 +12,13 @@ export default defineConfig(() => ({
       entryRoot: 'src',
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
     }),
+    nxViteTsPaths(),
   ],
+  resolve: {
+    alias: {
+      '@creditwave/utils': path.resolve(__dirname, '../../packages/utils/src'),
+    },
+  },
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [ nxViteTsPaths() ],
