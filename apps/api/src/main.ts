@@ -13,9 +13,11 @@ import {
 const host = process.env.HOST ?? 'localhost';
 const port = process.env.PORT ? Number(process.env.PORT) : 4300;
 
+let app;
+
 // Initialiser la DB
 syncDatabase().then(() => {
-  const app = express();
+  app = express();
 
   // Option 1: Allow all origins (for development or specific scenarios)
   app.use(
@@ -69,3 +71,6 @@ syncDatabase().then(() => {
     console.log(`[ ready ] http://${host}:${port}`);
   });
 });
+
+// Export pour Vercel
+export default app;
