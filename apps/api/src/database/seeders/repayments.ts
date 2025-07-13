@@ -170,6 +170,8 @@ export async function seedRepayments() {
     await Repayment.findOrCreate({
       where: { repaymentNumber: repaymentData.repaymentNumber },
       defaults: repaymentData,
+    }).catch((err) => {
+      console.log(err);
     });
   }
 

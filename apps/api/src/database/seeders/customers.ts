@@ -113,6 +113,8 @@ export async function seedCustomers() {
     await Customer.findOrCreate({
       where: { mobile: customerData.mobile },
       defaults: customerData,
+    }).catch((err) => {
+      console.log(err);
     });
   }
 

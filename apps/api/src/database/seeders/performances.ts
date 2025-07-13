@@ -139,7 +139,9 @@ export async function seedPerformances() {
   ];
 
   for (const performanceData of performances) {
-    await Performance.create(performanceData);
+    await Performance.create(performanceData).catch((err) => {
+      console.log(err);
+    });
   }
 
   console.log('✅ Performances seeded successfully');

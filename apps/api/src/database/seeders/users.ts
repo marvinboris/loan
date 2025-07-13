@@ -90,6 +90,8 @@ export async function seedUsers() {
     await User.findOrCreate({
       where: { email: userData.email },
       defaults: userData,
+    }).catch((err) => {
+      console.log(err);
     });
   }
 

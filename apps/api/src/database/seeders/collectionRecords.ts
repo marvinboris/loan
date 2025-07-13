@@ -97,7 +97,9 @@ export async function seedCollectionRecords() {
   ];
 
   for (const recordData of collectionRecords) {
-    await CollectionRecord.create(recordData);
+    await CollectionRecord.create(recordData).catch((err) => {
+      console.log(err);
+    });
   }
 
   console.log('✅ Collection Records seeded successfully');

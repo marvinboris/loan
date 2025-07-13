@@ -135,6 +135,8 @@ export async function seedLoans() {
     await Loan.findOrCreate({
       where: { loanNumber: loanData.loanNumber },
       defaults: loanData,
+    }).catch((err) => {
+      console.log(err);
     });
   }
 
