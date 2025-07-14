@@ -3,16 +3,15 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "seed": "dotenv -e apps/api/.env -- tsx apps/api/src/database/seeders/index.ts",
-    "seed:users": "dotenv -e apps/api/.env -- tsx apps/api/src/database/seeders/index.ts users",
-    "seed:customers": "dotenv -e apps/api/.env -- tsx apps/api/src/database/seeders/index.ts customers",
-    "seed:loans": "dotenv -e apps/api/.env -- tsx apps/api/src/database/seeders/index.ts loans",
-    "seed:collection-records": "dotenv -e apps/api/.env -- tsx apps/api/src/database/seeders/index.ts collection-records",
-    "seed:performances": "dotenv -e apps/api/.env -- tsx apps/api/src/database/seeders/index.ts performances",
-    "seed:repayments": "dotenv -e apps/api/.env -- tsx apps/api/src/database/seeders/index.ts repayments",
-    "seed:all": "dotenv -e apps/api/.env -- tsx apps/api/src/database/seeders/index.ts all",
-    "seed:user": "dotenv -e apps/api/.env -- tsx apps/api/src/database/seeders/user.ts",
-    "list-data": "dotenv -e apps/api/.env -- tsx apps/api/src/database/scripts/list.ts"
+    "seed": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts",
+    "seed:users": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts users",
+    "seed:customers": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts customers",
+    "seed:loans": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts loans",
+    "seed:collection-records": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts collection-records",
+    "seed:performances": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts performances",
+    "seed:repayments": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts repayments",
+    "seed:all": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts all",
+    "seed:user": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/user.ts"
   },
   "private": true,
   "dependencies": {
@@ -21,6 +20,7 @@
     "@headlessui/react": "^2.2.4",
     "@heroicons/react": "^2.2.0",
     "@legendapp/state": "3.0.0-beta.31",
+    "@supabase/supabase-js": "^2.50.5",
     "axios": "^1.6.0",
     "bcryptjs": "^3.0.2",
     "clsx": "^2.1.1",

@@ -1,9 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { Customer } from '../../database/models/customer';
-import { Loan } from '../../database/models/loan';
-import { Repayment } from '../../database/models/repayment';
-import { User } from '../../database/models/user';
+import { supabase } from '../../lib/supabase';
 
 export class FinancialController {
   async getRepaymentInquiries(req: Request, res: Response, next: NextFunction) {
@@ -31,65 +28,64 @@ export class FinancialController {
         product,
       } = req.query;
 
-      const whereClause: any = {};
-      const loanWhereClause: any = {};
-      const customerWhereClause: any = {};
+      // Construire la requête avec jointures
+      let query = supabase.from('repayments').select(`
+          *,
+          loans:loan_id (
+            *,
+            customers:customer_id (
+              name,
+              mobile
+            ),
+            collectors:collector_id (name)
+          )
+        `);
 
-      if (mobile) customerWhereClause.mobile = mobile;
-      if (name) customerWhereClause.name = name;
-      if (daysOverdue) loanWhereClause.daysOverdue = daysOverdue;
+      // Appliquer les filtres
+      if (mobile) query = query.eq('loans.customer.mobile', mobile);
+      if (name) query = query.ilike('loans.customer.name', `%${name}%`);
+      if (daysOverdue) query = query.eq('loans.days_overdue', daysOverdue);
       if (repaymentCodeVaLink)
-        whereClause.repaymentCodeVaLink = repaymentCodeVaLink;
-      if (tradingStatus) whereClause.tradingStatus = tradingStatus;
-      if (paymentChannel) whereClause.paymentChannel = paymentChannel;
-      if (repayment) whereClause.repaymentAmount = repayment;
-      if (creationTime) whereClause.creationTime = creationTime;
-      if (paybackTime) whereClause.paybackTime = paybackTime;
-      if (loanNumber) loanWhereClause.loanNumber = loanNumber;
-      if (repaymentNumber) whereClause.repaymentNumber = repaymentNumber;
-      if (collector) whereClause.collectorId = collector;
+        query = query.ilike(
+          'repayment_code_va_link',
+          `%${repaymentCodeVaLink}%`
+        );
+      if (tradingStatus) query = query.eq('trading_status', tradingStatus);
+      if (paymentChannel) query = query.eq('payment_channel', paymentChannel);
+      if (repayment) query = query.eq('repayment_amount', repayment);
+      if (creationTime) query = query.eq('creation_time', creationTime);
+      if (paybackTime) query = query.eq('payback_time', paybackTime);
+      if (loanNumber) query = query.eq('loans.loan_number', loanNumber);
+      if (repaymentNumber)
+        query = query.eq('repayment_number', repaymentNumber);
+      if (collector) query = query.eq('collector_id', collector);
       if (paymentCompanySerialNumber)
-        whereClause.paymentCompanySerialNumber = paymentCompanySerialNumber;
-      if (product) loanWhereClause.productName = product;
+        query = query.eq(
+          'payment_company_serial_number',
+          paymentCompanySerialNumber
+        );
+      if (product) query = query.eq('loans.product_name', product);
 
-      const repayments = await Repayment.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: Loan,
-            where: loanWhereClause,
-            as: 'loan',
-            include: [
-              {
-                model: Customer,
-                where: customerWhereClause,
-                as: 'customer',
-              },
-              {
-                model: User,
-                attributes: ['name'],
-                as: 'collector',
-              },
-            ],
-          },
-        ],
-      });
+      const { data: repayments, error } = await query;
 
-      const items = repayments.map((repayment) => ({
-        repaymentNum: repayment.repaymentNumber,
-        loanNum: repayment.loan?.loanNumber,
-        product: repayment.loan?.productName,
-        name: repayment.loan?.customer?.name,
-        mobile: repayment.loan?.customer?.mobile,
-        tradingStatus: repayment.tradingStatus,
-        repaymentCodeVaLink: repayment.repaymentCodeVaLink,
-        repaymentAmt: repayment.repaymentAmount,
-        realAmt: repayment.realAmount,
-        latestFollowUpTime: repayment.latestFollowUpTime,
-        followUpResults: repayment.followUpResults,
-        descFollowUp: repayment.descFollowUp,
-        whetherAssigned: repayment.whetherAssigned,
-      }));
+      if (error) throw error;
+
+      const items =
+        repayments?.map((repayment) => ({
+          repaymentNum: repayment.repayment_number,
+          loanNum: repayment.loan?.loan_number,
+          product: repayment.loan?.product_name,
+          name: repayment.loan?.customer?.name,
+          mobile: repayment.loan?.customer?.mobile,
+          tradingStatus: repayment.trading_status,
+          repaymentCodeVaLink: repayment.repayment_code_va_link,
+          repaymentAmt: repayment.repayment_amount,
+          realAmt: repayment.real_amount,
+          latestFollowUpTime: repayment.latest_follow_up_time,
+          followUpResults: repayment.follow_up_results,
+          descFollowUp: repayment.desc_follow_up,
+          whetherAssigned: repayment.whether_assigned,
+        })) || [];
 
       res.json({
         success: true,
@@ -126,63 +122,69 @@ export class FinancialController {
         product,
       } = req.query;
 
-      const whereClause: any = {};
-      const loanWhereClause: any = {};
-      const customerWhereClause: any = {};
+      // Construire la requête avec jointures
+      let query = supabase.from('loans').select(`
+          *,
+          customers:customer_id (name, mobile),
+          collectors:collector_id (name),
+          repayments:repayments (
+            *,
+            collectors:collector_id (name)
+          )
+        `);
 
-      if (mobile) customerWhereClause.mobile = mobile;
-      if (name) customerWhereClause.name = name;
-      if (daysOverdue) loanWhereClause.daysOverdue = daysOverdue;
+      // Appliquer les filtres
+      if (mobile) query = query.eq('customers.mobile', mobile);
+      if (name) query = query.ilike('customers.name', `%${name}%`);
+      if (daysOverdue) query = query.eq('days_overdue', daysOverdue);
       if (repaymentCodeVaLink)
-        whereClause.repaymentCodeVaLink = repaymentCodeVaLink;
-      if (tradingStatus) whereClause.tradingStatus = tradingStatus;
-      if (paymentChannel) whereClause.paymentChannel = paymentChannel;
-      if (repayment) whereClause.repaymentAmount = repayment;
-      if (creationTime) whereClause.creationTime = creationTime;
-      if (paybackTime) whereClause.paybackTime = paybackTime;
-      if (loanNumber) loanWhereClause.loanNumber = loanNumber;
-      if (repaymentNumber) whereClause.repaymentNumber = repaymentNumber;
-      if (collector) loanWhereClause.collectorId = collector;
+        query = query.ilike(
+          'repayments.repayment_code_va_link',
+          `%${repaymentCodeVaLink}%`
+        );
+      if (tradingStatus)
+        query = query.eq('repayments.trading_status', tradingStatus);
+      if (paymentChannel)
+        query = query.eq('repayments.payment_channel', paymentChannel);
+      if (repayment) query = query.eq('repayments.repayment_amount', repayment);
+      if (creationTime)
+        query = query.eq('repayments.creation_time', creationTime);
+      if (paybackTime) query = query.eq('repayments.payback_time', paybackTime);
+      if (loanNumber) query = query.eq('loan_number', loanNumber);
+      if (repaymentNumber)
+        query = query.eq('repayments.repayment_number', repaymentNumber);
+      if (collector) query = query.eq('collector_id', collector);
       if (paymentCompanySerialNumber)
-        whereClause.paymentCompanySerialNumber = paymentCompanySerialNumber;
-      if (product) loanWhereClause.productName = product;
+        query = query.eq(
+          'repayments.payment_company_serial_number',
+          paymentCompanySerialNumber
+        );
+      if (product) query = query.eq('product_name', product);
 
-      const loans = await Loan.findAll({
-        where: loanWhereClause,
-        include: [
-          {
-            model: Customer,
-            where: customerWhereClause,
-            as: 'customer',
-          },
-          {
-            model: User,
-            attributes: ['name'],
-            as: 'collector',
-          },
-          {
-            model: Repayment,
-            where: whereClause,
-            as: 'repayments',
-          },
-        ],
-      });
+      const { data: loans, error } = await query;
 
-      const items = loans.map((loan) => ({
-        repaymentNum: loan.repayments?.[0]?.repaymentNumber,
-        loanNum: loan.loanNumber,
-        product: loan.productName,
-        name: loan.customer?.name,
-        mobile: loan.customer?.mobile,
-        tradingStatus: loan.repayments?.[0]?.tradingStatus,
-        repaymentCodeVaLink: loan.repayments?.[0]?.repaymentCodeVaLink,
-        repaymentAmt: loan.repayments?.[0]?.repaymentAmount,
-        realAmt: loan.repayments?.[0]?.realAmount,
-        latestFollowUpTime: loan.repayments?.[0]?.latestFollowUpTime,
-        followUpResults: loan.repayments?.[0]?.followUpResults,
-        descFollowUp: loan.repayments?.[0]?.descFollowUp,
-        whetherAssigned: loan.repayments?.[0]?.whetherAssigned,
-      }));
+      if (error) throw error;
+
+      // Aplatir les données pour chaque remboursement
+      const items =
+        loans?.flatMap(
+          (loan) =>
+            loan.repayments?.map((repayment) => ({
+              repaymentNum: repayment.repayment_number,
+              loanNum: loan.loan_number,
+              product: loan.product_name,
+              name: loan.customer?.name,
+              mobile: loan.customer?.mobile,
+              tradingStatus: repayment.trading_status,
+              repaymentCodeVaLink: repayment.repayment_code_va_link,
+              repaymentAmt: repayment.repayment_amount,
+              realAmt: repayment.real_amount,
+              latestFollowUpTime: repayment.latest_follow_up_time,
+              followUpResults: repayment.follow_up_results,
+              descFollowUp: repayment.desc_follow_up,
+              whetherAssigned: repayment.whether_assigned,
+            })) || []
+        ) || [];
 
       res.json({
         success: true,
@@ -203,47 +205,41 @@ export class FinancialController {
 
       const { mobile, loanNum, masterLoanNum } = req.query;
 
-      const whereClause: any = {};
-      const loanWhereClause: any = {};
-      const customerWhereClause: any = {};
+      // Construire la requête avec jointures
+      let query = supabase.from('repayments').select(`
+          *,
+          loans:loan_id (
+            *,
+            customers:customer_id (name, mobile)
+          )
+        `);
 
-      if (mobile) customerWhereClause.mobile = mobile;
-      if (loanNum) loanWhereClause.loanNumber = loanNum;
-      if (masterLoanNum) loanWhereClause.masterLoanNumber = masterLoanNum;
+      // Appliquer les filtres
+      if (mobile) query = query.eq('loans.customer.mobile', mobile);
+      if (loanNum) query = query.eq('loans.loan_number', loanNum);
+      if (masterLoanNum)
+        query = query.eq('loans.master_loan_number', masterLoanNum);
 
-      const repayments = await Repayment.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: Loan,
-            where: loanWhereClause,
-            as: 'loan',
-            include: [
-              {
-                model: Customer,
-                where: customerWhereClause,
-                as: 'customer',
-              },
-            ],
-          },
-        ],
-      });
+      const { data: repayments, error } = await query;
 
-      const items = repayments.map((repayment) => ({
-        repaymentNum: repayment.repaymentNumber,
-        loanNum: repayment.loan?.loanNumber,
-        product: repayment.loan?.productName,
-        name: repayment.loan?.customer?.name,
-        mobile: repayment.loan?.customer?.mobile,
-        tradingStatus: repayment.tradingStatus,
-        repaymentCodeVaLink: repayment.repaymentCodeVaLink,
-        repaymentAmt: repayment.repaymentAmount,
-        realAmt: repayment.realAmount,
-        latestFollowUpTime: repayment.latestFollowUpTime,
-        followUpResults: repayment.followUpResults,
-        descFollowUp: repayment.descFollowUp,
-        whetherAssigned: repayment.whetherAssigned,
-      }));
+      if (error) throw error;
+
+      const items =
+        repayments?.map((repayment) => ({
+          repaymentNum: repayment.repayment_number,
+          loanNum: repayment.loan?.loan_number,
+          product: repayment.loan?.product_name,
+          name: repayment.loan?.customer?.name,
+          mobile: repayment.loan?.customer?.mobile,
+          tradingStatus: repayment.trading_status,
+          repaymentCodeVaLink: repayment.repayment_code_va_link,
+          repaymentAmt: repayment.repayment_amount,
+          realAmt: repayment.real_amount,
+          latestFollowUpTime: repayment.latest_follow_up_time,
+          followUpResults: repayment.follow_up_results,
+          descFollowUp: repayment.desc_follow_up,
+          whetherAssigned: repayment.whether_assigned,
+        })) || [];
 
       res.json({
         success: true,

@@ -1,7 +1,8 @@
-import bcrypt from 'bcryptjs';
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { User, UserStatus } from '../../database/models/user';
+import bcrypt from 'bcryptjs';
+import { supabase } from '../../lib/supabase';
+import { UserStatus } from '../../types';
 
 export class OperationController {
   async getAccounts(req: Request, res: Response, next: NextFunction) {
@@ -25,46 +26,54 @@ export class OperationController {
         role,
       } = req.query;
 
-      const whereClause: any = {};
+      let query = supabase.from('users').select('*');
 
-      if (account) whereClause.email = account; // Assuming account is email
-      if (email) whereClause.email = email;
-      if (name) whereClause.name = name;
-      if (status) whereClause.status = status;
-      if (group) whereClause.group = group;
-      if (workNum) whereClause.workNumber = workNum;
+      // Appliquer les filtres
+      if (account) query = query.eq('email', account);
+      if (email) query = query.eq('email', email);
+      if (name) query = query.ilike('name', `%${name}%`);
+      if (status) query = query.eq('status', status);
+      if (group) query = query.eq('group', group);
+      if (workNum) query = query.eq('work_number', workNum);
       if (voiceCollection)
-        whereClause.voiceCollection = voiceCollection === 'true';
-      if (staffLvl) whereClause.staffLevel = staffLvl;
+        query = query.eq('voice_collection', voiceCollection === 'true');
+      if (staffLvl) query = query.eq('staff_level', staffLvl);
       if (collectionDistributionRules)
-        whereClause.collectionDistributionRules = collectionDistributionRules;
+        query = query.eq(
+          'collection_distribution_rules',
+          collectionDistributionRules
+        );
       if (rulesApprovingDistribution)
-        whereClause.rulesApprovingDistribution = rulesApprovingDistribution;
-      if (role) whereClause.role = role;
+        query = query.eq(
+          'rules_approving_distribution',
+          rulesApprovingDistribution
+        );
+      if (role) query = query.eq('role', role);
 
-      const users = await User.findAll({
-        where: whereClause,
-        attributes: { exclude: ['password'] },
-      });
+      const { data: users, error } = await query;
 
-      const items = users.map((user) => ({
-        serialNum: user.id,
-        account: user.email,
-        email: user.email,
-        name: user.name,
-        workNum: user.workNumber,
-        creationTime: user.createdAt,
-        entryTime: user.entryDate,
-        group: user.group,
-        role: user.role,
-        staffLvl: user.staffLevel,
-        collectionDistributionRules: user.collectionDistributionRules,
-        rulesApprovingDistribution: user.rulesApprovingDistribution,
-        weights: user.weights,
-        voiceCollection: user.voiceCollection,
-        updateTime: user.updatedAt,
-        loginIp: user.lastLoginIp,
-      }));
+      if (error) throw error;
+
+      const items =
+        users?.map((user) => ({
+          serialNum: user.id,
+          account: user.email,
+          email: user.email,
+          name: user.name,
+          workNum: user.work_number,
+          creationTime: user.created_at,
+          entryTime: user.entry_date,
+          group: user.group,
+          role: user.role,
+          staffLvl: user.staff_level,
+          collectionDistributionRules: user.collection_distribution_rules,
+          rulesApprovingDistribution: user.rules_approving_distribution,
+          weights: user.weights,
+          voiceCollection: user.voice_collection,
+          updateTime: user.updated_at,
+          loginIp: user.last_login_ip,
+          status: user.status,
+        })) || [];
 
       res.json({
         success: true,
@@ -85,7 +94,7 @@ export class OperationController {
 
       const {
         email,
-        account,
+        account, // Alias pour email
         workNum,
         name,
         password,
@@ -100,37 +109,61 @@ export class OperationController {
         rulesApprovingDistribution,
       } = req.body;
 
-      // Hash password
+      // Vérifier si l'email existe déjà
+      const { data: existingUser, error: checkError } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', email || account)
+        .single();
+
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: 'Un compte avec cet email existe déjà',
+        });
+      }
+
+      if (checkError && checkError.code !== 'PGRST116') {
+        // Ignorer l'erreur "Aucune ligne trouvée"
+        throw checkError;
+      }
+
+      // Hacher le mot de passe
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const user = await User.create({
-        email: email || account,
-        workNumber: workNum,
-        name,
-        password: hashedPassword,
-        entryDate: entryTime,
-        group,
-        weights,
-        role,
-        voiceCollection: voiceCollection || false,
-        staffLevel: staffLvl,
-        collectionDistributionRules,
-        rulesApprovingDistribution,
-        status: UserStatus.ACTIVE,
-      }).catch((err) => {
-        console.error("Détails de l'erreur:", err);
-        throw err;
-      });
+      // Créer l'utilisateur
+      const { data: user, error: createError } = await supabase
+        .from('user')
+        .insert({
+          email: email || account,
+          work_number: workNum,
+          name,
+          password: hashedPassword,
+          entry_date: entryTime,
+          group,
+          weights,
+          role,
+          voice_collection: voiceCollection || false,
+          staff_level: staffLvl,
+          collection_distribution_rules: collectionDistributionRules,
+          rules_approving_distribution: rulesApprovingDistribution,
+          status: UserStatus.ACTIVE,
+        })
+        .select('id, email, name, role, created_at')
+        .single();
+
+      if (createError) throw createError;
 
       res.json({
         success: true,
-        message: 'Account created successfully',
+        message: 'Compte créé avec succès',
         data: {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
+          id: user?.id,
+          email: user?.email,
+          name: user?.name,
+          role: user?.role,
+          createdAt: user?.created_at,
         },
       });
     } catch (error) {

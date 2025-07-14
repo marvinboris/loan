@@ -1,10 +1,10 @@
 import { Express } from 'express-serve-static-core';
-import { User } from '../database/models';
+import { User } from '../types/user';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: User;
+      user?: { id: string };
     }
   }
 }

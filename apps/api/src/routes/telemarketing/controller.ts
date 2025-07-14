@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { Op } from 'sequelize';
-import { Customer } from '../../database/models/customer';
-import { Performance } from '../../database/models/performance';
-import { User } from '../../database/models/user';
+import { supabase } from '../../lib/supabase';
+import { PerformanceType } from '../../types';
 
 export class TelemarketingController {
   async getMonthlyPerformance(req: Request, res: Response, next: NextFunction) {
@@ -15,43 +13,43 @@ export class TelemarketingController {
 
       const { group, date, status } = req.query;
 
-      const whereClause: any = {
-        type: 'telemarketer_monthly',
-      };
+      let query = supabase
+        .from('performances')
+        .select(
+          `
+          *,
+          users:user_id (name)
+        `
+        )
+        .eq('type', PerformanceType.TELEMARKETER_MONTHLY);
 
-      if (group) whereClause.groupName = group;
-      if (status) whereClause.status = status;
-      if (date) whereClause.date = date;
+      if (group) query = query.eq('group_name', group);
+      if (status) query = query.eq('status', status);
+      if (date) query = query.eq('date', date);
 
-      const performances = await Performance.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: User,
-            attributes: ['name'],
-            as: 'user',
-          },
-        ],
-      });
+      const { data: performances, error } = await query;
 
-      const items = performances.map((perf) => ({
-        dateRange: perf.dateRange,
-        groupRange: perf.groupName,
-        ranking: perf.ranking,
-        telemarketersName: perf.user?.name,
-        totalAssignedQty: perf.totalAssignedQty,
-        newAssignedNum: perf.newAssignedNum,
-        targetRepayRate: perf.targetRepayRate,
-        targetNum: perf.targetNum,
-        numOfApps: perf.numOfApps,
-        appRate: perf.appRate,
-        numOfApprovedApps: perf.numOfApprovedApps,
-        handleNum: perf.handleNum,
-        bonus: perf.bonus,
-        status: perf.status,
-        daysOfEmployment: perf.daysOfEmployment,
-        updateTime: perf.updatedAt,
-      }));
+      if (error) throw error;
+
+      const items =
+        performances?.map((perf) => ({
+          dateRange: perf.date_range,
+          groupRange: perf.group_name,
+          ranking: perf.ranking,
+          telemarketersName: perf.user?.name,
+          totalAssignedQty: perf.total_assigned_qty,
+          newAssignedNum: perf.new_assigned_num,
+          targetRepayRate: perf.target_repay_rate,
+          targetNum: perf.target_num,
+          numOfApps: perf.num_of_apps,
+          appRate: perf.app_rate,
+          numOfApprovedApps: perf.num_of_approved_apps,
+          handleNum: perf.handle_num,
+          bonus: perf.bonus,
+          status: perf.status,
+          daysOfEmployment: perf.days_of_employment,
+          updateTime: perf.updated_at,
+        })) || [];
 
       res.json({
         success: true,
@@ -72,51 +70,51 @@ export class TelemarketingController {
 
       const { group, date, status } = req.query;
 
-      const whereClause: any = {
-        type: 'telemarketer_daily',
-      };
+      let query = supabase
+        .from('performances')
+        .select(
+          `
+          *,
+          users:user_id (name)
+        `
+        )
+        .eq('type', PerformanceType.TELEMARKETER_DAILY);
 
-      if (group) whereClause.groupName = group;
-      if (status) whereClause.status = status;
-      if (date) whereClause.date = date;
+      if (group) query = query.eq('group_name', group);
+      if (status) query = query.eq('status', status);
+      if (date) query = query.eq('date', date);
 
-      const performances = await Performance.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: User,
-            attributes: ['name'],
-            as: 'user',
-          },
-        ],
-      });
+      const { data: performances, error } = await query;
 
-      const items = performances.map((perf) => ({
-        date: perf.date,
-        groupName: perf.groupName,
-        ranking: perf.ranking,
-        telemarketersName: perf.user?.name,
-        totalAssignedQty: perf.totalAssignedQty,
-        newAssignedNum: perf.newAssignedNum,
-        targetRepayRate: perf.targetRepayRate,
-        targetNum: perf.targetNum,
-        numOfApps: perf.numOfApps,
-        appRate: perf.appRate,
-        numOfApprovedApps: perf.numOfApprovedApps,
-        handleNum: perf.handleNum,
-        bonus: perf.bonus,
-        numOfCalls: perf.numOfCalls,
-        numOfConnections: perf.numOfConnections,
-        phoneConnectionRate: perf.phoneConnectionRate,
-        totalCallDuration: perf.totalCallDuration,
-        firstCallTime: perf.firstCallTime,
-        latestCallTime: perf.latestCallTime,
-        caseCoverage: perf.caseCoverage,
-        numOfSms: perf.numOfSms,
-        status: perf.status,
-        daysOfEmployment: perf.daysOfEmployment,
-        updateTime: perf.updatedAt,
-      }));
+      if (error) throw error;
+
+      const items =
+        performances?.map((perf) => ({
+          date: perf.date,
+          groupName: perf.group_name,
+          ranking: perf.ranking,
+          telemarketersName: perf.user?.name,
+          totalAssignedQty: perf.total_assigned_qty,
+          newAssignedNum: perf.new_assigned_num,
+          targetRepayRate: perf.target_repay_rate,
+          targetNum: perf.target_num,
+          numOfApps: perf.num_of_apps,
+          appRate: perf.app_rate,
+          numOfApprovedApps: perf.num_of_approved_apps,
+          handleNum: perf.handle_num,
+          bonus: perf.bonus,
+          numOfCalls: perf.num_of_calls,
+          numOfConnections: perf.num_of_connections,
+          phoneConnectionRate: perf.phone_connection_rate,
+          totalCallDuration: perf.total_call_duration,
+          firstCallTime: perf.first_call_time,
+          latestCallTime: perf.latest_call_time,
+          caseCoverage: perf.case_coverage,
+          numOfSms: perf.num_of_sms,
+          status: perf.status,
+          daysOfEmployment: perf.days_of_employment,
+          updateTime: perf.updated_at,
+        })) || [];
 
       res.json({
         success: true,
@@ -141,32 +139,34 @@ export class TelemarketingController {
 
       const { group, status } = req.query;
 
-      const whereClause: any = {
-        type: 'team_monthly',
-      };
+      let query = supabase
+        .from('performances')
+        .select('*')
+        .eq('type', PerformanceType.TEAM_MONTHLY);
 
-      if (group) whereClause.groupName = group;
-      if (status) whereClause.status = status;
+      if (group) query = query.eq('group_name', group);
+      if (status) query = query.eq('status', status);
 
-      const performances = await Performance.findAll({
-        where: whereClause,
-      });
+      const { data: performances, error } = await query;
 
-      const items = performances.map((perf) => ({
-        dateRange: perf.dateRange,
-        groupRange: perf.groupName,
-        ranking: perf.ranking,
-        totalAssignedQty: perf.totalAssignedQty,
-        newAssignedNum: perf.newAssignedNum,
-        targetRepayRate: perf.targetRepayRate,
-        targetNum: perf.targetNum,
-        numOfApps: perf.numOfApps,
-        appRate: perf.appRate,
-        numOfApprovedApps: perf.numOfApprovedApps,
-        handleNum: perf.handleNum,
-        bonus: perf.bonus,
-        updateTime: perf.updatedAt,
-      }));
+      if (error) throw error;
+
+      const items =
+        performances?.map((perf) => ({
+          dateRange: perf.date_range,
+          groupRange: perf.group_name,
+          ranking: perf.ranking,
+          totalAssignedQty: perf.total_assigned_qty,
+          newAssignedNum: perf.new_assigned_num,
+          targetRepayRate: perf.target_repay_rate,
+          targetNum: perf.target_num,
+          numOfApps: perf.num_of_apps,
+          appRate: perf.app_rate,
+          numOfApprovedApps: perf.num_of_approved_apps,
+          handleNum: perf.handle_num,
+          bonus: perf.bonus,
+          updateTime: perf.updated_at,
+        })) || [];
 
       res.json({
         success: true,
@@ -191,32 +191,34 @@ export class TelemarketingController {
 
       const { group, status } = req.query;
 
-      const whereClause: any = {
-        type: 'team_daily',
-      };
+      let query = supabase
+        .from('performances')
+        .select('*')
+        .eq('type', PerformanceType.TEAM_DAILY);
 
-      if (group) whereClause.groupName = group;
-      if (status) whereClause.status = status;
+      if (group) query = query.eq('group_name', group);
+      if (status) query = query.eq('status', status);
 
-      const performances = await Performance.findAll({
-        where: whereClause,
-      });
+      const { data: performances, error } = await query;
 
-      const items = performances.map((perf) => ({
-        date: perf.date,
-        groupName: perf.groupName,
-        ranking: perf.ranking,
-        totalAssignedQty: perf.totalAssignedQty,
-        newAssignedNum: perf.newAssignedNum,
-        targetRepayRate: perf.targetRepayRate,
-        targetNum: perf.targetNum,
-        numOfApps: perf.numOfApps,
-        appRate: perf.appRate,
-        numOfApprovedApps: perf.numOfApprovedApps,
-        handleNum: perf.handleNum,
-        bonus: perf.bonus,
-        updateTime: perf.updatedAt,
-      }));
+      if (error) throw error;
+
+      const items =
+        performances?.map((perf) => ({
+          date: perf.date,
+          groupName: perf.group_name,
+          ranking: perf.ranking,
+          totalAssignedQty: perf.total_assigned_qty,
+          newAssignedNum: perf.new_assigned_num,
+          targetRepayRate: perf.target_repay_rate,
+          targetNum: perf.target_num,
+          numOfApps: perf.num_of_apps,
+          appRate: perf.app_rate,
+          numOfApprovedApps: perf.num_of_approved_apps,
+          handleNum: perf.handle_num,
+          bonus: perf.bonus,
+          updateTime: perf.updated_at,
+        })) || [];
 
       res.json({
         success: true,
@@ -248,50 +250,52 @@ export class TelemarketingController {
         appName,
       } = req.query;
 
-      const whereClause: any = {
-        type: 'new',
-      };
+      let query = supabase
+        .from('customers')
+        .select(
+          `
+          *,
+          telemarketers:telemarketer_id (name)
+        `
+        )
+        .eq('type', 'new');
 
-      if (importDate) whereClause.createdAt = importDate;
-      if (userLabel) whereClause.userLabel = userLabel;
-      if (mobile) whereClause.mobile = mobile;
-      if (telemarketer) whereClause.telemarketerId = telemarketer;
-      if (whetherApply) whereClause.whetherApply = whetherApply === 'true';
-      if (allocationTime) whereClause.allocationTime = allocationTime;
+      // Appliquer les filtres
+      if (importDate) query = query.eq('created_at', importDate);
+      if (userLabel) query = query.eq('user_label', userLabel);
+      if (mobile) query = query.eq('mobile', mobile);
+      if (telemarketer) query = query.eq('telemarketer_id', telemarketer);
+      if (whetherApply)
+        query = query.eq('whether_apply', whetherApply === 'true');
+      if (allocationTime) query = query.eq('allocation_time', allocationTime);
       if (whetherAssigned)
-        whereClause.whetherAssigned = whetherAssigned === 'true';
+        query = query.eq('whether_assigned', whetherAssigned === 'true');
       if (whetherFollowedUp)
-        whereClause.latestFollowUpTime =
-          whetherFollowedUp === 'true' ? { [Op.ne]: null } : null;
+        query = query.not('latest_follow_up_time', 'is', null);
       if (latestFollowUpPerson)
-        whereClause.followUpPerson = latestFollowUpPerson;
-      if (appName) whereClause.appName = appName;
+        query = query.eq('follow_up_person', latestFollowUpPerson);
+      if (appName) query = query.eq('app_name', appName);
 
-      const customers = await Customer.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: User,
-            attributes: ['name'],
-            as: 'telemarketer',
-          },
-        ],
-      });
+      const { data: customers, error } = await query;
 
-      const items = customers.map((customer) => ({
-        mobile: customer.mobile,
-        name: customer.name,
-        prevRepaymentTime: customer.prevRepaymentTime,
-        appName: customer.appName,
-        followUpPerson: customer.followUpPerson,
-        whetherApply: customer.whetherApply,
-        appTime: customer.appTime,
-        allocationTime: customer.allocationTime,
-        latestFollowUpTime: customer.latestFollowUpTime,
-        followUpResults: customer.followUpResults,
-        descFollowUp: customer.descFollowUp,
-        whetherAssigned: customer.whetherAssigned,
-      }));
+      if (error) throw error;
+
+      const items =
+        customers?.map((customer) => ({
+          mobile: customer.mobile,
+          name: customer.name,
+          prevRepaymentTime: customer.prev_repayment_time,
+          appName: customer.app_name,
+          followUpPerson: customer.follow_up_person,
+          whetherApply: customer.whether_apply,
+          appTime: customer.app_time,
+          allocationTime: customer.allocation_time,
+          latestFollowUpTime: customer.latest_follow_up_time,
+          followUpResults: customer.follow_up_results,
+          descFollowUp: customer.desc_follow_up,
+          whetherAssigned: customer.whether_assigned,
+          telemarketer: customer.telemarketer?.name,
+        })) || [];
 
       res.json({
         success: true,
@@ -323,50 +327,52 @@ export class TelemarketingController {
         appName,
       } = req.query;
 
-      const whereClause: any = {
-        type: 'old',
-      };
+      let query = supabase
+        .from('customers')
+        .select(
+          `
+          *,
+          telemarketers:telemarketer_id (name)
+        `
+        )
+        .eq('type', 'old');
 
-      if (importDate) whereClause.createdAt = importDate;
-      if (userLabel) whereClause.userLabel = userLabel;
-      if (mobile) whereClause.mobile = mobile;
-      if (telemarketer) whereClause.telemarketerId = telemarketer;
-      if (whetherApply) whereClause.whetherApply = whetherApply === 'true';
-      if (allocationTime) whereClause.allocationTime = allocationTime;
+      // Appliquer les filtres
+      if (importDate) query = query.eq('created_at', importDate);
+      if (userLabel) query = query.eq('user_label', userLabel);
+      if (mobile) query = query.eq('mobile', mobile);
+      if (telemarketer) query = query.eq('telemarketer_id', telemarketer);
+      if (whetherApply)
+        query = query.eq('whether_apply', whetherApply === 'true');
+      if (allocationTime) query = query.eq('allocation_time', allocationTime);
       if (whetherAssigned)
-        whereClause.whetherAssigned = whetherAssigned === 'true';
+        query = query.eq('whether_assigned', whetherAssigned === 'true');
       if (whetherFollowedUp)
-        whereClause.latestFollowUpTime =
-          whetherFollowedUp === 'true' ? { [Op.ne]: null } : null;
+        query = query.not('latest_follow_up_time', 'is', null);
       if (latestFollowUpPerson)
-        whereClause.followUpPerson = latestFollowUpPerson;
-      if (appName) whereClause.appName = appName;
+        query = query.eq('follow_up_person', latestFollowUpPerson);
+      if (appName) query = query.eq('app_name', appName);
 
-      const customers = await Customer.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: User,
-            attributes: ['name'],
-            as: 'telemarketer',
-          },
-        ],
-      });
+      const { data: customers, error } = await query;
 
-      const items = customers.map((customer) => ({
-        mobile: customer.mobile,
-        name: customer.name,
-        prevRepaymentTime: customer.prevRepaymentTime,
-        appName: customer.appName,
-        followUpPerson: customer.followUpPerson,
-        whetherApply: customer.whetherApply,
-        appTime: customer.appTime,
-        allocationTime: customer.allocationTime,
-        latestFollowUpTime: customer.latestFollowUpTime,
-        followUpResults: customer.followUpResults,
-        descFollowUp: customer.descFollowUp,
-        whetherAssigned: customer.whetherAssigned,
-      }));
+      if (error) throw error;
+
+      const items =
+        customers?.map((customer) => ({
+          mobile: customer.mobile,
+          name: customer.name,
+          prevRepaymentTime: customer.prev_repayment_time,
+          appName: customer.app_name,
+          followUpPerson: customer.follow_up_person,
+          whetherApply: customer.whether_apply,
+          appTime: customer.app_time,
+          allocationTime: customer.allocation_time,
+          latestFollowUpTime: customer.latest_follow_up_time,
+          followUpResults: customer.follow_up_results,
+          descFollowUp: customer.desc_follow_up,
+          whetherAssigned: customer.whether_assigned,
+          telemarketer: customer.telemarketer?.name,
+        })) || [];
 
       res.json({
         success: true,
@@ -394,7 +400,6 @@ export class TelemarketingController {
         userLabel,
         mobile,
         telemarketer,
-        whetherApply,
         allocationTime,
         whetherAssigned,
         whetherFollowedUp,
@@ -402,50 +407,51 @@ export class TelemarketingController {
         appName,
       } = req.query;
 
-      const whereClause: any = {
-        type: 'registered',
-        whetherApply: false,
-      };
+      let query = supabase
+        .from('customers')
+        .select(
+          `
+          *,
+          telemarketers:telemarketer_id (name)
+        `
+        )
+        .eq('type', 'registered')
+        .eq('whether_apply', false);
 
-      if (importDate) whereClause.createdAt = importDate;
-      if (userLabel) whereClause.userLabel = userLabel;
-      if (mobile) whereClause.mobile = mobile;
-      if (telemarketer) whereClause.telemarketerId = telemarketer;
-      if (allocationTime) whereClause.allocationTime = allocationTime;
+      // Appliquer les filtres
+      if (importDate) query = query.eq('created_at', importDate);
+      if (userLabel) query = query.eq('user_label', userLabel);
+      if (mobile) query = query.eq('mobile', mobile);
+      if (telemarketer) query = query.eq('telemarketer_id', telemarketer);
+      if (allocationTime) query = query.eq('allocation_time', allocationTime);
       if (whetherAssigned)
-        whereClause.whetherAssigned = whetherAssigned === 'true';
+        query = query.eq('whether_assigned', whetherAssigned === 'true');
       if (whetherFollowedUp)
-        whereClause.latestFollowUpTime =
-          whetherFollowedUp === 'true' ? { [Op.ne]: null } : null;
+        query = query.not('latest_follow_up_time', 'is', null);
       if (latestFollowUpPerson)
-        whereClause.followUpPerson = latestFollowUpPerson;
-      if (appName) whereClause.appName = appName;
+        query = query.eq('follow_up_person', latestFollowUpPerson);
+      if (appName) query = query.eq('app_name', appName);
 
-      const customers = await Customer.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: User,
-            attributes: ['name'],
-            as: 'telemarketer',
-          },
-        ],
-      });
+      const { data: customers, error } = await query;
 
-      const items = customers.map((customer) => ({
-        mobile: customer.mobile,
-        name: customer.name,
-        prevRepaymentTime: customer.prevRepaymentTime,
-        appName: customer.appName,
-        followUpPerson: customer.followUpPerson,
-        whetherApply: customer.whetherApply,
-        appTime: customer.appTime,
-        allocationTime: customer.allocationTime,
-        latestFollowUpTime: customer.latestFollowUpTime,
-        followUpResults: customer.followUpResults,
-        descFollowUp: customer.descFollowUp,
-        whetherAssigned: customer.whetherAssigned,
-      }));
+      if (error) throw error;
+
+      const items =
+        customers?.map((customer) => ({
+          mobile: customer.mobile,
+          name: customer.name,
+          prevRepaymentTime: customer.prev_repayment_time,
+          appName: customer.app_name,
+          followUpPerson: customer.follow_up_person,
+          whetherApply: customer.whether_apply,
+          appTime: customer.app_time,
+          allocationTime: customer.allocation_time,
+          latestFollowUpTime: customer.latest_follow_up_time,
+          followUpResults: customer.follow_up_results,
+          descFollowUp: customer.desc_follow_up,
+          whetherAssigned: customer.whether_assigned,
+          telemarketer: customer.telemarketer?.name,
+        })) || [];
 
       res.json({
         success: true,

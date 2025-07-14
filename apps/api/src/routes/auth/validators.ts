@@ -1,5 +1,6 @@
 import { body } from 'express-validator';
-import { User } from '../../database/models/user';
+import { User } from '../../types';
+import { supabase } from '../../lib/supabase';
 
 export const loginValidator = [
   body('email')
@@ -19,7 +20,10 @@ export const forgotPasswordValidator = [
     .withMessage('Please provide a valid email address')
     .normalizeEmail()
     .custom(async (email) => {
-      const user = await User.findOne({ where: { email } });
+      const user = await supabase
+        .from('users')
+        .select('email')
+        .eq('email', email);
       if (!user) {
         throw new Error('No account with that email address exists');
       }

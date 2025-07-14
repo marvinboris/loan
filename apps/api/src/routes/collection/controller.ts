@@ -1,10 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { CollectionRecord } from '../../database/models/collectionRecord';
-import { Customer } from '../../database/models/customer';
-import { Loan } from '../../database/models/loan';
-import { Performance } from '../../database/models/performance';
-import { User } from '../../database/models/user';
+import { supabase } from '../../lib/supabase';
 
 export class CollectionController {
   async getMonthlyPerformance(req: Request, res: Response, next: NextFunction) {
@@ -16,43 +12,45 @@ export class CollectionController {
 
       const { group, date, status } = req.query;
 
-      const whereClause: any = {
-        type: 'collector_monthly',
-      };
+      let query = supabase
+        .from('performances')
+        .select(
+          `
+          *,
+          users:user_id (name)
+        `
+        )
+        .eq('type', 'collector_monthly');
 
-      if (group) whereClause.groupName = group;
-      if (status) whereClause.status = status;
-      if (date) whereClause.date = date;
+      if (group) query = query.eq('group_name', group);
+      if (status) query = query.eq('status', status);
+      if (date) query = query.eq('date', date);
 
-      const performances = await Performance.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: User,
-            attributes: ['name'],
-            as: 'user',
-          },
-        ],
-      });
+      const { data: performances, error } = await query;
 
-      const items = performances.map((perf) => ({
-        dateRange: perf.dateRange,
-        groupRange: perf.groupName,
-        ranking: perf.ranking,
-        collectorsName: perf.user?.name,
-        totalAssignedQty: perf.totalAssignedQty,
-        newAssignedNum: perf.newAssignedNum,
-        targetRepayRate: perf.targetRepayRate,
-        targetNum: perf.targetNum,
-        numOfApps: perf.numOfApps,
-        appRate: perf.appRate,
-        numOfApprovedApps: perf.numOfApprovedApps,
-        handleNum: perf.handleNum,
-        bonus: perf.bonus,
-        status: perf.status,
-        daysOfEmployment: perf.daysOfEmployment,
-        updateTime: perf.updatedAt,
-      }));
+      if (error) {
+        throw new Error(`Supabase error: ${error.message}`);
+      }
+
+      const items =
+        performances?.map((perf) => ({
+          dateRange: perf.date_range,
+          groupRange: perf.group_name,
+          ranking: perf.ranking,
+          collectorsName: perf.user?.name,
+          totalAssignedQty: perf.total_assigned_qty,
+          newAssignedNum: perf.new_assigned_num,
+          targetRepayRate: perf.target_repay_rate,
+          targetNum: perf.target_num,
+          numOfApps: perf.num_of_apps,
+          appRate: perf.app_rate,
+          numOfApprovedApps: perf.num_of_approved_apps,
+          handleNum: perf.handle_num,
+          bonus: perf.bonus,
+          status: perf.status,
+          daysOfEmployment: perf.days_of_employment,
+          updateTime: perf.updated_at,
+        })) || [];
 
       res.json({
         success: true,
@@ -73,51 +71,51 @@ export class CollectionController {
 
       const { group, date, status } = req.query;
 
-      const whereClause: any = {
-        type: 'collector_daily',
-      };
+      let query = supabase
+        .from('performances')
+        .select(
+          `
+          *,
+          users:user_id (name)
+        `
+        )
+        .eq('type', 'collector_daily');
 
-      if (group) whereClause.groupName = group;
-      if (status) whereClause.status = status;
-      if (date) whereClause.date = date;
+      if (group) query = query.eq('group_name', group);
+      if (status) query = query.eq('status', status);
+      if (date) query = query.eq('date', date);
 
-      const performances = await Performance.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: User,
-            attributes: ['name'],
-            as: 'user',
-          },
-        ],
-      });
+      const { data: performances, error } = await query;
 
-      const items = performances.map((perf) => ({
-        date: perf.date,
-        groupName: perf.groupName,
-        ranking: perf.ranking,
-        collectorsName: perf.user?.name,
-        totalAssignedQty: perf.totalAssignedQty,
-        newAssignedNum: perf.newAssignedNum,
-        targetRepayRate: perf.targetRepayRate,
-        targetNum: perf.targetNum,
-        numOfApps: perf.numOfApps,
-        appRate: perf.appRate,
-        numOfApprovedApps: perf.numOfApprovedApps,
-        handleNum: perf.handleNum,
-        bonus: perf.bonus,
-        numOfCalls: perf.numOfCalls,
-        numOfConnections: perf.numOfConnections,
-        phoneConnectionRate: perf.phoneConnectionRate,
-        totalCallDuration: perf.totalCallDuration,
-        firstCallTime: perf.firstCallTime,
-        latestCallTime: perf.latestCallTime,
-        caseCoverage: perf.caseCoverage,
-        numOfSms: perf.numOfSms,
-        status: perf.status,
-        daysOfEmployment: perf.daysOfEmployment,
-        updateTime: perf.updatedAt,
-      }));
+      if (error) throw error;
+
+      const items =
+        performances?.map((perf) => ({
+          date: perf.date,
+          groupName: perf.group_name,
+          ranking: perf.ranking,
+          collectorsName: perf.user?.name,
+          totalAssignedQty: perf.total_assigned_qty,
+          newAssignedNum: perf.new_assigned_num,
+          targetRepayRate: perf.target_repay_rate,
+          targetNum: perf.target_num,
+          numOfApps: perf.num_of_apps,
+          appRate: perf.app_rate,
+          numOfApprovedApps: perf.num_of_approved_apps,
+          handleNum: perf.handle_num,
+          bonus: perf.bonus,
+          numOfCalls: perf.num_of_calls,
+          numOfConnections: perf.num_of_connections,
+          phoneConnectionRate: perf.phone_connection_rate,
+          totalCallDuration: perf.total_call_duration,
+          firstCallTime: perf.first_call_time,
+          latestCallTime: perf.latest_call_time,
+          caseCoverage: perf.case_coverage,
+          numOfSms: perf.num_of_sms,
+          status: perf.status,
+          daysOfEmployment: perf.days_of_employment,
+          updateTime: perf.updated_at,
+        })) || [];
 
       res.json({
         success: true,
@@ -142,32 +140,34 @@ export class CollectionController {
 
       const { group, status } = req.query;
 
-      const whereClause: any = {
-        type: 'team_monthly',
-      };
+      let query = supabase
+        .from('performances')
+        .select('*')
+        .eq('type', 'team_monthly');
 
-      if (group) whereClause.groupName = group;
-      if (status) whereClause.status = status;
+      if (group) query = query.eq('group_name', group);
+      if (status) query = query.eq('status', status);
 
-      const performances = await Performance.findAll({
-        where: whereClause,
-      });
+      const { data: performances, error } = await query;
 
-      const items = performances.map((perf) => ({
-        dateRange: perf.dateRange,
-        groupRange: perf.groupName,
-        ranking: perf.ranking,
-        totalAssignedQty: perf.totalAssignedQty,
-        newAssignedNum: perf.newAssignedNum,
-        targetRepayRate: perf.targetRepayRate,
-        targetNum: perf.targetNum,
-        numOfApps: perf.numOfApps,
-        appRate: perf.appRate,
-        numOfApprovedApps: perf.numOfApprovedApps,
-        handleNum: perf.handleNum,
-        bonus: perf.bonus,
-        updateTime: perf.updatedAt,
-      }));
+      if (error) throw error;
+
+      const items =
+        performances?.map((perf) => ({
+          dateRange: perf.date_range,
+          groupRange: perf.group_name,
+          ranking: perf.ranking,
+          totalAssignedQty: perf.total_assigned_qty,
+          newAssignedNum: perf.new_assigned_num,
+          targetRepayRate: perf.target_repay_rate,
+          targetNum: perf.target_num,
+          numOfApps: perf.num_of_apps,
+          appRate: perf.app_rate,
+          numOfApprovedApps: perf.num_of_approved_apps,
+          handleNum: perf.handle_num,
+          bonus: perf.bonus,
+          updateTime: perf.updated_at,
+        })) || [];
 
       res.json({
         success: true,
@@ -192,32 +192,34 @@ export class CollectionController {
 
       const { group, status } = req.query;
 
-      const whereClause: any = {
-        type: 'team_daily',
-      };
+      let query = supabase
+        .from('performances')
+        .select('*')
+        .eq('type', 'team_daily');
 
-      if (group) whereClause.groupName = group;
-      if (status) whereClause.status = status;
+      if (group) query = query.eq('group_name', group);
+      if (status) query = query.eq('status', status);
 
-      const performances = await Performance.findAll({
-        where: whereClause,
-      });
+      const { data: performances, error } = await query;
 
-      const items = performances.map((perf) => ({
-        date: perf.date,
-        groupName: perf.groupName,
-        ranking: perf.ranking,
-        totalAssignedQty: perf.totalAssignedQty,
-        newAssignedNum: perf.newAssignedNum,
-        targetRepayRate: perf.targetRepayRate,
-        targetNum: perf.targetNum,
-        numOfApps: perf.numOfApps,
-        appRate: perf.appRate,
-        numOfApprovedApps: perf.numOfApprovedApps,
-        handleNum: perf.handleNum,
-        bonus: perf.bonus,
-        updateTime: perf.updatedAt,
-      }));
+      if (error) throw error;
+
+      const items =
+        performances?.map((perf) => ({
+          date: perf.date,
+          groupName: perf.group_name,
+          ranking: perf.ranking,
+          totalAssignedQty: perf.total_assigned_qty,
+          newAssignedNum: perf.new_assigned_num,
+          targetRepayRate: perf.target_repay_rate,
+          targetNum: perf.target_num,
+          numOfApps: perf.num_of_apps,
+          appRate: perf.app_rate,
+          numOfApprovedApps: perf.num_of_approved_apps,
+          handleNum: perf.handle_num,
+          bonus: perf.bonus,
+          updateTime: perf.updated_at,
+        })) || [];
 
       res.json({
         success: true,
@@ -258,74 +260,72 @@ export class CollectionController {
         proportion,
       } = req.query;
 
-      const whereClause: any = {};
-      const customerWhereClause: any = {};
+      // Construire la requête avec des jointures
+      let query = supabase.from('loans').select(`
+          *,
+          customers:customer_id (*),
+          collectors:collector_id (name),
+          collection_records:collection_records (*)
+        `);
 
-      if (mobile) customerWhereClause.mobile = mobile;
-      if (name) customerWhereClause.name = name;
-      if (loanNum) whereClause.loanNumber = loanNum;
-      if (loanOrderNum) whereClause.loanOrderNumber = loanOrderNum;
-      if (stage) whereClause.collectionStage = stage;
-      if (collector) whereClause.collectorId = collector;
-      if (product) whereClause.productName = product;
-      if (loanTenure) whereClause.loanTenure = loanTenure;
-      if (loanAmt) whereClause.loanAmount = loanAmt;
-      if (appVersion) whereClause.appVersion = appVersion;
-      if (dueDate) whereClause.dueDate = dueDate;
-      if (loanStatus) whereClause.loanStatus = loanStatus;
-      if (tag) whereClause.tag = tag;
+      // Appliquer les filtres
+      if (mobile) query = query.eq('customers.mobile', mobile);
+      if (name) query = query.ilike('customers.name', `%${name}%`);
+      if (loanNum) query = query.eq('loan_number', loanNum);
+      if (loanOrderNum) query = query.eq('loan_order_number', loanOrderNum);
+      if (stage) query = query.eq('collection_stage', stage);
+      if (collector) query = query.eq('collector_id', collector);
+      if (product) query = query.eq('product_name', product);
+      if (loanTenure) query = query.eq('loan_tenure', loanTenure);
+      if (loanAmt) query = query.eq('loan_amount', loanAmt);
+      if (appVersion) query = query.eq('app_version', appVersion);
+      if (dueDate) query = query.eq('due_date', dueDate);
+      if (loanStatus) query = query.eq('loan_status', loanStatus);
+      if (tag) query = query.eq('tag', tag);
       if (repeatedBorrowing)
-        whereClause.repeatedBorrowing = repeatedBorrowing === 'true';
-      if (loanType) whereClause.loanType = loanType;
-      if (result) whereClause.result = result;
-      if (appName) whereClause.appName = appName;
+        query = query.eq('repeated_borrowing', repeatedBorrowing === 'true');
+      if (loanType) query = query.eq('loan_type', loanType);
+      if (result) query = query.eq('collection_records.result', result);
+      if (appName) query = query.eq('app_name', appName);
 
-      const loans = await Loan.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: Customer,
-            where: customerWhereClause,
-            as: 'customer',
-          },
-          {
-            model: User,
-            attributes: ['name'],
-            as: 'collector',
-          },
-          {
-            model: CollectionRecord,
-            as: 'collectionRecords',
-          },
-        ],
-      });
+      const { data: loans, error } = await query;
 
-      const items = loans.map((loan) => ({
-        loanNum: loan.loanNumber,
-        loanOrderNum: loan.loanOrderNumber,
-        appName: loan.appName,
-        name: loan.customer?.name,
-        mobile: loan.customer?.mobile,
-        dueDate: loan.dueDate,
-        product: loan.productName,
-        collector: loan.collector?.name,
-        stage: loan.collectionStage,
-        dailyTimes: loan.collectionRecords?.filter(
-          (r) =>
-            new Date(r.recordTime).toDateString() === new Date().toDateString()
-        ).length,
-        times: loan.collectionRecords?.length,
-        log: loan.collectionRecords?.map((r) => r.recordContent).join('\n'),
-        result: loan.collectionRecords?.[0]?.result,
-        logUpdateTime: loan.collectionRecords?.[0]?.recordTime,
-        lendingTime: loan.createdAt,
-        paymentTime: loan.updatedAt,
-        totalRepayment: loan.totalRepayment,
-        loanAmt: loan.loanAmount,
-        loanTenure: loan.loanTenure,
-        loanType: loan.loanType,
-        appStatus: loan.appStatus,
-      }));
+      if (error) throw error;
+
+      const items =
+        loans?.map((loan) => {
+          const today = new Date().toISOString().split('T')[0];
+          const dailyRecords =
+            loan.collection_records?.filter((record) =>
+              record.record_time?.startsWith(today)
+            ) || [];
+
+          return {
+            loanNum: loan.loan_number,
+            loanOrderNum: loan.loan_order_number,
+            appName: loan.app_name,
+            name: loan.customer?.name,
+            mobile: loan.customer?.mobile,
+            dueDate: loan.due_date,
+            product: loan.product_name,
+            collector: loan.collector?.name,
+            stage: loan.collection_stage,
+            dailyTimes: dailyRecords.length,
+            times: loan.collection_records?.length || 0,
+            log: loan.collection_records
+              ?.map((r) => r.record_content)
+              .join('\n'),
+            result: loan.collection_records?.[0]?.result,
+            logUpdateTime: loan.collection_records?.[0]?.record_time,
+            lendingTime: loan.created_at,
+            paymentTime: loan.updated_at,
+            totalRepayment: loan.total_repayment,
+            loanAmt: loan.loan_amount,
+            loanTenure: loan.loan_tenure,
+            loanType: loan.loan_type,
+            appStatus: loan.app_status,
+          };
+        }) || [];
 
       res.json({
         success: true,
@@ -364,76 +364,73 @@ export class CollectionController {
         dueDate,
       } = req.query;
 
-      const whereClause: any = {};
-      const customerWhereClause: any = {};
+      let query = supabase.from('loans').select(`
+          *,
+          customers:customer_id (*),
+          collectors:collector_id (name),
+          collection_records:collection_records (*)
+        `);
 
-      if (stage) whereClause.collectionStage = stage;
-      if (collector) whereClause.collectorId = collector;
-      if (product) whereClause.productName = product;
-      if (userSelect) customerWhereClause.userLabel = userSelect;
-      if (numLoans) customerWhereClause.numLoans = numLoans;
-      if (appChannel) whereClause.appChannel = appChannel;
-      if (loanNum) whereClause.loanNumber = loanNum;
-      if (loanOrderNum) whereClause.loanOrderNumber = loanOrderNum;
+      // Appliquer les filtres
+      if (stage) query = query.eq('collection_stage', stage);
+      if (collector) query = query.eq('collector_id', collector);
+      if (product) query = query.eq('product_name', product);
+      if (userSelect) query = query.eq('customers.user_label', userSelect);
+      if (numLoans) query = query.eq('customers.num_loans', numLoans);
+      if (appChannel) query = query.eq('app_channel', appChannel);
+      if (loanNum) query = query.eq('loan_number', loanNum);
+      if (loanOrderNum) query = query.eq('loan_order_number', loanOrderNum);
       if (repeatedBorrowing)
-        whereClause.repeatedBorrowing = repeatedBorrowing === 'true';
-      if (daysOverdue) whereClause.daysOverdue = daysOverdue;
-      if (mobile) customerWhereClause.mobile = mobile;
-      if (result) whereClause.result = result;
-      if (largeGroup) whereClause.largeGroup = largeGroup;
-      if (district) customerWhereClause.district = district;
-      if (otherStates) customerWhereClause.otherStates = otherStates;
-      if (appName) whereClause.appName = appName;
-      if (dueDate) whereClause.dueDate = dueDate;
+        query = query.eq('repeated_borrowing', repeatedBorrowing === 'true');
+      if (daysOverdue) query = query.eq('days_overdue', daysOverdue);
+      if (mobile) query = query.eq('customers.mobile', mobile);
+      if (result) query = query.eq('collection_records.result', result);
+      if (largeGroup) query = query.eq('large_group', largeGroup);
+      if (district) query = query.eq('customers.district', district);
+      if (otherStates) query = query.eq('customers.other_states', otherStates);
+      if (appName) query = query.eq('app_name', appName);
+      if (dueDate) query = query.eq('due_date', dueDate);
 
-      const loans = await Loan.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: Customer,
-            where: customerWhereClause,
-            as: 'customer',
-          },
-          {
-            model: User,
-            attributes: ['name'],
-            as: 'collector',
-          },
-          {
-            model: CollectionRecord,
-            as: 'collectionRecords',
-          },
-        ],
-      });
+      const { data: loans, error } = await query;
 
-      const items = loans.map((loan) => ({
-        loanNum: loan.loanNumber,
-        loanOrderNum: loan.loanOrderNumber,
-        appName: loan.appName,
-        name: loan.customer?.name,
-        district: loan.customer?.district,
-        mobile: loan.customer?.mobile,
-        dueDate: loan.dueDate,
-        daysOverdue: loan.daysOverdue,
-        totalRepayment: loan.totalRepayment,
-        dailyTimes: loan.collectionRecords?.filter(
-          (r) =>
-            new Date(r.recordTime).toDateString() === new Date().toDateString()
-        ).length,
-        times: loan.collectionRecords?.length,
-        log: loan.collectionRecords?.map((r) => r.recordContent).join('\n'),
-        result: loan.collectionRecords?.[0]?.result,
-        logUpdateTime: loan.collectionRecords?.[0]?.recordTime,
-        product: loan.productName,
-        userLvl: loan.customer?.userLabel,
-        loanAmt: loan.loanAmount,
-        loanTenure: loan.loanTenure,
-        loanType: loan.loanType,
-        appStatus: loan.appStatus,
-        appChannel: loan.appChannel,
-        amtRepaid: loan.amountRepaid,
-        collector: loan.collector?.name,
-      }));
+      if (error) throw error;
+
+      const items =
+        loans?.map((loan) => {
+          const today = new Date().toISOString().split('T')[0];
+          const dailyRecords =
+            loan.collection_records?.filter((record) =>
+              record.record_time?.startsWith(today)
+            ) || [];
+
+          return {
+            loanNum: loan.loan_number,
+            loanOrderNum: loan.loan_order_number,
+            appName: loan.app_name,
+            name: loan.customer?.name,
+            district: loan.customer?.district,
+            mobile: loan.customer?.mobile,
+            dueDate: loan.due_date,
+            daysOverdue: loan.days_overdue,
+            totalRepayment: loan.total_repayment,
+            dailyTimes: dailyRecords.length,
+            times: loan.collection_records?.length || 0,
+            log: loan.collection_records
+              ?.map((r) => r.record_content)
+              .join('\n'),
+            result: loan.collection_records?.[0]?.result,
+            logUpdateTime: loan.collection_records?.[0]?.record_time,
+            product: loan.product_name,
+            userLvl: loan.customer?.user_label,
+            loanAmt: loan.loan_amount,
+            loanTenure: loan.loan_tenure,
+            loanType: loan.loan_type,
+            appStatus: loan.app_status,
+            appChannel: loan.app_channel,
+            amtRepaid: loan.amount_repaid,
+            collector: loan.collector?.name,
+          };
+        }) || [];
 
       res.json({
         success: true,
@@ -467,67 +464,66 @@ export class CollectionController {
         result,
       } = req.query;
 
-      const whereClause: any = {};
-      const loanWhereClause: any = {};
-      const customerWhereClause: any = {};
+      // Construire la requête avec jointures complexes
+      let query = supabase.from('collection_records').select(`
+          *,
+          loans:loan_id (
+            *,
+            customers:customer_id (mobile)
+          ),
+          collectors:collector_id (name)
+        `);
 
-      if (personnel) whereClause.collectorId = personnel;
-      if (loanNum) loanWhereClause.loanNumber = loanNum;
-      if (loanOrderNum) loanWhereClause.loanOrderNumber = loanOrderNum;
-      if (mobile) customerWhereClause.mobile = mobile;
-      if (mark) whereClause.mark = mark;
-      if (recordTime) whereClause.recordTime = recordTime;
-      if (contact) whereClause.contact = contact;
-      if (targetContact) whereClause.targetContact = targetContact;
-      if (connection) whereClause.connection = connection;
-      if (willingnessPay) whereClause.willingnessToPay = willingnessPay;
-      if (overdueReason) whereClause.overdueReason = overdueReason;
-      if (result) whereClause.result = result;
+      // Appliquer les filtres
+      if (personnel) query = query.eq('collector_id', personnel);
+      if (loanNum) query = query.eq('loans.loan_number', loanNum);
+      if (loanOrderNum)
+        query = query.eq('loans.loan_order_number', loanOrderNum);
+      if (mobile) query = query.eq('loans.customer.mobile', mobile);
+      if (mark) query = query.eq('mark', mark);
+      if (recordTime) query = query.eq('record_time', recordTime);
+      if (contact) query = query.eq('contact', contact);
+      if (targetContact) query = query.eq('target_contact', targetContact);
+      if (connection) query = query.eq('connection', connection);
+      if (willingnessPay)
+        query = query.eq('willingness_to_pay', willingnessPay);
+      if (overdueReason) query = query.eq('overdue_reason', overdueReason);
+      if (result) query = query.eq('result', result);
 
-      const records = await CollectionRecord.findAll({
-        where: whereClause,
-        include: [
-          {
-            model: Loan,
-            where: loanWhereClause,
-            as: 'loan',
-            include: [
-              {
-                model: Customer,
-                where: customerWhereClause,
-                as: 'customer'
-              },
-            ],
-          },
-          {
-            model: User,
-            attributes: ['name'],
-            as: 'collector',
-          },
-        ],
-      });
+      const { data: records, error } = await query;
 
-      const items = records.map((record) => ({
-        personnel: record.collector?.name,
-        loanNum: record.loan?.loanNumber,
-        loanOrderNum: record.loan?.loanOrderNumber,
-        mobile: record.loan?.customer?.mobile,
-        mark: record.mark,
-        recordContent: record.recordContent,
-        dailyTimes: record.loan?.collectionRecords?.filter(
-          (r) =>
-            new Date(r.recordTime).toDateString() ===
-            new Date(record.recordTime).toDateString()
-        ).length,
-        times: record.loan?.collectionRecords?.length,
-        contact: record.contact,
-        targetContact: record.targetContact,
-        connection: record.connection,
-        willingnessPay: record.willingnessToPay,
-        overdueReason: record.overdueReason,
-        result: record.result,
-        recordTime: record.recordTime,
-      }));
+      if (error) throw error;
+
+      const items =
+        records?.map((record) => {
+          const recordDate = new Date(record.record_time)
+            .toISOString()
+            .split('T')[0];
+          const dailyRecords =
+            record.loan?.collection_records?.filter(
+              (r) =>
+                new Date(r.record_time).toISOString().split('T')[0] ===
+                recordDate
+            ) || [];
+
+          return {
+            personnel: record.collector?.name,
+            loanNum: record.loan?.loan_number,
+            loanOrderNum: record.loan?.loan_order_number,
+            mobile: record.loan?.customer?.mobile,
+            mark: record.mark,
+            recordContent: record.record_content,
+            dailyTimes: dailyRecords.length,
+            times: record.loan?.collection_records?.length || 0,
+            contact: record.contact,
+            targetContact: record.target_contact,
+            connection: record.connection,
+            willingnessPay: record.willingness_to_pay,
+            overdueReason: record.overdue_reason,
+            result: record.result,
+            recordTime: record.record_time,
+          };
+        }) || [];
 
       res.json({
         success: true,

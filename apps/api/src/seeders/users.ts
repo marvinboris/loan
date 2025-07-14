@@ -1,98 +1,97 @@
+// database/seeders/users.ts
+import { supabase } from '../lib/supabase';
 import bcrypt from 'bcryptjs';
-import { UserRole, UserStatus, User } from '../models';
+import { CreateUserInput, UserRole, UserStatus } from '../types';
 
-// User Seeder
 export async function seedUsers() {
   console.log('🌱 Seeding Users...');
 
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash('password123', salt);
 
-  const users = [
+  const users: CreateUserInput[] = [
     {
       email: 'admin@creditwave.com',
       password: hashedPassword,
       name: 'Admin User',
-      workNumber: 'ADM000',
+      work_number: 'ADM000',
       role: UserRole.ADMIN,
       group: 'Management',
-      entryDate: new Date('2023-01-01'),
+      entry_date: new Date('2023-01-01').toISOString(),
       weights: 100,
-      voiceCollection: true,
-      staffLevel: 'Senior',
+      voice_collection: true,
+      staff_level: 'Senior',
       status: UserStatus.ACTIVE,
-      resetPasswordToken: null,
-      resetPasswordExpires: null,
+      reset_password_token: null,
+      reset_password_expires: null,
     },
     {
       email: 'telemarketer1@creditwave.com',
       password: hashedPassword,
       name: 'John Telemarketer',
-      workNumber: 'TEL001',
+      work_number: 'TEL001',
       role: UserRole.TELEMARKETER,
       group: 'Sales Team A',
-      entryDate: new Date('2023-02-15'),
+      entry_date: new Date('2023-02-15').toISOString(),
       weights: 80,
-      voiceCollection: true,
-      staffLevel: 'Mid',
+      voice_collection: true,
+      staff_level: 'Mid',
       status: UserStatus.ACTIVE,
-      resetPasswordToken: null,
-      resetPasswordExpires: null,
+      reset_password_token: null,
+      reset_password_expires: null,
     },
     {
       email: 'telemarketer2@creditwave.com',
       password: hashedPassword,
       name: 'Jane Telemarketer',
-      workNumber: 'TEL002',
+      work_number: 'TEL002',
       role: UserRole.TELEMARKETER,
       group: 'Sales Team B',
-      entryDate: new Date('2023-03-01'),
+      entry_date: new Date('2023-03-01').toISOString(),
       weights: 75,
-      voiceCollection: true,
-      staffLevel: 'Junior',
+      voice_collection: true,
+      staff_level: 'Junior',
       status: UserStatus.ACTIVE,
-      resetPasswordToken: null,
-      resetPasswordExpires: null,
+      reset_password_token: null,
+      reset_password_expires: null,
     },
     {
       email: 'collector1@creditwave.com',
       password: hashedPassword,
       name: 'Mike Collector',
-      workNumber: 'COL001',
+      work_number: 'COL001',
       role: UserRole.COLLECTOR,
       group: 'Collection Team A',
-      entryDate: new Date('2023-01-15'),
+      entry_date: new Date('2023-01-15').toISOString(),
       weights: 90,
-      voiceCollection: true,
-      staffLevel: 'Senior',
+      voice_collection: true,
+      staff_level: 'Senior',
       status: UserStatus.ACTIVE,
-      resetPasswordToken: null,
-      resetPasswordExpires: null,
+      reset_password_token: null,
+      reset_password_expires: null,
     },
     {
       email: 'collector2@creditwave.com',
       password: hashedPassword,
       name: 'Sarah Collector',
-      workNumber: 'COL002',
+      work_number: 'COL002',
       role: UserRole.COLLECTOR,
       group: 'Collection Team B',
-      entryDate: new Date('2023-02-01'),
+      entry_date: new Date('2023-02-01').toISOString(),
       weights: 85,
-      voiceCollection: true,
-      staffLevel: 'Mid',
+      voice_collection: true,
+      staff_level: 'Mid',
       status: UserStatus.ACTIVE,
-      resetPasswordToken: null,
-      resetPasswordExpires: null,
+      reset_password_token: null,
+      reset_password_expires: null,
     },
   ];
 
-  for (const userData of users) {
-    await User.findOrCreate({
-      where: { email: userData.email },
-      defaults: userData,
-    }).catch((err) => {
-      console.log(err);
-    });
+  const { data, error } = await supabase.from('users').insert(users);
+
+  if (error) {
+    console.error('Error seeding users:', error);
+    return;
   }
 
   console.log('✅ Users seeded successfully');
