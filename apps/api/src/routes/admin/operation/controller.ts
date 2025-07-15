@@ -116,7 +116,7 @@ export class OperationController {
       const { data: existingUser, error: checkError } = await supabase
         .from('users')
         .select('id')
-        .eq('email', email || account)
+        .eq('email', email)
         .single();
 
       if (existingUser) {
@@ -139,7 +139,8 @@ export class OperationController {
       const { data: user, error: createError } = await supabase
         .from('user')
         .insert({
-          email: email || account,
+          email,
+          account,
           work_number: workNum,
           name,
           password: hashedPassword,
