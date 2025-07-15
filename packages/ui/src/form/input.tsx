@@ -55,7 +55,7 @@ export function Input({
       <input
         {...props}
         type={type}
-        className={cn('flex-1 outline-none text-sm', props.innerClassName)}
+        className={cn('w-full outline-none text-sm', props.innerClassName)}
       />
     </FormGroup>
   );

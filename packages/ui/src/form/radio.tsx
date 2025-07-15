@@ -48,7 +48,7 @@ export function Radio({
       <div
         {...props}
         className={cn(
-          'flex-1 outline-none text-sm bg-transparent grid',
+          'w-full outline-none text-sm bg-transparent grid',
           props.innerClassName
         )}
       >

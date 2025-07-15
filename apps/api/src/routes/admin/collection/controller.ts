@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../lib/supabase';
+import { filter } from '../../../utils';
 
 export class CollectionController {
   async getMonthlyPerformance(req: Request, res: Response, next: NextFunction) {
@@ -18,7 +19,8 @@ export class CollectionController {
           `
           *,
           users:user_id (name)
-        `
+        `,
+          { count: 'exact' }
         )
         .eq('type', 'collector_monthly');
 
@@ -26,7 +28,9 @@ export class CollectionController {
       if (status) query = query.eq('status', status);
       if (date) query = query.eq('date', date);
 
-      const { data: performances, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: performances, error } = await query.range(from, to);
 
       if (error) {
         throw new Error(`Supabase error: ${error.message}`);
@@ -55,7 +59,7 @@ export class CollectionController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -77,7 +81,8 @@ export class CollectionController {
           `
           *,
           users:user_id (name)
-        `
+        `,
+          { count: 'exact' }
         )
         .eq('type', 'collector_daily');
 
@@ -85,7 +90,9 @@ export class CollectionController {
       if (status) query = query.eq('status', status);
       if (date) query = query.eq('date', date);
 
-      const { data: performances, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: performances, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -120,7 +127,7 @@ export class CollectionController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -142,13 +149,15 @@ export class CollectionController {
 
       let query = supabase
         .from('performances')
-        .select('*')
+        .select('*', { count: 'exact' })
         .eq('type', 'team_monthly');
 
       if (group) query = query.eq('group_name', group);
       if (status) query = query.eq('status', status);
 
-      const { data: performances, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: performances, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -172,7 +181,7 @@ export class CollectionController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -194,13 +203,15 @@ export class CollectionController {
 
       let query = supabase
         .from('performances')
-        .select('*')
+        .select('*', { count: 'exact' })
         .eq('type', 'team_daily');
 
       if (group) query = query.eq('group_name', group);
       if (status) query = query.eq('status', status);
 
-      const { data: performances, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: performances, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -224,7 +235,7 @@ export class CollectionController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -261,12 +272,15 @@ export class CollectionController {
       } = req.query;
 
       // Construire la requête avec des jointures
-      let query = supabase.from('loans').select(`
+      let query = supabase.from('loans').select(
+        `
           *,
           customers:customer_id (*),
           collectors:collector_id (name),
           collection_records:collection_records (*)
-        `);
+        `,
+        { count: 'exact' }
+      );
 
       // Appliquer les filtres
       if (mobile) query = query.eq('customers.mobile', mobile);
@@ -288,7 +302,9 @@ export class CollectionController {
       if (result) query = query.eq('collection_records.result', result);
       if (appName) query = query.eq('app_name', appName);
 
-      const { data: loans, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: loans, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -330,7 +346,7 @@ export class CollectionController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -364,12 +380,15 @@ export class CollectionController {
         dueDate,
       } = req.query;
 
-      let query = supabase.from('loans').select(`
+      let query = supabase.from('loans').select(
+        `
           *,
           customers:customer_id (*),
           collectors:collector_id (name),
           collection_records:collection_records (*)
-        `);
+        `,
+        { count: 'exact' }
+      );
 
       // Appliquer les filtres
       if (stage) query = query.eq('collection_stage', stage);
@@ -391,7 +410,9 @@ export class CollectionController {
       if (appName) query = query.eq('app_name', appName);
       if (dueDate) query = query.eq('due_date', dueDate);
 
-      const { data: loans, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: loans, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -435,7 +456,7 @@ export class CollectionController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -465,14 +486,17 @@ export class CollectionController {
       } = req.query;
 
       // Construire la requête avec jointures complexes
-      let query = supabase.from('collection_records').select(`
+      let query = supabase.from('collection_records').select(
+        `
           *,
           loans:loan_id (
             *,
             customers:customer_id (mobile)
           ),
           collectors:collector_id (name)
-        `);
+        `,
+        { count: 'exact' }
+      );
 
       // Appliquer les filtres
       if (personnel) query = query.eq('collector_id', personnel);
@@ -490,7 +514,9 @@ export class CollectionController {
       if (overdueReason) query = query.eq('overdue_reason', overdueReason);
       if (result) query = query.eq('result', result);
 
-      const { data: records, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: records, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -528,7 +554,7 @@ export class CollectionController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);

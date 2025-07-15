@@ -5,12 +5,12 @@ import { authService } from '../../services';
 import { useAuth } from '@creditwave/hooks';
 
 export function AppLayout() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    if (!isAuthenticated) navigate('/login');
-  }, [isAuthenticated]);
+    if (!isAuthenticated || !user) navigate('/login');
+  }, [isAuthenticated, user]);
 
   return (
     <div className="h-screen w-screen overflow-clip flex">

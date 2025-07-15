@@ -12,6 +12,7 @@ export async function seedUsers() {
   const users: CreateUserInput[] = [
     {
       email: 'admin@creditwave.com',
+      account: 'admin',
       password: hashedPassword,
       name: 'Admin User',
       work_number: 'ADM000',
@@ -27,6 +28,7 @@ export async function seedUsers() {
     },
     {
       email: 'telemarketer1@creditwave.com',
+      account: 'telemarketer1',
       password: hashedPassword,
       name: 'John Telemarketer',
       work_number: 'TEL001',
@@ -42,6 +44,7 @@ export async function seedUsers() {
     },
     {
       email: 'telemarketer2@creditwave.com',
+      account: 'telemarketer2',
       password: hashedPassword,
       name: 'Jane Telemarketer',
       work_number: 'TEL002',
@@ -57,6 +60,7 @@ export async function seedUsers() {
     },
     {
       email: 'collector1@creditwave.com',
+      account: 'collector1',
       password: hashedPassword,
       name: 'Mike Collector',
       work_number: 'COL001',
@@ -72,6 +76,7 @@ export async function seedUsers() {
     },
     {
       email: 'collector2@creditwave.com',
+      account: 'collector2',
       password: hashedPassword,
       name: 'Sarah Collector',
       work_number: 'COL002',

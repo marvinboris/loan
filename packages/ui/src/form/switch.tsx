@@ -44,23 +44,21 @@ export function Switch({
       append={append}
       appendClassname={appendClassname}
     >
-      <div>
-        <HuiSwitch
-          {...props}
+      <HuiSwitch
+        {...props}
+        className={cn(
+          'group relative flex h-7 !w-14 cursor-pointer rounded-full bg-stone-200 p-1 ease-in-out focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white',
+          { 'bg-primary': props.checked }
+        )}
+      >
+        <span
+          aria-hidden="true"
           className={cn(
-            'group relative flex h-7 !w-14 cursor-pointer rounded-full bg-stone-200 p-1 ease-in-out focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white',
-            { 'bg-primary': props.checked }
+            'pointer-events-none inline-block size-5 translate-x-0 rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out',
+            { 'translate-x-7': props.checked }
           )}
-        >
-          <span
-            aria-hidden="true"
-            className={cn(
-              'pointer-events-none inline-block size-5 translate-x-0 rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out',
-              { 'translate-x-7': props.checked }
-            )}
-          />
-        </HuiSwitch>
-      </div>
+        />
+      </HuiSwitch>
     </FormGroup>
   );
 }

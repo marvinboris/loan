@@ -45,7 +45,7 @@ export function Select({
       <select
         {...props}
         className={cn(
-          'flex-1 outline-none text-sm bg-transparent',
+          'w-full outline-none text-sm bg-transparent',
           props.innerClassName
         )}
       >

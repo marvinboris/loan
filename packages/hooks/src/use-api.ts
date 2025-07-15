@@ -15,7 +15,7 @@ export function useApi<T>(url: string) {
         setLoading(true);
         setError(undefined);
         const httpClient = getHttpClient();
-        const result = await httpClient.get<T>(url);
+        const result = await httpClient.get<T>(url, { params });
         setData(result);
       } catch (error) {
         setError(error instanceof Error ? error.message : 'An error occured');

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../lib/supabase';
+import { filter } from '../../../utils';
 
 export class FinancialController {
   async getRepaymentInquiries(req: Request, res: Response, next: NextFunction) {
@@ -29,7 +30,8 @@ export class FinancialController {
       } = req.query;
 
       // Construire la requête avec jointures
-      let query = supabase.from('repayments').select(`
+      let query = supabase.from('repayments').select(
+        `
           *,
           loans:loan_id (
             *,
@@ -39,7 +41,9 @@ export class FinancialController {
             ),
             collectors:collector_id (name)
           )
-        `);
+        `,
+        { count: 'exact' }
+      );
 
       // Appliquer les filtres
       if (mobile) query = query.eq('loans.customer.mobile', mobile);
@@ -66,7 +70,9 @@ export class FinancialController {
         );
       if (product) query = query.eq('loans.product_name', product);
 
-      const { data: repayments, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: repayments, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -90,7 +96,7 @@ export class FinancialController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -123,7 +129,8 @@ export class FinancialController {
       } = req.query;
 
       // Construire la requête avec jointures
-      let query = supabase.from('loans').select(`
+      let query = supabase.from('loans').select(
+        `
           *,
           customers:customer_id (name, mobile),
           collectors:collector_id (name),
@@ -131,7 +138,9 @@ export class FinancialController {
             *,
             collectors:collector_id (name)
           )
-        `);
+        `,
+        { count: 'exact' }
+      );
 
       // Appliquer les filtres
       if (mobile) query = query.eq('customers.mobile', mobile);
@@ -161,7 +170,9 @@ export class FinancialController {
         );
       if (product) query = query.eq('product_name', product);
 
-      const { data: loans, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: loans, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -189,7 +200,7 @@ export class FinancialController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -206,13 +217,16 @@ export class FinancialController {
       const { mobile, loanNum, masterLoanNum } = req.query;
 
       // Construire la requête avec jointures
-      let query = supabase.from('repayments').select(`
+      let query = supabase.from('repayments').select(
+        `
           *,
           loans:loan_id (
             *,
             customers:customer_id (name, mobile)
           )
-        `);
+        `,
+        { count: 'exact' }
+      );
 
       // Appliquer les filtres
       if (mobile) query = query.eq('loans.customer.mobile', mobile);
@@ -220,7 +234,9 @@ export class FinancialController {
       if (masterLoanNum)
         query = query.eq('loans.master_loan_number', masterLoanNum);
 
-      const { data: repayments, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: repayments, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -244,7 +260,7 @@ export class FinancialController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);

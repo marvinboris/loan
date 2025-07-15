@@ -13,6 +13,7 @@ export enum UserStatus {
 export interface User {
   id: number;
   email: string;
+  account: string;
   password: string;
   name: string;
   work_number: string;

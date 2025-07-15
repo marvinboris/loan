@@ -54,19 +54,21 @@ export function FormGroup({
 
       <div
         className={cn(
-          'border rounded-md flex p-2 *:flex-1',
+          'border rounded-md flex p-2',
           { 'flex-1': inline },
           wrapperClassName
         )}
       >
         {props.prepend ? (
-          <div className={cn('!flex-0 self-center', props.prependClassname)}>
+          <div className={cn('flex-0 self-center', props.prependClassname)}>
             {props.prepend}
           </div>
         ) : null}
-        {props.children}
+
+        <div className="flex-1">{props.children}</div>
+
         {props.append ? (
-          <div className={cn('!flex-0 self-center', props.appendClassname)}>
+          <div className={cn('flex-0 self-center', props.appendClassname)}>
             {props.append}
           </div>
         ) : null}

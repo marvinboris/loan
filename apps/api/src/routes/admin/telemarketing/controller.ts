@@ -1,8 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
+import { telemarketingService } from './service';
 import { supabase } from '../../../lib/supabase';
 import { CustomerType, PerformanceType } from '../../../types';
-import { telemarketingService } from './service';
+import { filter } from '../../../utils';
 
 export class TelemarketingController {
   async getMonthlyPerformance(req: Request, res: Response, next: NextFunction) {
@@ -20,7 +21,8 @@ export class TelemarketingController {
           `
           *,
           users:user_id (name)
-        `
+        `,
+          { count: 'exact' }
         )
         .eq('type', PerformanceType.TELEMARKETER_MONTHLY);
 
@@ -28,7 +30,9 @@ export class TelemarketingController {
       if (status) query = query.eq('status', status);
       if (date) query = query.eq('date', date);
 
-      const { data: performances, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: performances, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -55,7 +59,7 @@ export class TelemarketingController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -77,7 +81,8 @@ export class TelemarketingController {
           `
           *,
           users:user_id (name)
-        `
+        `,
+          { count: 'exact' }
         )
         .eq('type', PerformanceType.TELEMARKETER_DAILY);
 
@@ -85,7 +90,9 @@ export class TelemarketingController {
       if (status) query = query.eq('status', status);
       if (date) query = query.eq('date', date);
 
-      const { data: performances, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: performances, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -120,7 +127,7 @@ export class TelemarketingController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -142,13 +149,15 @@ export class TelemarketingController {
 
       let query = supabase
         .from('performances')
-        .select('*')
+        .select('*', { count: 'exact' })
         .eq('type', PerformanceType.TEAM_MONTHLY);
 
       if (group) query = query.eq('group_name', group);
       if (status) query = query.eq('status', status);
 
-      const { data: performances, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: performances, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -172,7 +181,7 @@ export class TelemarketingController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -194,13 +203,15 @@ export class TelemarketingController {
 
       let query = supabase
         .from('performances')
-        .select('*')
+        .select('*', { count: 'exact' })
         .eq('type', PerformanceType.TEAM_DAILY);
 
       if (group) query = query.eq('group_name', group);
       if (status) query = query.eq('status', status);
 
-      const { data: performances, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: performances, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -224,7 +235,7 @@ export class TelemarketingController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -257,7 +268,8 @@ export class TelemarketingController {
           `
           *,
           telemarketers:telemarketer_id (name)
-        `
+        `,
+          { count: 'exact' }
         )
         .eq('type', 'new');
 
@@ -277,7 +289,9 @@ export class TelemarketingController {
         query = query.eq('follow_up_person', latestFollowUpPerson);
       if (appName) query = query.eq('app_name', appName);
 
-      const { data: customers, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: customers, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -301,7 +315,7 @@ export class TelemarketingController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -334,7 +348,8 @@ export class TelemarketingController {
           `
           *,
           telemarketers:telemarketer_id (name)
-        `
+        `,
+          { count: 'exact' }
         )
         .eq('type', 'old');
 
@@ -354,7 +369,9 @@ export class TelemarketingController {
         query = query.eq('follow_up_person', latestFollowUpPerson);
       if (appName) query = query.eq('app_name', appName);
 
-      const { data: customers, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: customers, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -378,7 +395,7 @@ export class TelemarketingController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);
@@ -414,7 +431,8 @@ export class TelemarketingController {
           `
           *,
           telemarketers:telemarketer_id (name)
-        `
+        `,
+          { count: 'exact' }
         )
         .eq('type', 'registered')
         .eq('whether_apply', false);
@@ -433,7 +451,9 @@ export class TelemarketingController {
         query = query.eq('follow_up_person', latestFollowUpPerson);
       if (appName) query = query.eq('app_name', appName);
 
-      const { data: customers, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: customers, error } = await query.range(from, to);
 
       if (error) throw error;
 
@@ -457,7 +477,7 @@ export class TelemarketingController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);

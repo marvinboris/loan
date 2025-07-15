@@ -29,9 +29,25 @@ export type FilterProps = {
 };
 
 export function Filter({ className, exportable, fields, onAdd }: FilterProps) {
-  const [, setParams] = useSearchParams();
+  const [params, setParams] = useSearchParams();
 
-  const initialValues: Record<string, string> = {};
+  const initialValues = React.useMemo(() => {
+    const record: Record<string, string | string[]> = {};
+
+    params.forEach((value, key) => {
+      if (record[key]) {
+        if (Array.isArray(record[key])) {
+          (record[key] as string[]).push(value);
+        } else {
+          record[key] = [record[key] as string, value];
+        }
+      } else {
+        record[key] = value;
+      }
+    });
+
+    return record;
+  }, []);
 
   return (
     <Formik
@@ -40,7 +56,7 @@ export function Filter({ className, exportable, fields, onAdd }: FilterProps) {
         setParams(data);
       }}
     >
-      {({ handleSubmit, resetForm }) => (
+      {({ handleChange, handleSubmit, resetForm, values }) => (
         <form
           className={cn('grid *:p-2.5 gap-2.5', className)}
           onSubmit={(e) => {
@@ -63,7 +79,9 @@ export function Filter({ className, exportable, fields, onAdd }: FilterProps) {
                     name={field.key}
                     options={field.options}
                     label={field.label + ':'}
+                    value={values[field.key]}
                     labelClassName="w-1/3 text-right"
+                    onChange={handleChange(field.key)}
                   />
                 ) : (
                   <Input
@@ -72,7 +90,9 @@ export function Filter({ className, exportable, fields, onAdd }: FilterProps) {
                     name={field.key}
                     type={field.type}
                     label={field.label + ':'}
+                    value={values[field.key]}
                     labelClassName="w-1/3 text-right"
+                    onChange={handleChange(field.key)}
                   />
                 )}
               </div>

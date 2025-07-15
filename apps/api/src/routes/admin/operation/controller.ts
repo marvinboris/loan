@@ -3,6 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../lib/supabase';
 import { UserStatus } from '../../../types';
+import { filter } from '../../../utils';
 
 export class OperationController {
   async getAccounts(req: Request, res: Response, next: NextFunction) {
@@ -29,7 +30,7 @@ export class OperationController {
       let query = supabase.from('users').select('*');
 
       // Appliquer les filtres
-      if (account) query = query.eq('email', account);
+      if (account) query = query.eq('account', account);
       if (email) query = query.eq('email', email);
       if (name) query = query.ilike('name', `%${name}%`);
       if (status) query = query.eq('status', status);
@@ -50,14 +51,16 @@ export class OperationController {
         );
       if (role) query = query.eq('role', role);
 
-      const { data: users, error } = await query;
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: users, error } = await query.range(from, to);
 
       if (error) throw error;
 
       const items =
         users?.map((user) => ({
           serialNum: user.id,
-          account: user.email,
+          account: user.account,
           email: user.email,
           name: user.name,
           workNum: user.work_number,
@@ -78,7 +81,7 @@ export class OperationController {
       res.json({
         success: true,
         items,
-        total: items.length,
+        total,
       });
     } catch (error) {
       next(error);

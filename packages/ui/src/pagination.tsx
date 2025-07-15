@@ -2,15 +2,19 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/outline';
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from './buttons';
+import { Select } from './form';
 
 export type PaginationProps = {
   total?: number;
 };
 
-export function Pagination({ total = 1 }: PaginationProps) {
+export function Pagination({ total: totalItems = 0 }: PaginationProps) {
   const [params, setParams] = useSearchParams();
 
   const page = +(params.get('_page') || '1');
+  const show = +(params.get('_show') || '10');
+
+  const total = totalItems ? Math.ceil(totalItems / show) : 1;
 
   const setPage = (page: number) =>
     setParams((params) => {
@@ -42,6 +46,21 @@ export function Pagination({ total = 1 }: PaginationProps) {
 
   return (
     <div className="flex gap-2 items-center">
+      <div>Displaying {page === total ? totalItems % show : show} of</div>
+
+      <Select
+        value={show}
+        onChange={(e) =>
+          setParams((prev) => {
+            prev.set('_show', e.target.value);
+            return prev;
+          })
+        }
+        options={{ 10: '10', 25: '25', 50: '50', 100: '100' }}
+      />
+
+      <div>{totalItems || 0} items</div>
+
       <Button
         color="black"
         variant="clear"
