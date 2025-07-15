@@ -4,9 +4,11 @@ import {
   Filter,
   Pagination,
   Table,
+  toastShow,
   useBreadcrumb,
 } from '@creditwave/ui';
 import React from 'react';
+import { telemarketingService } from '../../../services';
 
 type Item = {
   mobile: string;
@@ -34,6 +36,22 @@ export function TelemarketingRegisteredCustomers() {
   const { data, error, loading } = usePaginatedApi<Item>(
     '/telemarketing/registered-customers'
   );
+
+  const handleDataImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target;
+    const file = files?.item(0);
+
+    if (!file) return toastShow({ type: 'error', text: 'No file selected' });
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const result = await telemarketingService.dataImport('registered')(
+      formData
+    );
+    if (result.success)
+      return toastShow({ type: 'success', text: result.message });
+  };
 
   return (
     <>
@@ -112,7 +130,23 @@ export function TelemarketingRegisteredCustomers() {
       />
 
       <div className="flex gap-2.5">
-        <Button>Data Import</Button>
+        <Button
+          onClick={() =>
+            (
+              document.querySelector('#data-import') as HTMLInputElement | null
+            )?.click()
+          }
+        >
+          Data Import
+        </Button>
+        <input
+          type="file"
+          accept=".xlsx"
+          id="data-import"
+          className="hidden"
+          onChange={handleDataImport}
+        />
+
         <Button color="disabled" className="text-red-600">
           Export Excel
         </Button>

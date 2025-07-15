@@ -1,8 +1,16 @@
+import { useAuth } from '@creditwave/hooks';
 import { Logo } from '@creditwave/ui';
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 export function AuthLayout() {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (isAuthenticated) navigate('/');
+  }, [isAuthenticated]);
+
   return (
     <>
       <header></header>

@@ -57,12 +57,36 @@ export const authService = {
   },
 };
 
+// Service pour le telemarketing
+export const telemarketingService = {
+  dataImport: (type: 'new' | 'old' | 'registered') => async (file: any) => {
+    const httpClient = getHttpClient();
+    const results = await httpClient.post<Response>(
+      '/admin/telemarketing/' +
+        {
+          new: 'new-customers',
+          old: 'old-customers',
+          registered: 'registered-customers',
+        }[type] +
+        '/import',
+      file,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+
+    return results;
+  },
+};
+
 // Service pour les utilisateurs avec état global
 export const operationService = {
   createAccount: async (userData: any) => {
     const httpClient = getHttpClient();
     const createdAccount = await httpClient.post<Response>(
-      '/operation/account',
+      '/admin/operation/account',
       userData
     );
 

@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { supabase } from '../../lib/supabase';
-import { PerformanceType } from '../../types';
+import { supabase } from '../../../lib/supabase';
+import { CustomerType, PerformanceType } from '../../../types';
+import { telemarketingService } from './service';
 
 export class TelemarketingController {
   async getMonthlyPerformance(req: Request, res: Response, next: NextFunction) {
@@ -461,5 +462,28 @@ export class TelemarketingController {
     } catch (error) {
       next(error);
     }
+  }
+
+  postImportCustomers(type: CustomerType) {
+    return async function (req: Request, res: Response, next: NextFunction) {
+      try {
+        // Vérification plus robuste du fichier
+        if (!req.file || !req.file.buffer) {
+          return res
+            .status(400)
+            .json({ success: false, message: 'Aucun fichier valide fourni' });
+        }
+
+        const result = await telemarketingService.importCustomers(
+          type,
+          req.file.buffer
+        );
+        if (!result.success) return res.status(400).json(result);
+
+        res.json(result);
+      } catch (error) {
+        next(error);
+      }
+    };
   }
 }

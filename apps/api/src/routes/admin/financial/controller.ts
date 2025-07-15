@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../../lib/supabase';
 
 export class FinancialController {
   async getRepaymentInquiries(req: Request, res: Response, next: NextFunction) {

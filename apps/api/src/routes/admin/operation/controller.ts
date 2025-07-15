@@ -1,8 +1,8 @@
+import bcrypt from 'bcryptjs';
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import bcrypt from 'bcryptjs';
-import { supabase } from '../../lib/supabase';
-import { UserStatus } from '../../types';
+import { supabase } from '../../../lib/supabase';
+import { UserStatus } from '../../../types';
 
 export class OperationController {
   async getAccounts(req: Request, res: Response, next: NextFunction) {

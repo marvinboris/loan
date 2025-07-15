@@ -1,6 +1,6 @@
 import express from 'express';
 import { OperationController } from './controller';
-import { authenticate, authorize } from '../../middlewares';
+import { authenticate, authorize } from '../../../middlewares';
 
 const operationRouter = express.Router();
 

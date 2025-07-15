@@ -1,13 +1,7 @@
 // main.ts
 import express from 'express';
 import cors from 'cors';
-import {
-  authRouter,
-  collectionRouter,
-  financialRouter,
-  operationRouter,
-  telemarketingRouter,
-} from './routes';
+import { adminRouter, authRouter } from './routes';
 
 const app = express();
 const port = process.env.PORT || 4300;
@@ -17,14 +11,11 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRouter);
-app.use('/api/telemarketing', telemarketingRouter);
-app.use('/api/financial', financialRouter);
-app.use('/api/collection', collectionRouter);
-app.use('/api/operation', operationRouter);
+app.use('/api/admin', adminRouter);
 
 // Test endpoint
 app.get('/', (req, res) => {
-  res.send({ message: 'CreditWave API - Supabase Edition' });
+  res.send({ message: 'Credit Wave API' });
 });
 
 // Error handling

@@ -1,21 +1,17 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from './use-auth';
 
 // Hook pour surveiller les changements d'état d'authentification
 export const useAuthWatcher = () => {
   const { isAuthenticated, user } = useAuth();
-  const navigate = useNavigate();
 
   React.useEffect(() => {
     if (isAuthenticated && user) {
       console.log('User connected:', user);
       // Logique à exécuter lors de la connexion
-      navigate('/');
     } else {
       console.log('User disconnected');
       // Logique à exécuter lors de la déconnexion
-      navigate('/login');
     }
   }, [isAuthenticated, user]);
 };

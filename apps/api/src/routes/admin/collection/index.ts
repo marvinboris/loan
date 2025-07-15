@@ -1,6 +1,6 @@
 import express from 'express';
 import { CollectionController } from './controller';
-import { authenticate, authorize } from '../../middlewares';
+import { authenticate, authorize } from '../../../middlewares';
 
 const collectionRouter = express.Router();
 
@@ -10,43 +10,43 @@ const collectionController = new CollectionController();
 collectionRouter.get(
   '/performance-management/monthly',
   authenticate,
-  authorize(['admin', 'collector']),
+  authorize(['admin']),
   collectionController.getMonthlyPerformance
 );
 collectionRouter.get(
   '/performance-management/daily',
   authenticate,
-  authorize(['admin', 'collector']),
+  authorize(['admin']),
   collectionController.getDailyPerformance
 );
 collectionRouter.get(
   '/performance-management/team-monthly',
   authenticate,
-  authorize(['admin', 'collector']),
+  authorize(['admin']),
   collectionController.getTeamMonthlyPerformance
 );
 collectionRouter.get(
   '/performance-management/team-daily',
   authenticate,
-  authorize(['admin', 'collector']),
+  authorize(['admin']),
   collectionController.getTeamDailyPerformance
 );
 collectionRouter.get(
   '/case',
   authenticate,
-  authorize(['admin', 'collector']),
+  authorize(['admin']),
   collectionController.getCollectionCase
 );
 collectionRouter.get(
   '/case-allocation',
   authenticate,
-  authorize(['admin', 'collector']),
+  authorize(['admin']),
   collectionController.getCaseAllocation
 );
 collectionRouter.get(
   '/records',
   authenticate,
-  authorize(['admin', 'collector']),
+  authorize(['admin']),
   collectionController.getCollectionRecords
 );
 

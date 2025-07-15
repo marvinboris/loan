@@ -1,9 +1,17 @@
 import { Breadcrumb, Profile, Sidebar } from '@creditwave/ui';
 import React from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { authService } from '../../services';
+import { useAuth } from '@creditwave/hooks';
 
 export function AppLayout() {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (!isAuthenticated) navigate('/login');
+  }, [isAuthenticated]);
+
   return (
     <div className="h-screen w-screen overflow-clip flex">
       <Sidebar />
