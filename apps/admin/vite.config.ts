@@ -24,7 +24,7 @@ export default defineConfig(() => ({
   resolve: {
     alias: {
       '@creditwave/hooks': resolve(__dirname, '../../packages/hooks/src'),
-      '@creditwave/ui': resolve(__dirname, '../../packages/ui/src'),
+      '@creditwave/ui-web': resolve(__dirname, '../../packages/ui-web/src'),
       '@creditwave/utils': resolve(__dirname, '../../packages/utils/src'),
       // Ajoutez tous vos packages ici
     }

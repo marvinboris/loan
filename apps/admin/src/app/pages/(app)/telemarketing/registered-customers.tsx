@@ -6,7 +6,7 @@ import {
   Table,
   toastShow,
   useBreadcrumb,
-} from '@creditwave/ui';
+} from '@creditwave/ui-web';
 import React from 'react';
 import { telemarketingService } from '../../../services';
 

@@ -1,5 +1,5 @@
 import { useRequest } from '@creditwave/hooks';
-import { Button, Card, Input } from '@creditwave/ui';
+import { Button, Card, Input } from '@creditwave/ui-web';
 import { Formik } from 'formik';
 import React from 'react';
 import { Link } from 'react-router-dom';

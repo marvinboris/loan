@@ -1,5 +1,5 @@
 import { useAuthWatcher, useRequest } from '@creditwave/hooks';
-import { BreadcrumbProvider, Toast, toastShow } from '@creditwave/ui';
+import { BreadcrumbProvider, Toast, toastShow } from '@creditwave/ui-web';
 import { initializeHttpClient } from '@creditwave/utils';
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';

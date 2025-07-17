@@ -1,5 +1,23 @@
 {
-  "name": "@creditwave/customer",
+  "name": "customer",
   "version": "0.0.1",
-  "private": true
+  "private": true,
+  "scripts": {
+    "eas-build-post-install": "cd ../../ && node tools/scripts/eas-build-post-install.mjs . apps/customer",
+    "prebuild": "expo prebuild",
+    "android": "pnpm prebuild && expo run:android",
+    "android-prev": "dotenv -c -- eas build -p android --profile preview --local",
+    "android-prod": "eas build -p android",
+    "ios": "expo run:ios"
+  },
+  "dependencies": {
+    "@testing-library/jest-native": "*",
+    "@testing-library/react-native": "*",
+    "metro-config": "*",
+    "react-native": "*",
+    "expo": "*",
+    "react-native-svg": "*",
+    "react-native-web": "*",
+    "react": "18.3.1"
+  }
 }

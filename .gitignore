@@ -58,6 +58,9 @@ npm-debug.*
 web-build/
 cache/
 
+android/
+ios/
+
 .env
 
 test-output

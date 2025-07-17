@@ -1,5 +1,5 @@
 import { usePaginatedApi } from '@creditwave/hooks';
-import { Filter, Pagination, Table, useBreadcrumb } from '@creditwave/ui';
+import { Filter, Pagination, Table, useBreadcrumb } from '@creditwave/ui-web';
 import React from 'react';
 
 type Item = {

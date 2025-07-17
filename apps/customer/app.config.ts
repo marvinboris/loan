@@ -8,10 +8,12 @@ const APP_NAME = 'Credit Wave';
 const BUNDLE_IDENTIFIER = 'com.creditwave.customer';
 const PACKAGE_NAME = 'com.creditwave.customer';
 const ICON = './assets/icon.png';
-const ADAPTIVE_ICON = './assets/adaptivicon.png';
+const ADAPTIVE_ICON = './assets/adaptive-icon.png';
 const SCHEME = 'creditwave-customer';
 
-export default ({ config }: ConfigContext): ExpoConfig => {
+export default ({
+  config,
+}: ConfigContext): Partial<ExpoConfig & { expo: ExpoConfig }> => {
   const APP_ENV =
     (process.env.APP_ENV as 'development' | 'preview' | 'production') ||
     'development';
@@ -22,78 +24,80 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
   return {
     ...config,
-    name,
-    scheme,
-    slug: SLUG,
-    version,
-    icon,
-    splash: {
-      image: './assets/splash.png',
-      resizeMode: 'contain',
-      backgroundColor: '#585572',
-    },
-    updates: {
-      fallbackToCacheTimeout: 0,
-    },
-    assetBundlePatterns: ['**/*'],
-    ios: {
-      bundleIdentifier,
-      buildNumber: version,
-      supportsTablet: true,
-      requireFullScreen: true,
-      infoPlist: {
-        NSSpeechRecognitionUsageDescription:
-          'Allow $(PRODUCT_NAME) to use speech recognition.',
-        NSMicrophoneUsageDescription:
-          'Allow $(PRODUCT_NAME) to use the microphone.',
-        ITSAppUsesNonExemptEncryption: false,
+    expo: {
+      name,
+      scheme,
+      slug: SLUG,
+      version,
+      icon,
+      splash: {
+        image: './assets/splash.png',
+        resizeMode: 'contain',
+        backgroundColor: '#ffffff',
       },
-    },
-    android: {
-      package: packageName,
-      adaptiveIcon: {
-        foregroundImage: adaptiveIcon,
-        backgroundColor: '#252879',
+      updates: {
+        fallbackToCacheTimeout: 0,
       },
-      permissions: [
-        'android.permission.CAMERA',
-        'android.permission.RECORD_AUDIO',
+      assetBundlePatterns: ['**/*'],
+      ios: {
+        bundleIdentifier,
+        buildNumber: version,
+        supportsTablet: true,
+        requireFullScreen: true,
+        infoPlist: {
+          NSSpeechRecognitionUsageDescription:
+            'Allow $(PRODUCT_NAME) to use speech recognition.',
+          NSMicrophoneUsageDescription:
+            'Allow $(PRODUCT_NAME) to use the microphone.',
+          ITSAppUsesNonExemptEncryption: false,
+        },
+      },
+      android: {
+        package: packageName,
+        adaptiveIcon: {
+          foregroundImage: adaptiveIcon,
+          backgroundColor: '#252879',
+        },
+        permissions: [
+          'android.permission.CAMERA',
+          'android.permission.RECORD_AUDIO',
+        ],
+      },
+      web: {
+        bundler: 'metro',
+        favicon: './assets/favicon.png',
+      },
+      plugins: [
+        'expo-router',
+        [
+          'expo-camera',
+          {
+            cameraPermission: 'Allow $(PRODUCT_NAME) to access your camera',
+            microphonePermission:
+              'Allow $(PRODUCT_NAME) to access your microphone',
+            recordAudioAndroid: true,
+          },
+        ],
+        [
+          'expo-screen-orientation',
+          {
+            initialOrientation: 'DEFAULT',
+          },
+        ],
+        'expo-asset',
+        [
+          'expo-font',
+          {
+            fonts: [
+              './assets/fonts/Inter_18pt-Bold.ttf',
+              './assets/fonts/Inter_18pt-Medium.ttf',
+              './assets/fonts/Inter_18pt-Regular.ttf',
+              './assets/fonts/Inter_18pt-SemiBold.ttf',
+            ],
+          },
+        ],
       ],
     },
-    web: {
-      bundler: 'metro',
-      favicon: './assets/favicon.png',
-    },
-    plugins: [
-      'expo-router',
-      [
-        'expo-camera',
-        {
-          cameraPermission: 'Allow $(PRODUCT_NAME) to access your camera',
-          microphonePermission:
-            'Allow $(PRODUCT_NAME) to access your microphone',
-          recordAudioAndroid: true,
-        },
-      ],
-      [
-        'expo-screen-orientation',
-        {
-          initialOrientation: 'DEFAULT',
-        },
-      ],
-      'expo-asset',
-      [
-        'expo-font',
-        {
-          fonts: [
-            './assets/fonts/SF-Pro-Display-Bold.otf',
-            './assets/fonts/SF-Pro-Display-Medium.otf',
-            './assets/fonts/SF-Pro-Display-Regular.otf',
-            './assets/fonts/SF-Pro-Display-Semibold.otf',
-          ],
-        },
-      ],
-    ],
   };
 };
 

@@ -1,5 +1,5 @@
 import { useAuth } from '@creditwave/hooks';
-import { Logo } from '@creditwave/ui';
+import { Logo } from '@creditwave/ui-web';
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 

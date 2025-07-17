@@ -1,34 +1,19 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "types": [
-      "node",
-      "@nx/react/typings/cssmodule.d.ts",
-      "@nx/react/typings/image.d.ts",
-      "vite/client"
-    ],
-    "rootDir": ".",
-    "jsx": "react-jsx",
-    "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
+    "outDir": "../../dist/out-tsc",
+    "types": ["node"]
   },
   "exclude": [
-    "out-tsc",
-    "dist",
-    "**/*.spec.ts",
     "**/*.test.ts",
-    "**/*.spec.tsx",
+    "**/*.spec.ts",
     "**/*.test.tsx",
-    "**/*.spec.js",
+    "**/*.spec.tsx",
     "**/*.test.js",
-    "**/*.spec.jsx",
+    "**/*.spec.js",
     "**/*.test.jsx",
-    "jest.config.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
-    "eslint.config.js",
-    "eslint.config.cjs",
-    "eslint.config.mjs"
+    "**/*.spec.jsx",
+    "src/test-setup.ts"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
+  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

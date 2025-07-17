@@ -1,0 +1,9 @@
+{
+  "name": "telemarketing",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/telemarketing/src",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project telemarketing --web",
+  "targets": {}
+}

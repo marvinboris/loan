@@ -1,4 +1,4 @@
-import { Breadcrumb, Profile, Sidebar } from '@creditwave/ui';
+import { Breadcrumb, Profile, Sidebar } from '@creditwave/ui-web';
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { authService } from '../../services';

@@ -11,7 +11,7 @@ import {
   Table,
   toastShow,
   useBreadcrumb,
-} from '@creditwave/ui';
+} from '@creditwave/ui-web';
 import { Formik } from 'formik';
 import moment from 'moment';
 import React from 'react';
