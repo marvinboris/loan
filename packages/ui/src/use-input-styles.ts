@@ -25,7 +25,8 @@ export function useInputStyles({
                 backgroundColor: getColor('white'),
               },
         label: {
-          fontSize: normal ? 14 : 18,
+          marginBottom: 8,
+          fontSize: normal ? 16 : 18,
           fontFamily: normal ? 'REGULAR' : 'MEDIUM',
           color: normal ? undefined : getColor('primary'),
         },
@@ -47,8 +48,7 @@ export function useInputStyles({
           flexDirection: 'row',
           alignItems: 'center',
           borderWidth: normal || bordered ? 0.5 : 2,
-          borderColor:
-            normal || bordered ? getColor('divider') + 'b' : 'transparent',
+          borderColor: normal || bordered ? getColor('divider') : 'transparent',
           borderRadius: normal || bordered ? 6 : 8,
           paddingHorizontal: 8,
           backgroundColor:
@@ -59,8 +59,8 @@ export function useInputStyles({
         input: {
           flex: 1,
           textAlignVertical: multiline ? 'top' : undefined,
-          height: normal || bordered ? 44 : multiline ? 64 : 40,
-          fontSize: 18,
+          height: normal || bordered ? 40 : multiline ? 64 : 40,
+          fontSize: 16,
           color: getColor('black'),
           fontFamily: 'REGULAR',
           paddingVertical: multiline ? 5 : 0,

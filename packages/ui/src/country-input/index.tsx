@@ -194,7 +194,7 @@ export function CountryInput({
             ]}
           >
             <Typography style={styles.modalTitle}>
-              {'ui.country_input'}
+              Select country phone code
             </Typography>
 
             <SearchBar

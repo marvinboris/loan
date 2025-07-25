@@ -65,11 +65,12 @@ export class HttpClient {
         }
 
         const errorMessage =
+          error.response?.data?.errors?.map((error) => error.msg)?.join('\n') ||
           error.response?.data?.message ||
           error.message ||
           'Une erreur est survenue';
         requestState$.error.set(errorMessage);
-        console.error('Response error:', error);
+        console.error('Response error:', errorMessage);
         return Promise.reject(error);
       }
     );

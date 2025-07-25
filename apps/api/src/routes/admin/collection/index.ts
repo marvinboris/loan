@@ -10,43 +10,43 @@ const collectionController = new CollectionController();
 collectionRouter.get(
   '/performance-management/monthly',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   collectionController.getMonthlyPerformance
 );
 collectionRouter.get(
   '/performance-management/daily',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   collectionController.getDailyPerformance
 );
 collectionRouter.get(
   '/performance-management/team-monthly',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   collectionController.getTeamMonthlyPerformance
 );
 collectionRouter.get(
   '/performance-management/team-daily',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   collectionController.getTeamDailyPerformance
 );
 collectionRouter.get(
   '/case',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   collectionController.getCollectionCase
 );
 collectionRouter.get(
   '/case-allocation',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   collectionController.getCaseAllocation
 );
 collectionRouter.get(
   '/records',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   collectionController.getCollectionRecords
 );
 

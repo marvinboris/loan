@@ -1,58 +1,55 @@
-import { useApi } from '@creditwave/hooks';
-import { Button, Section, Typography } from '@creditwave/ui';
+import { useApi, useConfig, useTitle } from '@creditwave/hooks';
+import { Button, Loan, LoanProps, Section } from '@creditwave/ui';
+import { router } from 'expo-router';
 import moment from 'moment';
 import { View } from 'react-native';
 
-type Item = {
-  amount: number;
-  interest: number;
-  date: Date;
-  active?: boolean;
-};
+const defaultData = [
+  {
+    amount: 5000,
+    interest: 50,
+    date: moment().subtract(2, 'd').toDate(),
+    active: true,
+  },
+  {
+    amount: 7000,
+    interest: 70,
+    date: moment().subtract(2, 'w').toDate(),
+  },
+];
 
 export default function Page() {
-  const {
-    data = [
-      {
-        amount: 5000,
-        interest: 50,
-        date: moment().subtract(2, 'd').toDate(),
-        active: true,
-      },
-      {
-        amount: 7000,
-        interest: 70,
-        date: moment().subtract(2, 'w').toDate(),
-      },
-    ],
-    loading,
-  } = useApi<Item[]>('/customer/dashboard');
+  const { theme } = useConfig();
+  useTitle('Dashboard');
+
+  const { data, loading } = useApi<{ data: LoanProps[]; success: boolean }>(
+    '/customer/dashboard'
+  );
 
   return (
     <View style={{ gap: 10 }}>
       <View>
-        <Typography align="center">Onboarding</Typography>
+        <View style={{ paddingVertical: 12, paddingHorizontal: 16 }}>
+          <View
+            style={{
+              height: 150,
+              borderRadius: 6,
+              backgroundColor: theme.primary + '22',
+            }}
+          />
+        </View>
 
-        <Button containerStyle={{ alignSelf: 'center' }}>Borrow now</Button>
+        <Button
+          onPress={() => router.push('/borrow')}
+          containerStyle={{ alignSelf: 'center' }}
+        >
+          Borrow now
+        </Button>
       </View>
 
-      <Section loading={loading} size="xs" titleText="History">
-        {data.map((item, index) => (
-          <View key={index}>
-            <View
-              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
-            >
-              <Typography color={item.active ? 'warning' : 'success'}>
-                {item.amount} XAF
-              </Typography>
-
-              <Typography color="black">+{item.interest}</Typography>
-            </View>
-
-            <Typography color="disabled">
-              {moment(item.date).fromNow()}
-            </Typography>
-          </View>
+      <Section loading={loading} titleText="History">
+        {(data?.data || defaultData).map((item, index) => (
+          <Loan key={index} {...item} />
         ))}
       </Section>
     </View>

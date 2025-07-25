@@ -1,7 +1,7 @@
 import { ConfigContext, ExpoConfig } from 'expo/config';
 import { version } from './package.json';
 
-const SLUG = '@creditwave/customer';
+const SLUG = 'creditwave-customer';
 
 // App production config
 const APP_NAME = 'Credit Wave';
@@ -30,6 +30,7 @@ export default ({
       slug: SLUG,
       version,
       icon,
+      jsEngine: 'hermes',
       splash: {
         image: './assets/splash.png',
         resizeMode: 'contain',
@@ -54,6 +55,7 @@ export default ({
       },
       android: {
         package: packageName,
+        edgeToEdgeEnabled: true,
         adaptiveIcon: {
           foregroundImage: adaptiveIcon,
           backgroundColor: '#252879',
@@ -96,7 +98,31 @@ export default ({
             ],
           },
         ],
+        [
+          'expo-build-properties',
+          {
+            android: {
+              enableBundleCompression: true,
+              enableProguardInReleaseBuilds: true,
+              enableShrinkResourcesInReleaseBuilds: true,
+              useLegacyPackaging: true,
+              enableSeparateBuildPerCPUArchitecture: true,
+              packagingOptions: {
+                pickFirst : [
+                  '**/libc++_shared.so',
+                  '**/libjsc.so',
+                  '**/libreactnativejni.so',
+                ],
+              },
+            },
+          },
+        ],
       ],
+      extra: {
+        eas: {
+          projectId: '703808fa-8b4b-4943-8d1e-13544a4fe2ea',
+        },
+      },
     },
   };
 };
@@ -137,3 +163,20 @@ export const getDynamicAppConfig = (
     scheme: `${SCHEME}-dev`,
   };
 };
+
+// Use current code to minify the android bundle
+// android/app/build.gradle
+/**
+ * ...
+ * android {
+ *    ...
+ *    splits {
+ *      abi {
+ *        enable true
+ *        reset()
+ *        include 'arm64-v8a'
+ *        universalApk false
+ *      }
+ *    }
+ * }
+ */

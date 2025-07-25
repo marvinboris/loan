@@ -40,11 +40,11 @@ export function Typography({
         {
           textAlign: align,
           fontSize: {
-            sm: 16,
-            md: 18,
-            lg: 20,
-            xl: 24,
-            '2xl': 32,
+            sm: 14,
+            md: 16,
+            lg: 18,
+            xl: 20,
+            '2xl': 24,
           }[size],
           fontFamily: family,
           color: color ? getColor(color) : getColor('black'),

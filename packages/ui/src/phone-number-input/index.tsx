@@ -1,11 +1,9 @@
 import { getCountries } from '@creditwave/utils';
-// import { isValidPhoneNumber } from 'libphonenumber-js';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 import React from 'react';
 import { z } from 'zod';
 import { CountryInput } from '../country-input';
 import { FormInput, FormInputProps } from '../form-input';
-
-const isValidPhoneNumber = (val: string) => true;
 
 export type PhoneNumberInputProps = FormInputProps & {
   icon?: boolean;
@@ -17,7 +15,7 @@ export const phoneNumberInputSchema = () =>
     .refine(
       (val) => isValidPhoneNumber((val.startsWith('+') ? '' : '+') + val),
       {
-        message: 'ui.phone_number_input.error',
+        message: 'Invalid phone number',
       }
     );
 

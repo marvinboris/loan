@@ -1,3 +1,5 @@
+import { Customer } from '../../types';
+
 export interface LoginInput {
   email: string;
   password: string;
@@ -13,6 +15,15 @@ export interface ResetPasswordInput {
   token: string;
 }
 
+export interface CustomerLoginInput {
+  mobile: string;
+}
+
+export interface VerifyCodeInput {
+  mobile: string;
+  code: string;
+}
+
 export interface AuthResponse {
   success: boolean;
   message?: string;
@@ -21,4 +32,10 @@ export interface AuthResponse {
     id: number;
     email: string;
   };
+  customer?: CustomerWithAuthInfo; // Nouveau type retourné
 }
+
+export type CustomerWithAuthInfo = Pick<
+  Customer,
+  'id' | 'mobile' | 'name' | 'type' | 'user_label' | 'whether_apply'
+>;

@@ -43,6 +43,7 @@ export function NumberInput({
               buttonStyle={{ width: 32 }}
               onPress={() => onChange(+(value || 0) - step)}
               titleStyle={{ lineHeight: 24, fontSize: 24 }}
+              containerStyle={{ height: '100%', paddingVertical: 7 }}
             />
           )}
         </>

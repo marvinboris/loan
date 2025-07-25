@@ -2,13 +2,17 @@
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 import { config } from '../../config';
 import { supabase } from '../../lib/supabase';
-import { sendEmail } from '../../utils';
+import { Customer, CustomerType } from '../../types';
+import { generateVerificationCode, sendEmail, sendWhatsapp } from '../../utils';
 import {
   LoginInput,
   ForgotPasswordInput,
   ResetPasswordInput,
+  CustomerLoginInput,
+  VerifyCodeInput,
   AuthResponse,
 } from './interfaces';
 
@@ -107,5 +111,151 @@ export const authService = {
       .eq('id', user.id);
 
     return { success: true, message: 'Password has been reset successfully' };
+  },
+
+  async customerLogin(input: CustomerLoginInput): Promise<AuthResponse> {
+    const { mobile } = input;
+
+    // Validation du numéro de mobile
+    if (!mobile || !isValidPhoneNumber(mobile)) {
+      return { success: false, message: 'Invalid phone number' };
+    }
+
+    // Génération du code de vérification
+    const { verificationCode, codeExpiresAt } = generateVerificationCode();
+
+    console.log(verificationCode);
+
+    try {
+      // Recherche du customer existant
+      const { data: existingCustomer, error } = await supabase
+        .from('customers')
+        .select('*')
+        .eq('mobile', mobile)
+        .single();
+
+      if (error && !existingCustomer) {
+        // Création d'un nouveau customer si non trouvé
+        const newCustomer: Omit<Customer, 'id' | 'created_at' | 'updated_at'> =
+          {
+            mobile,
+            name: '', // Nom vide par défaut
+            type: CustomerType.NEW,
+            whether_apply: false,
+            whether_assigned: false,
+          };
+
+        const { data: createdCustomer, error: createError } = await supabase
+          .from('customers')
+          .insert(newCustomer)
+          .select()
+          .single();
+
+        if (createError || !createdCustomer) {
+          throw new Error('Customer creation failed');
+        }
+
+        // Mise à jour du code de vérification
+        await supabase
+          .from('customers')
+          .update({
+            verification_code: +verificationCode,
+            verification_code_expires: codeExpiresAt.toISOString(),
+          })
+          .eq('id', createdCustomer.id);
+      } else {
+        // Mise à jour du customer existant
+        await supabase
+          .from('customers')
+          .update({
+            verification_code: +verificationCode,
+            verification_code_expires: codeExpiresAt.toISOString(),
+          })
+          .eq('id', existingCustomer.id);
+      }
+
+      // Envoi du code par WhatsApp
+      const message = `Your verification code is : ${verificationCode}`;
+      const whatsappSent = await sendWhatsapp(`whatsapp:${mobile}`, message);
+
+      if (!whatsappSent) {
+        return {
+          success: false,
+          message: 'WhatsApp message failed to send',
+        };
+      }
+
+      return {
+        success: true,
+        message: 'Verification code sent on WhatsApp',
+      };
+    } catch (error) {
+      console.error('Error in customerLogin:', error);
+      return {
+        success: false,
+        message: 'Failed to send verification code',
+      };
+    }
+  },
+
+  async verifyCode(input: VerifyCodeInput): Promise<AuthResponse> {
+    const { mobile, code } = input;
+
+    try {
+      // Vérification du code
+      const { data: customer, error } = await supabase
+        .from('customers')
+        .select('*')
+        .eq('mobile', mobile)
+        .eq('verification_code', +code)
+        .gt('verification_code_expires', new Date().toISOString())
+        .single();
+
+      if (!customer || error) {
+        return {
+          success: false,
+          message: 'Invalid or expired verification code',
+        };
+      }
+
+      // Génération du token JWT
+      const token = jwt.sign(
+        {
+          customerId: customer.id,
+          mobile: customer.mobile,
+          type: customer.type,
+        },
+        config.jwtSecret,
+        { expiresIn: '8h' } // Durée plus longue pour les customers
+      );
+
+      // Nettoyage du code de vérification
+      await supabase
+        .from('customers')
+        .update({
+          verification_code: null,
+          verification_code_expires: null,
+        })
+        .eq('id', customer.id);
+
+      return {
+        success: true,
+        token,
+        customer: {
+          id: customer.id,
+          mobile: customer.mobile,
+          name: customer.name,
+          type: customer.type as CustomerType,
+          user_label: customer.user_label,
+          whether_apply: customer.whether_apply,
+        },
+      };
+    } catch (error) {
+      console.error('Error in verifyCode:', error);
+      return {
+        success: false,
+        message: 'Code verification failed',
+      };
+    }
   },
 };

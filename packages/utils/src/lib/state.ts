@@ -1,11 +1,16 @@
 import { observable } from '@legendapp/state';
+import { observablePersistAsyncStorage } from '@legendapp/state/persist-plugins/async-storage';
 import { ObservablePersistLocalStorage } from '@legendapp/state/persist-plugins/local-storage';
-import { ObservablePersistMMKV } from '@legendapp/state/persist-plugins/mmkv';
 import { syncObservable } from '@legendapp/state/sync';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
 const plugin =
-  Platform.OS === 'web' ? ObservablePersistLocalStorage : ObservablePersistMMKV;
+  Platform.OS === 'web'
+    ? ObservablePersistLocalStorage
+    : observablePersistAsyncStorage({
+        AsyncStorage,
+      });
 
 // Interface pour l'état de l'authentification
 export interface AuthState {
@@ -23,6 +28,19 @@ export interface RequestState {
 // Interface pour l'état de la première utilisation
 export type IsFirstUseState = boolean;
 
+// Interface pour l'etat du formulaire KYC
+export interface KycState {
+  firstName?: string;
+  lastName: string;
+  location: string;
+  birthdate: string;
+  emergencyNumber1: string;
+  emergencyNumber2?: string;
+  frontPhoto: string;
+  backPhoto: string;
+  selfie: string;
+}
+
 // État global observable avec persistance
 export const authState$ = observable<AuthState>({
   token: null,
@@ -39,6 +57,12 @@ export const requestState$ = observable<RequestState>({
 // État de la première utilisation
 export const isFirstUseState$ = observable<IsFirstUseState>(false);
 
+// Etat du titre de la page
+export const titleState$ = observable<string>('');
+
+// Etat du formulaire KYC
+export const kycState$ = observable<KycState>();
+
 // Configuration de la persistance pour l'authentification
 syncObservable(authState$, {
   persist: {
@@ -50,6 +74,13 @@ syncObservable(authState$, {
 syncObservable(isFirstUseState$, {
   persist: {
     name: 'is-first-use-state',
+    plugin,
+  },
+});
+
+syncObservable(kycState$, {
+  persist: {
+    name: 'kyc-state',
     plugin,
   },
 });

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../lib/supabase';
+import { ConnectionStatus, WillingnessToPay } from '../../../types';
 import { filter } from '../../../utils';
 
 export class CollectionController {
@@ -24,9 +25,9 @@ export class CollectionController {
         )
         .eq('type', 'collector_monthly');
 
-      if (group) query = query.eq('group_name', group);
-      if (status) query = query.eq('status', status);
-      if (date) query = query.eq('date', date);
+      if (group) query = query.eq('group_name', group as string);
+      if (status) query = query.eq('status', status as string);
+      if (date) query = query.eq('date', date as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -41,7 +42,7 @@ export class CollectionController {
           dateRange: perf.date_range,
           groupRange: perf.group_name,
           ranking: perf.ranking,
-          collectorsName: perf.user?.name,
+          collectorsName: perf.users?.name,
           totalAssignedQty: perf.total_assigned_qty,
           newAssignedNum: perf.new_assigned_num,
           targetRepayRate: perf.target_repay_rate,
@@ -86,9 +87,9 @@ export class CollectionController {
         )
         .eq('type', 'collector_daily');
 
-      if (group) query = query.eq('group_name', group);
-      if (status) query = query.eq('status', status);
-      if (date) query = query.eq('date', date);
+      if (group) query = query.eq('group_name', group as string);
+      if (status) query = query.eq('status', status as string);
+      if (date) query = query.eq('date', date as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -101,7 +102,7 @@ export class CollectionController {
           date: perf.date,
           groupName: perf.group_name,
           ranking: perf.ranking,
-          collectorsName: perf.user?.name,
+          collectorsName: perf.users?.name,
           totalAssignedQty: perf.total_assigned_qty,
           newAssignedNum: perf.new_assigned_num,
           targetRepayRate: perf.target_repay_rate,
@@ -152,8 +153,8 @@ export class CollectionController {
         .select('*', { count: 'exact' })
         .eq('type', 'team_monthly');
 
-      if (group) query = query.eq('group_name', group);
-      if (status) query = query.eq('status', status);
+      if (group) query = query.eq('group_name', group as string);
+      if (status) query = query.eq('status', status as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -206,8 +207,8 @@ export class CollectionController {
         .select('*', { count: 'exact' })
         .eq('type', 'team_daily');
 
-      if (group) query = query.eq('group_name', group);
-      if (status) query = query.eq('status', status);
+      if (group) query = query.eq('group_name', group as string);
+      if (status) query = query.eq('status', status as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -283,24 +284,26 @@ export class CollectionController {
       );
 
       // Appliquer les filtres
-      if (mobile) query = query.eq('customers.mobile', mobile);
+      if (mobile) query = query.eq('customers.mobile', mobile as string);
       if (name) query = query.ilike('customers.name', `%${name}%`);
-      if (loanNum) query = query.eq('loan_number', loanNum);
-      if (loanOrderNum) query = query.eq('loan_order_number', loanOrderNum);
-      if (stage) query = query.eq('collection_stage', stage);
-      if (collector) query = query.eq('collector_id', collector);
-      if (product) query = query.eq('product_name', product);
-      if (loanTenure) query = query.eq('loan_tenure', loanTenure);
-      if (loanAmt) query = query.eq('loan_amount', loanAmt);
-      if (appVersion) query = query.eq('app_version', appVersion);
-      if (dueDate) query = query.eq('due_date', dueDate);
-      if (loanStatus) query = query.eq('loan_status', loanStatus);
-      if (tag) query = query.eq('tag', tag);
+      if (loanNum) query = query.eq('loan_number', loanNum as string);
+      if (loanOrderNum)
+        query = query.eq('loan_order_number', loanOrderNum as string);
+      if (stage) query = query.eq('collection_stage', stage as string);
+      if (collector) query = query.eq('collector_id', +(collector as string));
+      if (product) query = query.eq('product_name', product as string);
+      if (loanTenure) query = query.eq('loan_tenure', +(loanTenure as string));
+      if (loanAmt) query = query.eq('loan_amount', +(loanAmt as string));
+      if (appVersion) query = query.eq('app_version', appVersion as string);
+      if (dueDate) query = query.eq('due_date', dueDate as string);
+      if (loanStatus) query = query.eq('loan_status', loanStatus as string);
+      if (tag) query = query.eq('tag', tag as string);
       if (repeatedBorrowing)
         query = query.eq('repeated_borrowing', repeatedBorrowing === 'true');
-      if (loanType) query = query.eq('loan_type', loanType);
-      if (result) query = query.eq('collection_records.result', result);
-      if (appName) query = query.eq('app_name', appName);
+      if (loanType) query = query.eq('loan_type', loanType as string);
+      if (result)
+        query = query.eq('collection_records.result', result as string);
+      if (appName) query = query.eq('app_name', appName as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -320,11 +323,11 @@ export class CollectionController {
             loanNum: loan.loan_number,
             loanOrderNum: loan.loan_order_number,
             appName: loan.app_name,
-            name: loan.customer?.name,
-            mobile: loan.customer?.mobile,
+            name: loan.customers?.name,
+            mobile: loan.customers?.mobile,
             dueDate: loan.due_date,
             product: loan.product_name,
-            collector: loan.collector?.name,
+            collector: loan.collectors?.name,
             stage: loan.collection_stage,
             dailyTimes: dailyRecords.length,
             times: loan.collection_records?.length || 0,
@@ -391,24 +394,28 @@ export class CollectionController {
       );
 
       // Appliquer les filtres
-      if (stage) query = query.eq('collection_stage', stage);
-      if (collector) query = query.eq('collector_id', collector);
-      if (product) query = query.eq('product_name', product);
-      if (userSelect) query = query.eq('customers.user_label', userSelect);
-      if (numLoans) query = query.eq('customers.num_loans', numLoans);
-      if (appChannel) query = query.eq('app_channel', appChannel);
-      if (loanNum) query = query.eq('loan_number', loanNum);
-      if (loanOrderNum) query = query.eq('loan_order_number', loanOrderNum);
+      if (stage) query = query.eq('collection_stage', stage as string);
+      if (collector) query = query.eq('collector_id', +(collector as string));
+      if (product) query = query.eq('product_name', product as string);
+      if (userSelect)
+        query = query.eq('customers.user_label', userSelect as string);
+      if (numLoans) query = query.eq('customers.num_loans', numLoans as string);
+      if (appChannel) query = query.eq('app_channel', appChannel as string);
+      if (loanNum) query = query.eq('loan_number', loanNum as string);
+      if (loanOrderNum)
+        query = query.eq('loan_order_number', loanOrderNum as string);
       if (repeatedBorrowing)
         query = query.eq('repeated_borrowing', repeatedBorrowing === 'true');
-      if (daysOverdue) query = query.eq('days_overdue', daysOverdue);
-      if (mobile) query = query.eq('customers.mobile', mobile);
-      if (result) query = query.eq('collection_records.result', result);
-      if (largeGroup) query = query.eq('large_group', largeGroup);
-      if (district) query = query.eq('customers.district', district);
+      if (daysOverdue)
+        query = query.eq('days_overdue', +(daysOverdue as string));
+      if (mobile) query = query.eq('customers.mobile', mobile as string);
+      if (result)
+        query = query.eq('collection_records.result', result as string);
+      // if (largeGroup) query = query.eq('large_group', largeGroup as string);
+      if (district) query = query.eq('customers.district', district as string);
       if (otherStates) query = query.eq('customers.other_states', otherStates);
-      if (appName) query = query.eq('app_name', appName);
-      if (dueDate) query = query.eq('due_date', dueDate);
+      if (appName) query = query.eq('app_name', appName as string);
+      if (dueDate) query = query.eq('due_date', dueDate as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -428,9 +435,9 @@ export class CollectionController {
             loanNum: loan.loan_number,
             loanOrderNum: loan.loan_order_number,
             appName: loan.app_name,
-            name: loan.customer?.name,
-            district: loan.customer?.district,
-            mobile: loan.customer?.mobile,
+            name: loan.customers?.name,
+            district: loan.customers?.district,
+            mobile: loan.customers?.mobile,
             dueDate: loan.due_date,
             daysOverdue: loan.days_overdue,
             totalRepayment: loan.total_repayment,
@@ -442,14 +449,14 @@ export class CollectionController {
             result: loan.collection_records?.[0]?.result,
             logUpdateTime: loan.collection_records?.[0]?.record_time,
             product: loan.product_name,
-            userLvl: loan.customer?.user_label,
+            userLvl: loan.customers?.user_label,
             loanAmt: loan.loan_amount,
             loanTenure: loan.loan_tenure,
             loanType: loan.loan_type,
             appStatus: loan.app_status,
             appChannel: loan.app_channel,
             amtRepaid: loan.amount_repaid,
-            collector: loan.collector?.name,
+            collector: loan.collectors?.name,
           };
         }) || [];
 
@@ -499,20 +506,29 @@ export class CollectionController {
       );
 
       // Appliquer les filtres
-      if (personnel) query = query.eq('collector_id', personnel);
-      if (loanNum) query = query.eq('loans.loan_number', loanNum);
+      if (personnel) query = query.eq('collector_id', +(personnel as string));
+      if (loanNum) query = query.eq('loans.loan_number', loanNum as string);
       if (loanOrderNum)
-        query = query.eq('loans.loan_order_number', loanOrderNum);
-      if (mobile) query = query.eq('loans.customer.mobile', mobile);
-      if (mark) query = query.eq('mark', mark);
-      if (recordTime) query = query.eq('record_time', recordTime);
-      if (contact) query = query.eq('contact', contact);
-      if (targetContact) query = query.eq('target_contact', targetContact);
-      if (connection) query = query.eq('connection', connection);
+        query = query.eq('loans.loan_order_number', loanOrderNum as string);
+      if (mobile) query = query.eq('loans.customer.mobile', mobile as string);
+      if (mark) query = query.eq('mark', mark as string);
+      if (recordTime) query = query.eq('record_time', recordTime as string);
+      if (contact) query = query.eq('contact', contact as string);
+      if (targetContact)
+        query = query.eq('target_contact', targetContact as string);
+      if (connection)
+        query = query.eq(
+          'connection',
+          connection as string as ConnectionStatus
+        );
       if (willingnessPay)
-        query = query.eq('willingness_to_pay', willingnessPay);
-      if (overdueReason) query = query.eq('overdue_reason', overdueReason);
-      if (result) query = query.eq('result', result);
+        query = query.eq(
+          'willingness_to_pay',
+          willingnessPay as string as WillingnessToPay
+        );
+      if (overdueReason)
+        query = query.eq('overdue_reason', overdueReason as string);
+      if (result) query = query.eq('result', result as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -526,21 +542,21 @@ export class CollectionController {
             .toISOString()
             .split('T')[0];
           const dailyRecords =
-            record.loan?.collection_records?.filter(
+            (record.loans as any)?.collection_records?.filter(
               (r) =>
                 new Date(r.record_time).toISOString().split('T')[0] ===
                 recordDate
             ) || [];
 
           return {
-            personnel: record.collector?.name,
-            loanNum: record.loan?.loan_number,
-            loanOrderNum: record.loan?.loan_order_number,
-            mobile: record.loan?.customer?.mobile,
+            personnel: record.collectors?.name,
+            loanNum: record.loans?.loan_number,
+            loanOrderNum: record.loans?.loan_order_number,
+            mobile: record.loans?.customers?.mobile,
             mark: record.mark,
             recordContent: record.record_content,
             dailyTimes: dailyRecords.length,
-            times: record.loan?.collection_records?.length || 0,
+            times: (record.loans as any)?.collection_records?.length || 0,
             contact: record.contact,
             targetContact: record.target_contact,
             connection: record.connection,

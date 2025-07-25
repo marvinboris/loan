@@ -44,10 +44,10 @@ export type SectionProps = PropsWithChildren & {
 };
 
 export function Section({
-  borderless,
+  borderless = true,
   children,
   direction,
-  size = 'md',
+  size = 'xs',
   loading,
   collapsable,
   collapsed: currentCollapsed,
@@ -83,7 +83,7 @@ export function Section({
             ? undefined
             : { xs: 6, sm: 4, md: 8, lg: 12 }[size],
           borderColor: borderless ? undefined : theme?.divider,
-          backgroundColor: borderless ? undefined : theme?.grey0,
+          backgroundColor: borderless ? undefined : theme?.grey5,
         },
       }),
     [theme, size, borderless]
@@ -95,7 +95,7 @@ export function Section({
           style={[
             {
               gap: 5,
-              marginTop: { xs: 0, sm: 4, md: 8, lg: 12 }[size],
+              marginTop: { xs: 8, sm: 8, md: 8, lg: 12 }[size],
               paddingHorizontal: borderless
                 ? undefined
                 : { xs: 8, sm: 10, md: 24, lg: 24 }[size],
@@ -119,7 +119,7 @@ export function Section({
               <Typography
                 align={direction}
                 family={size === 'xs' ? 'SEMIBOLD' : 'BOLD'}
-                color={size === 'xs' ? 'primary' : 'secondary'}
+                color={size === 'xs' ? 'grey0' : 'secondary'}
                 style={[
                   {
                     fontSize: { xs: 18, sm: 20, md: 24, lg: 30 }[size],
@@ -138,7 +138,7 @@ export function Section({
                   align={direction}
                   style={[
                     {
-                      fontSize: { xs: 16, sm: 18, md: 18, lg: 18 }[size],
+                      fontSize: { xs: 14, sm: 16, md: 16, lg: 16 }[size],
                       marginTop: { xs: 2, sm: 4, md: 8, lg: 12 }[size],
                     },
                     props.subtitleProps?.textStyle,

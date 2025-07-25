@@ -10,19 +10,19 @@ const financialController = new FinancialController();
 financialRouter.get(
   '/repayment-inquiries',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   financialController.getRepaymentInquiries
 );
 financialRouter.get(
   '/loan-inquiry',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   financialController.getLoanInquiry
 );
 financialRouter.get(
   '/reconciliation',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   financialController.getReconciliation
 );
 

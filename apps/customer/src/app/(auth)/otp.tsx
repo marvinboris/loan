@@ -1,10 +1,18 @@
 import { useRequest } from '@creditwave/hooks';
-import { Button, Form, Typography } from '@creditwave/ui';
+import {
+  Button,
+  Form,
+  PinCodeInput,
+  toastShow,
+  Typography,
+} from '@creditwave/ui';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Formik } from 'formik';
-import { authService } from '../../services';
 import { Pressable } from 'react-native';
+import { authService } from '../../services';
 
 export default function Page() {
+  const { mobile } = useLocalSearchParams<{ mobile: string }>();
   const { loading } = useRequest();
 
   const initialValues = {
@@ -15,19 +23,41 @@ export default function Page() {
     <Formik
       initialValues={initialValues}
       onSubmit={async (data) => {
-        await authService.verify(data);
+        const result = await authService.verify({ ...data, mobile });
+        if (result.token) router.navigate('/dashboard');
       }}
     >
-      {({ values, errors, handleChange, handleSubmit }) => (
+      {({ values, handleChange, handleSubmit, resetForm }) => (
         <Form>
-          <Button
-            color="primary"
-            loading={loading}
-            title="Continue"
-            onPress={() => handleSubmit()}
+          <PinCodeInput
+            id="code"
+            name="code"
+            value={values.code}
+            label="Verification code"
+            onChange={handleChange('code')}
+            description="Enter the code received via WhatsApp"
           />
 
-          <Pressable>
+          <Button
+            color="primary"
+            title="Continue"
+            loading={loading}
+            onPress={() => handleSubmit()}
+            containerStyle={{ marginVertical: 16 }}
+          />
+
+          <Pressable
+            onPress={async () => {
+              const result = await authService.login({ mobile });
+              if (result.success) {
+                toastShow({
+                  type: 'success',
+                  text: 'Verification code resent',
+                });
+                resetForm();
+              }
+            }}
+          >
             <Typography underline align="center">
               Resend code
             </Typography>

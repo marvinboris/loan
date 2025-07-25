@@ -18,23 +18,35 @@ export const authenticate = async (
   }
 
   try {
-    const decoded = jwt.verify(token, config.jwtSecret) as { userId: string };
-    req.user = { id: decoded.userId };
+    const decoded = jwt.verify(token, config.jwtSecret) as {
+      userId?: number;
+      customerId?: number;
+    };
+    req.user = { id: decoded.userId || decoded.customerId };
     next();
   } catch (error) {
     res.status(401).json({ success: false, message: 'Not authorized' });
   }
 };
 
-export const authorize = (roles: string[]) => {
+export const authorize = (
+  role: 'admin' | 'telemarketer' | 'collector' | 'customer'
+) => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', req.user.id)
-      .single();
+    const { data: user, error } =
+      role === 'customer'
+        ? await supabase
+            .from('customers')
+            .select('id')
+            .eq('id', req.user.id)
+            .single()
+        : await supabase
+            .from('users')
+            .select('role')
+            .eq('id', req.user.id)
+            .single();
 
-    if (error || !user || !roles.includes(user.role)) {
+    if (error || !user || ('role' in user && role !== user.role)) {
       return res.status(403).json({ success: false, message: 'Forbidden' });
     }
     next();

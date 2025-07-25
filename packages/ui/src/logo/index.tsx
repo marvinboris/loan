@@ -1,12 +1,12 @@
-import { Image } from 'react-native';
+import { Image, View } from 'react-native';
 
 export function Logo() {
   return (
-    <Image
-      source={{
-        height: 36,
-        uri: '/logo.png',
-      }}
-    />
+    <View style={{ width: '100%' }}>
+      <Image
+        style={{ width: 222, height: 36, alignSelf: 'center' }}
+        source={require('./logo.png')}
+      />
+    </View>
   );
 }

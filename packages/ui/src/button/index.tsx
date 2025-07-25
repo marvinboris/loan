@@ -98,7 +98,7 @@ export function Button({
             <Text
               style={[
                 {
-                  fontSize: size === 'sm' ? 14 : 18,
+                  fontSize: size === 'sm' ? 14 : 16,
                   fontFamily: 'REGULAR',
                   textAlign: 'center',
                   color: titleColor,

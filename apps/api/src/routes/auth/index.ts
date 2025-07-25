@@ -4,6 +4,8 @@ import {
   loginValidator,
   forgotPasswordValidator,
   resetPasswordValidator,
+  customerLoginValidator,
+  verifyCodeValidator,
 } from './validators';
 
 const authController = new AuthController();
@@ -16,5 +18,11 @@ authRouter.post(
   authController.forgotPassword
 );
 authRouter.post('/reset', resetPasswordValidator, authController.resetPassword);
+authRouter.post(
+  '/customer',
+  customerLoginValidator,
+  authController.customerLogin
+);
+authRouter.post('/verify', verifyCodeValidator, authController.verifyCode);
 
 export { authRouter };

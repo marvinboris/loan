@@ -14,7 +14,8 @@ import { useInputStyles } from '../use-input-styles';
 export type FormInputProps = ViewProps & {
   id: string;
   name: string;
-  placeholder: string;
+  required?: boolean;
+  placeholder?: string;
   value: string | undefined;
   onChange:
     | ((value: string) => void)
@@ -26,8 +27,6 @@ export type FormInputProps = ViewProps & {
   label?: string;
   prepend?: React.ReactNode;
   append?: React.ReactNode;
-  transcript?: boolean;
-  cancelSave?: boolean;
   inputStyle?: StyleProp<TextStyle>;
   inputContainerStyle?: StyleProp<ViewStyle>;
   inputProps?: Omit<
@@ -47,19 +46,18 @@ export function FormInput({
   append,
   bordered,
   borderless,
-  cancelSave,
   error,
   id,
   inputProps,
   inputStyle,
   label,
   name,
-  normal,
+  normal = true,
   onChange,
   placeholder,
   prepend,
+  required,
   style,
-  transcript,
   value: initialValue,
   ...props
 }: FormInputProps) {
@@ -73,8 +71,6 @@ export function FormInput({
   const [isFocused, setIsFocused] = React.useState(false);
   const [isTouched, setIsTouched] = React.useState(false);
 
-  const [value, setValue] = React.useState(initialValue);
-
   const handleFocus = () => {
     setIsFocused(true);
   };
@@ -85,8 +81,7 @@ export function FormInput({
 
   const onChangeText = (value: string) => {
     setIsTouched(true);
-    if (cancelSave) setValue(value);
-    else onChange(value);
+    onChange(value);
   };
 
   return (
@@ -107,6 +102,7 @@ export function FormInput({
       {label ? (
         <Typography numberOfLines={1} style={styles.label}>
           {label}
+          {required ? <Typography color="error">*</Typography> : null}
         </Typography>
       ) : null}
 
@@ -117,22 +113,33 @@ export function FormInput({
           props.inputContainerStyle,
         ]}
       >
-        {prepend ? <View>{prepend}</View> : null}
+        {prepend ? (
+          <View
+            style={{
+              alignSelf: 'stretch',
+              flexDirection: 'row',
+            }}
+          >
+            {prepend}
+          </View>
+        ) : null}
 
-        <TextInput
-          {...inputProps}
-          autoCorrect={false}
-          onBlur={handleBlur}
-          autoCapitalize="none"
-          onFocus={handleFocus}
-          placeholder={placeholder}
-          cursorColor={theme?.black}
-          onChangeText={onChangeText}
-          testID="FormInput-TextInput"
-          style={[styles.input, inputStyle]}
-          placeholderTextColor={theme?.disabled}
-          value={cancelSave ? value : initialValue}
-        />
+        {props.children || (
+          <TextInput
+            {...inputProps}
+            autoCorrect={false}
+            onBlur={handleBlur}
+            autoCapitalize="none"
+            onFocus={handleFocus}
+            placeholder={placeholder}
+            cursorColor={theme?.black}
+            onChangeText={onChangeText}
+            testID="FormInput-TextInput"
+            style={[styles.input, inputStyle]}
+            placeholderTextColor={theme?.disabled}
+            value={initialValue}
+          />
+        )}
 
         {append}
       </View>

@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../lib/supabase';
-import { UserStatus } from '../../../types';
+import { UserRole, UserStatus } from '../../../types';
 import { filter } from '../../../utils';
 
 export class OperationController {
@@ -30,26 +30,26 @@ export class OperationController {
       let query = supabase.from('users').select('*');
 
       // Appliquer les filtres
-      if (account) query = query.eq('account', account);
-      if (email) query = query.eq('email', email);
+      // if (account) query = query.eq('account', account as string);
+      if (email) query = query.eq('email', email as string);
       if (name) query = query.ilike('name', `%${name}%`);
-      if (status) query = query.eq('status', status);
-      if (group) query = query.eq('group', group);
-      if (workNum) query = query.eq('work_number', workNum);
+      if (status) query = query.eq('status', status as string as UserStatus);
+      if (group) query = query.eq('group', group as string);
+      if (workNum) query = query.eq('work_number', workNum as string);
       if (voiceCollection)
         query = query.eq('voice_collection', voiceCollection === 'true');
-      if (staffLvl) query = query.eq('staff_level', staffLvl);
+      if (staffLvl) query = query.eq('staff_level', staffLvl as string);
       if (collectionDistributionRules)
         query = query.eq(
           'collection_distribution_rules',
-          collectionDistributionRules
+          collectionDistributionRules as string
         );
       if (rulesApprovingDistribution)
         query = query.eq(
           'rules_approving_distribution',
-          rulesApprovingDistribution
+          rulesApprovingDistribution as string
         );
-      if (role) query = query.eq('role', role);
+      if (role) query = query.eq('role', role as string as UserRole);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -60,7 +60,7 @@ export class OperationController {
       const items =
         users?.map((user) => ({
           serialNum: user.id,
-          account: user.account,
+          // account: user.account,
           email: user.email,
           name: user.name,
           workNum: user.work_number,
@@ -137,7 +137,7 @@ export class OperationController {
 
       // Créer l'utilisateur
       const { data: user, error: createError } = await supabase
-        .from('user')
+        .from('users')
         .insert({
           email,
           account,

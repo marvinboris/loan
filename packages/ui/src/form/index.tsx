@@ -7,7 +7,7 @@ export function Form({ children, style, ...props }: FormProps) {
   return (
     <View
       testID="form-container"
-      style={[{ gap: 10, paddingBottom: 1 }, style]}
+      style={[{ gap: 8, paddingBottom: 1 }, style]}
       {...props}
     >
       {children}

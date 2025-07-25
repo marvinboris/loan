@@ -10,13 +10,13 @@ const operationController = new OperationController();
 operationRouter.get(
   '/account',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   operationController.getAccounts
 );
 operationRouter.post(
   '/account',
   authenticate,
-  authorize(['admin']),
+  authorize('admin'),
   operationController.createAccount
 );
 

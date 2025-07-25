@@ -1,10 +1,7 @@
 import { getHttpClient } from '@creditwave/utils';
 import React from 'react';
-import { useSearchParams } from 'react-router-dom';
 
 export function useApi<T>(url: string) {
-  const [params] = useSearchParams();
-
   const [data, setData] = React.useState<T>();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string>();
@@ -15,7 +12,7 @@ export function useApi<T>(url: string) {
         setLoading(true);
         setError(undefined);
         const httpClient = getHttpClient();
-        const result = await httpClient.get<T>(url, { params });
+        const result = await httpClient.get<T>(url);
         setData(result);
       } catch (error) {
         setError(error instanceof Error ? error.message : 'An error occured');
@@ -25,7 +22,7 @@ export function useApi<T>(url: string) {
     };
 
     handle();
-  }, [params, url]);
+  }, [url]);
 
   return { data, loading, error };
 }

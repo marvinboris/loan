@@ -1,6 +1,6 @@
 import { useConfig } from '@creditwave/hooks';
 import React from 'react';
-import { SafeAreaView, StyleSheet, ViewStyle, TextStyle } from 'react-native';
+import { SafeAreaView, StyleSheet, TextInput } from 'react-native';
 import {
   CodeField,
   CodeFieldProps,
@@ -19,16 +19,18 @@ export type PinCodeInputProps = Omit<
   value?: string;
   onChange: (value: string) => void;
   label?: string;
+  description?: string;
 };
 
 // Le composant fonctionnel
-export const PinCodeInput: React.FC<PinCodeInputProps> = ({
+export function PinCodeInput({
   id,
   cellCount = 6,
   value,
   onChange: setValue,
+  editable = true,
   ...props
-}) => {
+}: PinCodeInputProps) {
   const { theme } = useConfig();
 
   const styles = StyleSheet.create({
@@ -36,7 +38,7 @@ export const PinCodeInput: React.FC<PinCodeInputProps> = ({
       marginTop: 0,
       display: 'flex',
       justifyContent: 'center',
-    } as ViewStyle,
+    },
     cell: {
       width: 40,
       height: 45,
@@ -49,12 +51,12 @@ export const PinCodeInput: React.FC<PinCodeInputProps> = ({
       borderColor: theme?.divider,
       textAlign: 'center',
       fontFamily: 'MEDIUM',
-    } as TextStyle,
-    focusCell: props.editable
-      ? ({
+    },
+    focusCell: editable
+      ? {
           borderWidth: 2,
           borderColor: theme?.warning,
-        } as TextStyle)
+        }
       : {},
   });
 
@@ -65,11 +67,7 @@ export const PinCodeInput: React.FC<PinCodeInputProps> = ({
   });
 
   const handleTextChange = (val: string) => {
-    if (
-      (val.length && val.trim() === '') ||
-      isNaN(Number(val)) ||
-      !props.editable
-    )
+    if ((val.length && val.trim() === '') || isNaN(Number(val)) || !editable)
       return;
 
     setValue(val);
@@ -77,14 +75,24 @@ export const PinCodeInput: React.FC<PinCodeInputProps> = ({
 
   return (
     <SafeAreaView id={id}>
+      {props.label ? (
+        <Typography style={{ marginBottom: 8 }}>{props.label}</Typography>
+      ) : null}
+
+      {props.description ? (
+        <Typography color="grey0" style={{ marginBottom: 8 }}>
+          {props.description}
+        </Typography>
+      ) : null}
+
       <CodeField
-        ref={ref}
+        ref={ref as React.RefObject<TextInput>}
         {...props}
         value={value}
         autoComplete="off"
         caretHidden={false}
         cellCount={cellCount}
-        testID="my-code-input"
+        testID="pin-code-input"
         keyboardType="number-pad"
         textContentType="oneTimeCode"
         onChangeText={handleTextChange}
@@ -101,4 +109,4 @@ export const PinCodeInput: React.FC<PinCodeInputProps> = ({
       />
     </SafeAreaView>
   );
-};
+}

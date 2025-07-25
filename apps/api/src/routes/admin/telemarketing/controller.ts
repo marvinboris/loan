@@ -26,9 +26,9 @@ export class TelemarketingController {
         )
         .eq('type', PerformanceType.TELEMARKETER_MONTHLY);
 
-      if (group) query = query.eq('group_name', group);
-      if (status) query = query.eq('status', status);
-      if (date) query = query.eq('date', date);
+      if (group) query = query.eq('group_name', group as string);
+      if (status) query = query.eq('status', status as string);
+      if (date) query = query.eq('date', date as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -41,7 +41,7 @@ export class TelemarketingController {
           dateRange: perf.date_range,
           groupRange: perf.group_name,
           ranking: perf.ranking,
-          telemarketersName: perf.user?.name,
+          telemarketersName: perf.users?.name,
           totalAssignedQty: perf.total_assigned_qty,
           newAssignedNum: perf.new_assigned_num,
           targetRepayRate: perf.target_repay_rate,
@@ -86,9 +86,9 @@ export class TelemarketingController {
         )
         .eq('type', PerformanceType.TELEMARKETER_DAILY);
 
-      if (group) query = query.eq('group_name', group);
-      if (status) query = query.eq('status', status);
-      if (date) query = query.eq('date', date);
+      if (group) query = query.eq('group_name', group as string);
+      if (status) query = query.eq('status', status as string);
+      if (date) query = query.eq('date', date as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -101,7 +101,7 @@ export class TelemarketingController {
           date: perf.date,
           groupName: perf.group_name,
           ranking: perf.ranking,
-          telemarketersName: perf.user?.name,
+          telemarketersName: perf.users?.name,
           totalAssignedQty: perf.total_assigned_qty,
           newAssignedNum: perf.new_assigned_num,
           targetRepayRate: perf.target_repay_rate,
@@ -152,8 +152,8 @@ export class TelemarketingController {
         .select('*', { count: 'exact' })
         .eq('type', PerformanceType.TEAM_MONTHLY);
 
-      if (group) query = query.eq('group_name', group);
-      if (status) query = query.eq('status', status);
+      if (group) query = query.eq('group_name', group as string);
+      if (status) query = query.eq('status', status as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -206,8 +206,8 @@ export class TelemarketingController {
         .select('*', { count: 'exact' })
         .eq('type', PerformanceType.TEAM_DAILY);
 
-      if (group) query = query.eq('group_name', group);
-      if (status) query = query.eq('status', status);
+      if (group) query = query.eq('group_name', group as string);
+      if (status) query = query.eq('status', status as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -274,20 +274,22 @@ export class TelemarketingController {
         .eq('type', 'new');
 
       // Appliquer les filtres
-      if (importDate) query = query.eq('created_at', importDate);
-      if (userLabel) query = query.eq('user_label', userLabel);
-      if (mobile) query = query.eq('mobile', mobile);
-      if (telemarketer) query = query.eq('telemarketer_id', telemarketer);
+      if (importDate) query = query.eq('created_at', importDate as string);
+      if (userLabel) query = query.eq('user_label', userLabel as string);
+      if (mobile) query = query.eq('mobile', mobile as string);
+      if (telemarketer)
+        query = query.eq('telemarketer_id', +(telemarketer as string));
       if (whetherApply)
         query = query.eq('whether_apply', whetherApply === 'true');
-      if (allocationTime) query = query.eq('allocation_time', allocationTime);
+      if (allocationTime)
+        query = query.eq('allocation_time', allocationTime as string);
       if (whetherAssigned)
         query = query.eq('whether_assigned', whetherAssigned === 'true');
       if (whetherFollowedUp)
         query = query.not('latest_follow_up_time', 'is', null);
       if (latestFollowUpPerson)
-        query = query.eq('follow_up_person', latestFollowUpPerson);
-      if (appName) query = query.eq('app_name', appName);
+        query = query.eq('follow_up_person', latestFollowUpPerson as string);
+      if (appName) query = query.eq('app_name', appName as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -309,7 +311,7 @@ export class TelemarketingController {
           followUpResults: customer.follow_up_results,
           descFollowUp: customer.desc_follow_up,
           whetherAssigned: customer.whether_assigned,
-          telemarketer: customer.telemarketer?.name,
+          telemarketer: customer.telemarketers?.name,
         })) || [];
 
       res.json({
@@ -354,20 +356,22 @@ export class TelemarketingController {
         .eq('type', 'old');
 
       // Appliquer les filtres
-      if (importDate) query = query.eq('created_at', importDate);
-      if (userLabel) query = query.eq('user_label', userLabel);
-      if (mobile) query = query.eq('mobile', mobile);
-      if (telemarketer) query = query.eq('telemarketer_id', telemarketer);
+      if (importDate) query = query.eq('created_at', importDate as string);
+      if (userLabel) query = query.eq('user_label', userLabel as string);
+      if (mobile) query = query.eq('mobile', mobile as string);
+      if (telemarketer)
+        query = query.eq('telemarketer_id', +(telemarketer as string));
       if (whetherApply)
         query = query.eq('whether_apply', whetherApply === 'true');
-      if (allocationTime) query = query.eq('allocation_time', allocationTime);
+      if (allocationTime)
+        query = query.eq('allocation_time', allocationTime as string);
       if (whetherAssigned)
         query = query.eq('whether_assigned', whetherAssigned === 'true');
       if (whetherFollowedUp)
         query = query.not('latest_follow_up_time', 'is', null);
       if (latestFollowUpPerson)
-        query = query.eq('follow_up_person', latestFollowUpPerson);
-      if (appName) query = query.eq('app_name', appName);
+        query = query.eq('follow_up_person', latestFollowUpPerson as string);
+      if (appName) query = query.eq('app_name', appName as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -389,7 +393,7 @@ export class TelemarketingController {
           followUpResults: customer.follow_up_results,
           descFollowUp: customer.desc_follow_up,
           whetherAssigned: customer.whether_assigned,
-          telemarketer: customer.telemarketer?.name,
+          telemarketer: customer.telemarketers?.name,
         })) || [];
 
       res.json({
@@ -438,18 +442,20 @@ export class TelemarketingController {
         .eq('whether_apply', false);
 
       // Appliquer les filtres
-      if (importDate) query = query.eq('created_at', importDate);
-      if (userLabel) query = query.eq('user_label', userLabel);
-      if (mobile) query = query.eq('mobile', mobile);
-      if (telemarketer) query = query.eq('telemarketer_id', telemarketer);
-      if (allocationTime) query = query.eq('allocation_time', allocationTime);
+      if (importDate) query = query.eq('created_at', importDate as string);
+      if (userLabel) query = query.eq('user_label', userLabel as string);
+      if (mobile) query = query.eq('mobile', mobile as string);
+      if (telemarketer)
+        query = query.eq('telemarketer_id', +(telemarketer as string));
+      if (allocationTime)
+        query = query.eq('allocation_time', allocationTime as string);
       if (whetherAssigned)
         query = query.eq('whether_assigned', whetherAssigned === 'true');
       if (whetherFollowedUp)
         query = query.not('latest_follow_up_time', 'is', null);
       if (latestFollowUpPerson)
-        query = query.eq('follow_up_person', latestFollowUpPerson);
-      if (appName) query = query.eq('app_name', appName);
+        query = query.eq('follow_up_person', latestFollowUpPerson as string);
+      if (appName) query = query.eq('app_name', appName as string);
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
@@ -471,7 +477,7 @@ export class TelemarketingController {
           followUpResults: customer.follow_up_results,
           descFollowUp: customer.desc_follow_up,
           whetherAssigned: customer.whether_assigned,
-          telemarketer: customer.telemarketer?.name,
+          telemarketer: customer.telemarketers?.name,
         })) || [];
 
       res.json({

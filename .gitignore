@@ -60,6 +60,7 @@ cache/
 
 android/
 ios/
+build-*.apk
 
 .env
 

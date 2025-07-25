@@ -1,5 +1,11 @@
-import { useConfig, useIsFirstUse } from '@creditwave/hooks';
-import { Onboarding } from '@creditwave/ui';
+import {
+  useAuthWatcher,
+  useConfig,
+  useIsFirstUse,
+  useRequest,
+} from '@creditwave/hooks';
+import { Onboarding, Toast, toastShow } from '@creditwave/ui';
+import { initializeHttpClient } from '@creditwave/utils';
 import { useFonts } from 'expo-font';
 import { Slot } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -40,9 +46,12 @@ function Bar() {
 SplashScreen.preventAutoHideAsync();
 
 function Content() {
+  useAuthWatcher();
+  const { theme } = useConfig();
   const { isFirstUse, setIsFirstUse } = useIsFirstUse();
+  const { error } = useRequest();
 
-  const [loaded, error] = useFonts({
+  const [loaded, fontsError] = useFonts({
     BOLD: require('../../assets/fonts/Inter_18pt-Bold.ttf'),
     MEDIUM: require('../../assets/fonts/Inter_18pt-Medium.ttf'),
     ITALIC: require('../../assets/fonts/Inter_18pt-Italic.ttf'),
@@ -51,7 +60,6 @@ function Content() {
   });
 
   const [appIsReady, setAppIsReady] = React.useState(false);
-  const [displayingOnboarding, setDisplayingOnboarding] = React.useState(false);
 
   React.useEffect(() => {
     async function prepare() {
@@ -67,30 +75,36 @@ function Content() {
       }
     }
     prepare();
+
+    initializeHttpClient(process.env.EXPO_PUBLIC_API_URL);
   }, []);
 
   React.useEffect(() => {
-    if ((loaded || error) && appIsReady) {
+    if (error) toastShow({ type: 'error', text: error });
+  }, [error]);
+
+  React.useEffect(() => {
+    if ((loaded || fontsError) && appIsReady) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, error, appIsReady]);
+  }, [loaded, fontsError, appIsReady]);
 
   if (isFirstUse && !onWeb) {
-    if (displayingOnboarding)
-      return (
-        <SafeAreaView style={{ flex: 1 }}>
-          <Onboarding
-            onFinish={() => {
-              setDisplayingOnboarding(false);
-              setIsFirstUse(false);
-            }}
-          />
-        </SafeAreaView>
-      );
+    return (
+      <SafeAreaView style={{ flex: 1 }}>
+        <Onboarding
+          onFinish={() => {
+            setIsFirstUse(false);
+          }}
+        />
+      </SafeAreaView>
+    );
   }
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.white }}>
+      <Toast />
+
       <Slot />
     </SafeAreaView>
   );

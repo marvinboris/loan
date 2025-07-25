@@ -5,6 +5,21 @@ const { mergeConfig } = require('metro-config');
 const defaultConfig = getDefaultConfig(__dirname);
 const { assetExts, sourceExts } = defaultConfig.resolver;
 
+defaultConfig.transformer.getTransformOptions = async () => ({
+  transform: {
+    experimentalImportSupport: true,
+    inlineRequires: true,
+  },
+});
+
+defaultConfig.transformer.minifierPath = 'metro-minify-esbuild';
+defaultConfig.transformer.minifierConfig = {
+  compress: {
+    // The option below removes all console logs statements in production.
+    drop_console: true,
+  },
+};
+
 /**
  * Metro configuration
  * https://reactnative.dev/docs/metro

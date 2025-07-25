@@ -1,5 +1,5 @@
-import { useApi } from './use-api';
+import { useApiWeb } from './use-api-web';
 
 export function usePaginatedApi<T extends object>(url: string) {
-  return useApi<{ items: T[]; total: number }>('/admin' + url);
+  return useApiWeb<{ items: T[]; total: number }>('/admin' + url);
 }
