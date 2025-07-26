@@ -3,11 +3,17 @@
     "production": {
       "android": {
         "buildType": "app-bundle"
+      },
+      "env": {
+        "APP_ENV": "production"
       }
     },
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "APP_ENV": "development"
+      }
     },
     "preview": {
       "distribution": "internal",
@@ -16,6 +22,10 @@
       },
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "APP_ENV": "preview",
+        "GRADLE_OPTS": "-Xmx4G -Dkotlin.daemon.jvm.options=-Xmx2G -XX:+HeapDumpOnOutOfMemoryError -XX:+UseParallelGC -Dfile.encoding=UTF-8"
       }
     }
   },

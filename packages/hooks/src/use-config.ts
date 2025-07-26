@@ -16,6 +16,7 @@ export function useConfig() {
     grey3: '#c0c0c0',
     grey4: '#d0d0d0',
     grey5: '#f0f0f0',
+    background: '#ffffff',
   };
 
   const getColor = (color: keyof Omit<typeof theme, 'platform'>) =>

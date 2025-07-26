@@ -6,7 +6,9 @@ import {
   resetPasswordValidator,
   customerLoginValidator,
   verifyCodeValidator,
+  changePasswordValidator,
 } from './validators';
+import { authenticate } from '../../middlewares';
 
 const authController = new AuthController();
 
@@ -18,6 +20,12 @@ authRouter.post(
   authController.forgotPassword
 );
 authRouter.post('/reset', resetPasswordValidator, authController.resetPassword);
+authRouter.post(
+  '/change-password',
+  authenticate,
+  changePasswordValidator,
+  authController.changePassword
+);
 authRouter.post(
   '/customer',
   customerLoginValidator,

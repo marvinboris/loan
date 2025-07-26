@@ -49,6 +49,28 @@ export const resetPasswordValidator = [
   body('token').notEmpty().withMessage('Token is required'),
 ];
 
+export const changePasswordValidator = [
+  body('oldPassword')
+    .notEmpty()
+    .withMessage('Old password is required')
+    .isLength({ min: 6 })
+    .withMessage('Old password must be at least 6 characters long'),
+  body('password')
+    .notEmpty()
+    .withMessage('Password is required')
+    .isLength({ min: 6 })
+    .withMessage('Password must be at least 6 characters long'),
+  body('passwordConfirmation')
+    .notEmpty()
+    .withMessage('Password confirmation is required')
+    .custom((value, { req }) => {
+      if (value !== req.body.password) {
+        throw new Error('Passwords do not match');
+      }
+      return true;
+    }),
+];
+
 export const customerLoginValidator = [
   body('mobile')
     .notEmpty()

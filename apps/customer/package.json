@@ -27,7 +27,6 @@
     "expo-router": "*",
     "expo-screen-orientation": "*",
     "expo-sharing": "*",
-    "expo-speech-recognition": "*",
     "expo-status-bar": "*",
     "react": "*",
     "react-dom": "*",

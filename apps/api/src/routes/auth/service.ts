@@ -14,6 +14,7 @@ import {
   CustomerLoginInput,
   VerifyCodeInput,
   AuthResponse,
+  ChangePasswordInput,
 } from './interfaces';
 
 export const authService = {
@@ -111,6 +112,32 @@ export const authService = {
       .eq('id', user.id);
 
     return { success: true, message: 'Password has been reset successfully' };
+  },
+
+  async changePassword(input: ChangePasswordInput): Promise<AuthResponse> {
+    const { oldPassword, password, userId } = input;
+
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch || error) {
+      return { success: false, message: 'Invalid old password' };
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await supabase
+      .from('users')
+      .update({
+        password: hashedPassword,
+      })
+      .eq('id', user.id);
+
+    return { success: true, message: 'Password has been updated successfully' };
   },
 
   async customerLogin(input: CustomerLoginInput): Promise<AuthResponse> {

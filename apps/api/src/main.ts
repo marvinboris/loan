@@ -1,7 +1,12 @@
 // main.ts
 import express from 'express';
 import cors from 'cors';
-import { adminRouter, authRouter, customerRouter } from './routes';
+import {
+  adminRouter,
+  authRouter,
+  customerRouter,
+  telemarketingRouter,
+} from './routes';
 
 const app = express();
 const port = process.env.PORT || 4300;
@@ -13,6 +18,7 @@ app.use(express.json());
 app.use('/api/auth', authRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/customer', customerRouter);
+app.use('/api/telemarketing', telemarketingRouter);
 
 // Test endpoint
 app.get('/', (req, res) => {

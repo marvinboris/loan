@@ -45,7 +45,7 @@ export function Select({
   borderless,
   error,
   label,
-  normal,
+  normal = true,
   dropdown,
   placeholder,
   value,

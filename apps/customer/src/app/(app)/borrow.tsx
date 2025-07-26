@@ -1,17 +1,16 @@
 import { useTitle } from '@creditwave/hooks';
 import {
+  AmountLine,
   Button,
   FileInput,
   Form,
   NumberInput,
   Section,
   toastShow,
-  Typography,
 } from '@creditwave/ui';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
 import React from 'react';
-import { View } from 'react-native';
 import { borrowService } from '../../services';
 
 export default function Page() {
@@ -48,10 +47,10 @@ export default function Page() {
             />
 
             <Section borderless={false}>
-              <Line label="Disbursement amount" amount={5850} />
-              <Line label="Service fee" amount={3150} />
-              <Line label="Interest" amount={63} />
-              <Line label="Total" amount={9063} bold />
+              <AmountLine label="Disbursement amount" amount={5850} />
+              <AmountLine label="Service fee" amount={3150} />
+              <AmountLine label="Interest" amount={63} />
+              <AmountLine label="Total" amount={9063} bold />
             </Section>
 
             <FileInput
@@ -66,30 +65,5 @@ export default function Page() {
         )}
       </Formik>
     </Section>
-  );
-}
-
-function Line({
-  label,
-  amount,
-  bold,
-}: {
-  label: string;
-  amount: number;
-  bold?: boolean;
-}) {
-  return (
-    <View
-      style={{
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingVertical: 12,
-        paddingHorizontal: 16,
-      }}
-    >
-      <Typography family={bold ? 'BOLD' : undefined}>{label}</Typography>
-
-      <Typography family="BOLD">{amount.toLocaleString('en')}</Typography>
-    </View>
   );
 }

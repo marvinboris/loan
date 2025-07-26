@@ -1,7 +1,7 @@
 import { Button, Card, Input, toastShow } from '@creditwave/ui-web';
 import { Formik } from 'formik';
 import React from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import z from 'zod';
 import { toFormikValidate } from 'zod-formik-adapter';
 import { authService } from '../../services';

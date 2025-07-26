@@ -27,6 +27,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug: SLUG,
     version,
     icon,
+    jsEngine: 'hermes',
     splash: {
       image: './assets/splash.png',
       resizeMode: 'contain',
@@ -86,11 +87,30 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         'expo-font',
         {
           fonts: [
-            './assets/fonts/SF-Pro-Display-Bold.otf',
-            './assets/fonts/SF-Pro-Display-Medium.otf',
-            './assets/fonts/SF-Pro-Display-Regular.otf',
-            './assets/fonts/SF-Pro-Display-Semibold.otf',
+            './assets/fonts/Inter_18pt-Bold.ttf',
+            './assets/fonts/Inter_18pt-Medium.ttf',
+            './assets/fonts/Inter_18pt-Regular.ttf',
+            './assets/fonts/Inter_18pt-SemiBold.ttf',
           ],
+        },
+      ],
+      [
+        'expo-build-properties',
+        {
+          android: {
+            enableBundleCompression: true,
+            enableProguardInReleaseBuilds: true,
+            enableShrinkResourcesInReleaseBuilds: true,
+            useLegacyPackaging: true,
+            enableSeparateBuildPerCPUArchitecture: true,
+            packagingOptions: {
+              pickFirst: [
+                '**/libc++_shared.so',
+                '**/libjsc.so',
+                '**/libreactnativejni.so',
+              ],
+            },
+          },
         },
       ],
     ],
@@ -133,3 +153,20 @@ export const getDynamicAppConfig = (
     scheme: `${SCHEME}-dev`,
   };
 };
+
+// Use current code to minify the android bundle
+// android/app/build.gradle
+/**
+ * ...
+ * android {
+ *    ...
+ *    splits {
+ *      abi {
+ *        enable true
+ *        reset()
+ *        include 'arm64-v8a'
+ *        universalApk false
+ *      }
+ *    }
+ * }
+ */

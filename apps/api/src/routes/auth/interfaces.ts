@@ -15,6 +15,12 @@ export interface ResetPasswordInput {
   token: string;
 }
 
+export interface ChangePasswordInput {
+  oldPassword: string;
+  password: string;
+  userId: number;
+}
+
 export interface CustomerLoginInput {
   mobile: string;
 }
