@@ -1,7 +1,7 @@
 import { ConfigContext, ExpoConfig } from 'expo/config';
 import { version } from './package.json';
 
-const SLUG = '@creditwave/telemarketing';
+const SLUG = 'creditwave-telemarketing';
 
 // App production config
 const APP_NAME = 'Credit Wave Telemarketing';
@@ -114,6 +114,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         },
       ],
     ],
+    extra: {
+      eas: {
+        projectId: '5b725e90-f6ba-479a-a4b9-14311d59296c',
+      },
+    },
   };
 };
 

@@ -4,7 +4,10 @@
   "private": true,
   "scripts": {
     "eas-build-post-install": "cd ../../ && node tools/scripts/eas-build-post-install.mjs . apps/telemarketing",
-    "android": "expo run:android",
+    "prebuild": "expo prebuild",
+    "android": "pnpm prebuild && expo run:android",
+    "android-prev": "dotenv -c -- eas build -p android --profile preview --local",
+    "android-prod": "eas build -p android",
     "ios": "expo run:ios"
   },
   "dependencies": {
