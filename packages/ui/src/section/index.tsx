@@ -211,7 +211,7 @@ export function Section({
       {...props}
       style={[styles.container, fullHeight && { flexGrow: 1 }, forWeb, style]}
     >
-      {loading ? <ActivityIndicator /> : content}
+      {loading ? <ActivityIndicator size="large" /> : content}
     </View>
   );
 }

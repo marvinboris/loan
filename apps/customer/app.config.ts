@@ -32,7 +32,7 @@ export default ({
       icon,
       jsEngine: 'hermes',
       splash: {
-        image: './assets/splash.png',
+        image: './assets/icon.png',
         resizeMode: 'contain',
         backgroundColor: '#ffffff',
       },
@@ -58,7 +58,7 @@ export default ({
         edgeToEdgeEnabled: true,
         adaptiveIcon: {
           foregroundImage: adaptiveIcon,
-          backgroundColor: '#252879',
+          backgroundColor: '#ffffff',
         },
         permissions: [
           'android.permission.CAMERA',

@@ -1,8 +1,7 @@
 import { useAuth } from '@creditwave/hooks';
-import { Typography } from '@creditwave/ui';
 import { router } from 'expo-router';
 import React from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 export default function Page() {
   const { isAuthenticated } = useAuth();
@@ -32,8 +31,8 @@ export default function Page() {
   }, [isAuthenticated, appIsReady]);
 
   return (
-    <View>
-      <Typography>Root page</Typography>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <ActivityIndicator size="large" />
     </View>
   );
 }

@@ -12,8 +12,11 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Platform, View } from 'react-native';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 const onWeb = Platform.OS === 'web';
 
@@ -39,8 +42,25 @@ export default function Layout() {
 
 function Bar() {
   const { theme } = useConfig();
+  const insets = useSafeAreaInsets();
 
-  return <StatusBar style="light" backgroundColor={theme?.primary} />;
+  return (
+    <>
+      <View
+        style={[
+          {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1,
+          },
+          { height: insets.top, backgroundColor: theme.primary },
+        ]}
+      />
+      <StatusBar translucent={true} backgroundColor="transparent" />
+    </>
+  );
 }
 
 SplashScreen.preventAutoHideAsync();

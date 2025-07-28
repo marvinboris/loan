@@ -3,6 +3,7 @@ import { Pressable, View } from 'react-native';
 import { Typography } from '../typography';
 import { CustomerForm, CustomerProps } from './form';
 import { Modal } from '../modal';
+import { useConfig } from '@creditwave/hooks';
 
 export { CustomerProps };
 
@@ -18,6 +19,7 @@ const encodePhoneNumber = (mobile: string): string => {
 export function Customer(props: CustomerProps) {
   const mobile = encodePhoneNumber(props.mobile);
 
+  const { theme } = useConfig();
   const [visible, setVisible] = React.useState(false);
 
   return (
@@ -28,7 +30,10 @@ export function Customer(props: CustomerProps) {
 
       <Pressable
         onPress={() => setVisible(true)}
-        style={{ gap: 4, paddingVertical: 12, paddingHorizontal: 16 }}
+        style={({ pressed }) => [
+          { gap: 4, paddingVertical: 12, paddingHorizontal: 16 },
+          pressed && { backgroundColor: theme.primary + '22' },
+        ]}
       >
         <View
           style={{
