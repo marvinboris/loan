@@ -4,6 +4,7 @@ import { Linking, Pressable, View } from 'react-native';
 import { Modal } from '../modal';
 import { Typography } from '../typography';
 import { CustomerForm, CustomerProps } from './form';
+import { toastShow } from '../toast';
 
 export { CustomerProps };
 
@@ -70,7 +71,16 @@ export function Customer(props: CustomerProps) {
 
           <Pressable
             style={{ flex: 1 }}
-            onPress={() => Linking.openURL('whatsapp:' + props.mobile)}
+            onPress={() =>
+              Linking.openURL(
+                `whatsapp://send?phone=${props.mobile}&text=Hello`
+              ).catch((error) => {
+                toastShow({
+                  type: 'error',
+                  text: error.message,
+                });
+              })
+            }
           >
             <Typography size="sm" align="right">
               WhatsApp

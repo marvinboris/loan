@@ -1,6 +1,6 @@
 import { SubmitInput, VerifyInput } from './interfaces';
 import { supabase } from '../../../../lib';
-import { generateVerificationCode, sendWhatsapp } from '../../../../utils';
+import { generateVerificationCode, sendSms } from '../../../../utils';
 
 export const beneficiaryService = {
   async submit(input: SubmitInput) {
@@ -17,17 +17,14 @@ export const beneficiaryService = {
     if (error)
       return { success: false, message: 'Failed to send verification code' };
 
-    // Envoi du code par WhatsApp
+    // Envoi du code
     const message = `Your verification code is : ${verificationCode}`;
-    const whatsappSent = await sendWhatsapp(
-      `whatsapp:${input.mobile}`,
-      message
-    );
+    const whatsappSent = await sendSms(input.mobile, message);
 
     if (!whatsappSent) {
       return {
         success: false,
-        message: 'WhatsApp message failed to send',
+        message: 'Message failed to send',
       };
     }
 

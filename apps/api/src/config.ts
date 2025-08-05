@@ -9,6 +9,8 @@ export const config = {
   jwtSecret: process.env.JWT_SECRET || 'your_jwt_secret',
   frontendUrl: process.env.FRONTEND_URL || 'http://localhost:3000',
 
+  smsKey: process.env.SMS_KEY || '',
+
   twilio: {
     accountSid: process.env.TWILIO_ACCOUNT_SID,
     authToken: process.env.TWILIO_AUTH_TOKEN,

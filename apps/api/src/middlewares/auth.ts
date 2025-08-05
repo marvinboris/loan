@@ -39,12 +39,12 @@ export const authorize = (
             .from('customers')
             .select('id')
             .eq('id', req.user.id)
-            .single()
+            .maybeSingle()
         : await supabase
             .from('users')
             .select('role')
             .eq('id', req.user.id)
-            .single();
+            .maybeSingle();
 
     if (error || !user || ('role' in user && role !== user.role)) {
       return res.status(403).json({ success: false, message: 'Forbidden' });

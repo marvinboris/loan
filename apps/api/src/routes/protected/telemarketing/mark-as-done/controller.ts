@@ -13,6 +13,7 @@ export class MarkAsDoneController {
         follow_up_results: input.remark,
         desc_follow_up: input.reason,
         latest_follow_up_time: new Date().toISOString(),
+        whether_apply: Boolean(input.wishes),
       })
       .eq('mobile', mobile);
 

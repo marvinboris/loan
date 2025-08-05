@@ -5,7 +5,12 @@ export class MyPerformanceController {
   async get(req: Request, res: Response, next: NextFunction) {
     const { data, error } = await supabase
       .from('loans')
-      .select('*')
+      .select(
+        `
+        *,
+        customers:customer_id (name)
+        `
+      )
       .eq('collector_id', req.user.id)
       .order('created_at', { ascending: false });
 
@@ -17,7 +22,7 @@ export class MyPerformanceController {
 
     res.json({
       success: true,
-      data,
+      data: data.map((item) => ({ ...item, name: item.customers.name })),
     });
   }
 }

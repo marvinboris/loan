@@ -35,7 +35,7 @@ export default function Page() {
             value={values.code}
             label="Verification code"
             onChange={handleChange('code')}
-            description="Enter the code received via WhatsApp"
+            description="Enter the code received via SMS"
           />
 
           <Button

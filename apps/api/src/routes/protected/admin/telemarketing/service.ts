@@ -8,7 +8,7 @@ import {
   KycStatus,
   LoanStatus,
 } from '../../../../types';
-import { payCustomer, sendWhatsapp } from '../../../../utils';
+import { payCustomer, sendSms } from '../../../../utils';
 
 export const telemarketingService = {
   async importCustomers(type: CustomerType, buffer: Buffer) {
@@ -77,7 +77,7 @@ export const telemarketingService = {
           .filter(Boolean)
           .join(' ') + '.';
 
-    await sendWhatsapp(kyc.customers.mobile, message);
+    await sendSms(kyc.customers.mobile, message);
 
     return {
       success: true,
@@ -119,7 +119,7 @@ export const telemarketingService = {
           .filter(Boolean)
           .join(' ') + '.';
 
-    await sendWhatsapp(loan.customers.mobile, message);
+    await sendSms(loan.customers.mobile, message);
 
     if (input.validated)
       await payCustomer(loan.customers.account, loan.loan_amount);

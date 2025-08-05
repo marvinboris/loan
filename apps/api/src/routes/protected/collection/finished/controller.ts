@@ -1,13 +1,19 @@
 import { NextFunction, Request, Response } from 'express';
 import { supabase } from '../../../../lib';
+import { LoanStatus } from '../../../../types';
 
 export class FinishedController {
   async get(req: Request, res: Response, next: NextFunction) {
     const { data, error } = await supabase
       .from('loans')
-      .select('*')
+      .select(
+        `
+        *,
+        customers:customer_id (name)
+        `
+      )
       .eq('collector_id', req.user.id)
-      .eq('loan_status', 'finished')
+      .eq('loan_status', LoanStatus.REPAID)
       .order('created_at', { ascending: false });
 
     if (error)
@@ -18,7 +24,7 @@ export class FinishedController {
 
     res.json({
       success: true,
-      data,
+      data: data.map((item) => ({ ...item, name: item.customers.name })),
     });
   }
 }

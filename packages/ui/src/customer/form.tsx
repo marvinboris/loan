@@ -58,17 +58,26 @@ export function CustomerForm({
             <>
               <Select
                 id="wishes"
-                options={{}}
                 name="wishes"
                 error={errors.wishes}
                 value={values.wishes}
                 label="Customer wishes"
                 placeholder="Select an option"
                 onChange={handleChange('wishes')}
+                options={{
+                  applying: 'Applying',
+                  not_applying: 'Not applying',
+                }}
               />
 
               <Select
-                options={{}}
+                options={{
+                  '': 'None',
+                  high_service_fee: 'High service fee',
+                  short_payment_duration: 'Short payment duration',
+                  not_interested: 'Not interested',
+                  will_apply_later: 'Will apply later',
+                }}
                 id="rejectionIssues"
                 name="rejectionIssues"
                 placeholder="Select an option"
@@ -79,7 +88,10 @@ export function CustomerForm({
               />
 
               <Select
-                options={{}}
+                options={{
+                  1: 'Yes',
+                  0: 'No',
+                }}
                 id="whetherSendLink"
                 name="whetherSendLink"
                 error={errors.whetherSendLink}
@@ -103,7 +115,11 @@ export function CustomerForm({
             <Select
               id="reason"
               name="reason"
-              options={{}}
+              options={{
+                offline: 'Offline',
+                busy: 'Busy',
+                shutdown: 'Shutdown',
+              }}
               error={errors.reason}
               value={values.reason}
               placeholder="Select a reason"

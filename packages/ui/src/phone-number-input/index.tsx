@@ -2,8 +2,8 @@ import { getCountries } from '@creditwave/utils';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import React from 'react';
 import { z } from 'zod';
-import { CountryInput } from '../country-input';
 import { FormInput, FormInputProps } from '../form-input';
+import { Typography } from '../typography';
 
 export type PhoneNumberInputProps = FormInputProps & {
   icon?: boolean;
@@ -59,13 +59,7 @@ export function PhoneNumberInput({
       onChange={(value: string) => onChangeText(value as string)}
       prepend={
         withCode ? (
-          <CountryInput
-            name="code"
-            type="code"
-            value={code}
-            onChange={setCode}
-            id={props.id + '-countryinput'}
-          />
+          <Typography style={{ marginVertical: 'auto' }}>+{code}</Typography>
         ) : undefined
       }
       {...props}

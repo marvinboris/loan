@@ -6,7 +6,7 @@ import { isValidPhoneNumber } from 'libphonenumber-js';
 import { config } from '../../config';
 import { supabase } from '../../lib';
 import { Customer, CustomerType } from '../../types';
-import { generateVerificationCode, sendEmail, sendWhatsapp } from '../../utils';
+import { generateVerificationCode, sendEmail, sendSms } from '../../utils';
 import {
   LoginInput,
   ForgotPasswordInput,
@@ -201,20 +201,20 @@ export const authService = {
           .eq('id', existingCustomer.id);
       }
 
-      // Envoi du code par WhatsApp
+      // Envoi du code
       const message = `Your verification code is : ${verificationCode}`;
-      const whatsappSent = await sendWhatsapp(`whatsapp:${mobile}`, message);
+      const smsResponse = await sendSms(mobile, message);
 
-      if (!whatsappSent) {
+      if (!smsResponse.success) {
         return {
           success: false,
-          message: 'WhatsApp message failed to send',
+          message: 'Message failed to send',
         };
       }
 
       return {
         success: true,
-        message: 'Verification code sent on WhatsApp',
+        message: 'Verification code sent via SMS',
       };
     } catch (error) {
       console.error('Error in customerLogin:', error);

@@ -6,7 +6,7 @@ export async function repay(account: string, amount: number) {
 
     return true;
   } catch (error) {
-    console.error('Error sending WhatsApp message:', error);
+    console.error('Error repaying:', error);
     return false;
   }
 }
