@@ -17,6 +17,7 @@ export default defineConfig(() => ({
   resolve: {
     alias: {
       '@creditwave/utils': path.resolve(__dirname, '../../packages/utils/src'),
+      'react-native': 'react-native-web',
     },
   },
   // Uncomment this if you are using workers.

@@ -12,6 +12,12 @@ export default defineConfig(() => ({
       tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
     }),
   ],
+  resolve: {
+    alias: {
+      // Alias react-native to an empty module or web alternative
+      'react-native': 'react-native-web'
+    }
+  },
   // Uncomment this if you are using workers.
   // worker: {
   //  plugins: [ nxViteTsPaths() ],
