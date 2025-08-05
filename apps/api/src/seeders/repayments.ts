@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib';
 import { CreateRepaymentInput, TradingStatus } from '../types';
 
 export async function seedRepayments() {

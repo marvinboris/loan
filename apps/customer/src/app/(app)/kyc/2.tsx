@@ -1,4 +1,4 @@
-import { Button, FileInput, Form, Section } from '@creditwave/ui';
+import { Button, Form, ImageInput, Section } from '@creditwave/ui';
 import { kycState$ } from '@creditwave/utils';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
@@ -25,8 +25,7 @@ export default function Page() {
       >
         {({ handleSubmit, setFieldValue, values }) => (
           <Form>
-            <FileInput
-              accept="image/*"
+            <ImageInput
               value={values.backPhoto}
               placeholder="Upload document back photo"
               onChange={(value) => setFieldValue('backPhoto', value)}

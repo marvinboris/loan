@@ -20,9 +20,14 @@ export type CustomerProps = {
   mobile: string;
 
   onSubmit(data: FormValues): void;
+  onRecordOnce(data: FormValues): void;
 };
 
-export function CustomerForm({ mobile, onSubmit }: CustomerProps) {
+export function CustomerForm({
+  mobile,
+  onSubmit,
+  onRecordOnce,
+}: CustomerProps) {
   const initialValues: FormValues = {
     mobile,
     callSituation: '',
@@ -42,6 +47,7 @@ export function CustomerForm({ mobile, onSubmit }: CustomerProps) {
             id="callSituation"
             name="callSituation"
             label="Call situation"
+            error={errors.callSituation}
             value={values.callSituation}
             placeholder="Select an option"
             onChange={handleChange('callSituation')}
@@ -54,6 +60,7 @@ export function CustomerForm({ mobile, onSubmit }: CustomerProps) {
                 id="wishes"
                 options={{}}
                 name="wishes"
+                error={errors.wishes}
                 value={values.wishes}
                 label="Customer wishes"
                 placeholder="Select an option"
@@ -65,6 +72,7 @@ export function CustomerForm({ mobile, onSubmit }: CustomerProps) {
                 id="rejectionIssues"
                 name="rejectionIssues"
                 placeholder="Select an option"
+                error={errors.rejectionIssues}
                 value={values.rejectionIssues}
                 label="Customer rejection issues"
                 onChange={handleChange('rejectionIssues')}
@@ -74,6 +82,7 @@ export function CustomerForm({ mobile, onSubmit }: CustomerProps) {
                 options={{}}
                 id="whetherSendLink"
                 name="whetherSendLink"
+                error={errors.whetherSendLink}
                 value={values.whetherSendLink}
                 placeholder="Select an option"
                 label="Whether to send the link"
@@ -84,6 +93,7 @@ export function CustomerForm({ mobile, onSubmit }: CustomerProps) {
                 id="remark"
                 name="remark"
                 label="Remark"
+                error={errors.remark}
                 value={values.remark}
                 placeholder="Select a remark"
                 onChange={handleChange('remark')}
@@ -94,6 +104,7 @@ export function CustomerForm({ mobile, onSubmit }: CustomerProps) {
               id="reason"
               name="reason"
               options={{}}
+              error={errors.reason}
               value={values.reason}
               placeholder="Select a reason"
               label="Reason for not connecting"
@@ -106,12 +117,14 @@ export function CustomerForm({ mobile, onSubmit }: CustomerProps) {
               type="clear"
               title="Record once"
               containerStyle={{ flex: 1 }}
+              onPress={() => onRecordOnce(values)}
             />
 
             <Button
               color="primary"
               title="Mark complete"
               containerStyle={{ flex: 1 }}
+              onPress={() => handleSubmit()}
             />
           </View>
         </Form>

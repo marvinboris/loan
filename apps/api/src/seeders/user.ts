@@ -1,7 +1,7 @@
 // database/seeders/user.ts
 import bcrypt from 'bcryptjs';
 import { config } from '../config';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib';
 import { UserRole, UserStatus } from '../types/user';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';

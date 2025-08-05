@@ -1,3 +1,5 @@
+import path from 'path';
+
 // config.ts
 export const config = {
   appName: process.env.APP_NAME as string,
@@ -12,4 +14,6 @@ export const config = {
     authToken: process.env.TWILIO_AUTH_TOKEN,
     phoneNumber: process.env.TWILIO_WHATSAPP_NUMBER, // Format: 'whatsapp:+14155238886'
   },
+
+  uploadsPath: path.join(__dirname, '..', 'uploads'),
 };

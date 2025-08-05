@@ -2,7 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib';
 
 export const authenticate = async (
   req: Request,

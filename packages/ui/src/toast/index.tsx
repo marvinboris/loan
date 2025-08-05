@@ -37,17 +37,29 @@ export const Toast = observer(function () {
       style={{
         position: 'absolute',
         zIndex: 50,
-        borderWidth: 1,
         borderRadius: 6,
         paddingHorizontal: 20,
         paddingVertical: 10,
         left: '50%',
-        backgroundColor,
-        borderColor,
+        backgroundColor: '#fff',
         bottom: state.visible ? 20 : -320,
         transform: [{ translateX: width * -0.5 }],
       }}
     >
+      <View
+        style={{
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          borderColor,
+          borderWidth: 1,
+          backgroundColor,
+          borderRadius: 6,
+          position: 'absolute',
+          zIndex: -1,
+        }}
+      />
       <Typography color={color}>{state.text}</Typography>
     </View>
   );

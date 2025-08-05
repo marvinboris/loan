@@ -9,7 +9,7 @@ export default defineConfig(() => ({
   cacheDir: '../../node_modules/.vite/apps/admin',
   server: {
     port: 4200,
-    host: 'localhost',
+    host: true,
   },
   preview: {
     port: 4200,
@@ -27,7 +27,8 @@ export default defineConfig(() => ({
       '@creditwave/ui-web': resolve(__dirname, '../../packages/ui-web/src'),
       '@creditwave/utils': resolve(__dirname, '../../packages/utils/src'),
       // Ajoutez tous vos packages ici
-    }
+      'react-native': 'react-native-web',
+    },
   },
   // Uncomment this if you are using workers.
   // worker: {

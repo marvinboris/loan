@@ -27,6 +27,7 @@ import {
   TelemarketingRegisteredCustomers,
   TelemarketingTeamDailyReport,
   TelemarketingTeamMonthlyReport,
+  Uploads,
 } from './pages';
 
 export function App() {
@@ -52,6 +53,8 @@ export function App() {
 
       <Routes>
         <Route element={<AppLayout />}>
+          <Route path="/files" element={<Uploads />} />
+
           <Route path="/operation/account" element={<OperationAccount />} />
 
           <Route

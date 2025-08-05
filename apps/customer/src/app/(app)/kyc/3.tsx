@@ -1,4 +1,5 @@
-import { Button, FileInput, Form, Section } from '@creditwave/ui';
+import { useRequest } from '@creditwave/hooks';
+import { Button, Form, ImageInput, Section } from '@creditwave/ui';
 import { KycState, kycState$ } from '@creditwave/utils';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
@@ -6,6 +7,8 @@ import { ArrowUpOnSquareStackIcon } from 'react-native-heroicons/outline';
 import { kycService } from '../../../services';
 
 export default function Page() {
+  const { loading } = useRequest();
+
   const initialValues: {
     selfie: string;
   } = {
@@ -30,8 +33,8 @@ export default function Page() {
       >
         {({ handleSubmit, setFieldValue, values }) => (
           <Form>
-            <FileInput
-              accept="image/*"
+            <ImageInput
+              aspect={[1, 1]}
               value={values.selfie}
               placeholder="Upload your photo"
               onChange={(value) => setFieldValue('selfie', value)}
@@ -40,6 +43,7 @@ export default function Page() {
             <Button
               iconRight
               title="Submit"
+              loading={loading}
               icon={ArrowUpOnSquareStackIcon}
               onPress={() => handleSubmit()}
               containerStyle={{ alignItems: 'center' }}

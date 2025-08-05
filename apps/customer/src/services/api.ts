@@ -1,5 +1,6 @@
 import {
   authState$,
+  buildFormData,
   formatPhoneNumber,
   getHttpClient,
 } from '@creditwave/utils';
@@ -55,6 +56,7 @@ export const beneficiaryService = {
     provider: string;
   }) => {
     const httpClient = getHttpClient();
+    credentials.account = formatPhoneNumber(credentials.account);
     credentials.mobile = formatPhoneNumber(credentials.mobile);
     const response = await httpClient.post<{
       success: boolean;
@@ -91,11 +93,15 @@ export const kycService = {
     backPhoto: string;
     selfie: string;
   }) => {
+    const formData = buildFormData(credentials);
+
     const httpClient = getHttpClient();
     const response = await httpClient.post<{
       success: boolean;
       message: string;
-    }>('/customer/kyc', credentials);
+    }>('/customer/kyc', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
 
     return response;
   },
@@ -103,11 +109,27 @@ export const kycService = {
 
 export const borrowService = {
   submit: async (credentials: { amount: number; photo: string }) => {
+    const formData = buildFormData(credentials);
+
     const httpClient = getHttpClient();
     const response = await httpClient.post<{
       success: boolean;
       message: string;
-    }>('/customer/borrow', credentials);
+    }>('/customer/borrow', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    return response;
+  },
+};
+
+export const repaymentService = {
+  submit: async (credentials: { amount: number; id: number }) => {
+    const httpClient = getHttpClient();
+    const response = await httpClient.post<{
+      success: boolean;
+      message: string;
+    }>('/customer/repay', credentials);
 
     return response;
   },

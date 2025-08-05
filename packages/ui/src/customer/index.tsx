@@ -1,9 +1,9 @@
+import { useConfig } from '@creditwave/hooks';
 import React from 'react';
-import { Pressable, View } from 'react-native';
+import { Linking, Pressable, View } from 'react-native';
+import { Modal } from '../modal';
 import { Typography } from '../typography';
 import { CustomerForm, CustomerProps } from './form';
-import { Modal } from '../modal';
-import { useConfig } from '@creditwave/hooks';
 
 export { CustomerProps };
 
@@ -44,7 +44,7 @@ export function Customer(props: CustomerProps) {
         >
           <Typography family="BOLD">{mobile}</Typography>
 
-          <Pressable>
+          <Pressable onPress={() => Linking.openURL('tel:' + props.mobile)}>
             <Typography>Dial</Typography>
           </Pressable>
         </View>
@@ -55,17 +55,23 @@ export function Customer(props: CustomerProps) {
             flexDirection: 'row',
           }}
         >
-          <Pressable style={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>
             <Typography size="sm">Record</Typography>
-          </Pressable>
+          </View>
 
-          <Pressable style={{ flex: 1 }}>
+          <Pressable
+            style={{ flex: 1 }}
+            onPress={() => Linking.openURL('sms:' + props.mobile)}
+          >
             <Typography size="sm" align="center">
               Send SMS
             </Typography>
           </Pressable>
 
-          <Pressable style={{ flex: 1 }}>
+          <Pressable
+            style={{ flex: 1 }}
+            onPress={() => Linking.openURL('whatsapp:' + props.mobile)}
+          >
             <Typography size="sm" align="right">
               WhatsApp
             </Typography>

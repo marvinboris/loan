@@ -82,6 +82,7 @@ export type Database = {
       }
       customers: {
         Row: {
+          account: string | null
           allocation_time: string | null
           app_name: string | null
           app_time: string | null
@@ -105,6 +106,7 @@ export type Database = {
           whether_assigned: boolean
         }
         Insert: {
+          account?: string | null
           allocation_time?: string | null
           app_name?: string | null
           app_time?: string | null
@@ -128,6 +130,7 @@ export type Database = {
           whether_assigned?: boolean
         }
         Update: {
+          account?: string | null
           allocation_time?: string | null
           app_name?: string | null
           app_time?: string | null

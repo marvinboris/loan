@@ -58,7 +58,7 @@ function Bar() {
           { height: insets.top, backgroundColor: theme.primary },
         ]}
       />
-      <StatusBar translucent={true} backgroundColor="transparent" />
+      <StatusBar translucent style="light" />
     </>
   );
 }

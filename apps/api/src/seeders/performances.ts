@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib';
 import { CreatePerformanceInput, PerformanceType } from '../types';
 
 export async function seedPerformances() {

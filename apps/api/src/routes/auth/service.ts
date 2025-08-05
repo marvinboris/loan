@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import { config } from '../../config';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib';
 import { Customer, CustomerType } from '../../types';
 import { generateVerificationCode, sendEmail, sendWhatsapp } from '../../utils';
 import {

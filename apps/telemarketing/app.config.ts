@@ -31,7 +31,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     splash: {
       image: './assets/icon.png',
       resizeMode: 'contain',
-      backgroundColor: '#585572',
+      backgroundColor: '#ffffff',
     },
     updates: {
       fallbackToCacheTimeout: 0,

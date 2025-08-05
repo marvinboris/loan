@@ -1,6 +1,7 @@
 import { useConfig } from '@creditwave/hooks';
 import { Button, Section, Typography } from '@creditwave/ui';
 import { router } from 'expo-router';
+import { View } from 'react-native';
 
 export default function Page() {
   const { theme } = useConfig();
@@ -13,11 +14,20 @@ export default function Page() {
         KYC Completed
       </Typography>
 
-      <Button
-        title="Dashboard"
-        onPress={() => router.push('/dashboard')}
-        containerStyle={{ alignItems: 'center' }}
-      />
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        <Button
+          type="clear"
+          title="Dashboard"
+          containerStyle={{ flex: 1 }}
+          onPress={() => router.push('/dashboard')}
+        />
+
+        <Button
+          title="Borrow now"
+          containerStyle={{ flex: 1 }}
+          onPress={() => router.push('/borrow')}
+        />
+      </View>
     </Section>
   );
 }

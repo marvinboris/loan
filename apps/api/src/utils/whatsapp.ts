@@ -9,14 +9,15 @@ export const sendWhatsapp = async (
   body: string
 ): Promise<boolean> => {
   try {
-    // Format du numéro: 'whatsapp:+33612345678'
+    // Format du numéro: 'whatsapp:+237612345678'
     const formattedTo = to.startsWith('whatsapp:') ? to : `whatsapp:${to}`;
 
-    await client.messages.create({
-      body,
-      from: config.twilio.phoneNumber,
-      to: formattedTo,
-    });
+    if (!config.modeTest)
+      await client.messages.create({
+        body,
+        from: config.twilio.phoneNumber,
+        to: formattedTo,
+      });
 
     return true;
   } catch (error) {

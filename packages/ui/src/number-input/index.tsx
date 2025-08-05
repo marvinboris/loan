@@ -4,6 +4,8 @@ import { Button } from '../button';
 import { FormInput, FormInputProps } from '../form-input';
 
 export type NumberInputProps = Omit<FormInputProps, 'value' | 'onChange'> & {
+  min?: number;
+  max?: number;
   step?: number;
   controls?: boolean;
   value: number | undefined;
@@ -12,6 +14,8 @@ export type NumberInputProps = Omit<FormInputProps, 'value' | 'onChange'> & {
 };
 
 export function NumberInput({
+  min,
+  max,
   value,
   onChange,
   step = 1,
@@ -28,7 +32,12 @@ export function NumberInput({
         if (value === '-') {
           onChange(undefined);
         } else if (isRegexTrue) {
-          onChange(value !== undefined ? +value : undefined);
+          let newValue = value !== undefined ? +value : undefined;
+          if (newValue !== undefined) {
+            if (min !== undefined && newValue < min) newValue = min;
+            if (max !== undefined && newValue > max) newValue = max;
+          }
+          onChange(newValue);
         }
       }}
       prepend={

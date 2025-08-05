@@ -2,7 +2,7 @@ import { useConfig, useTitle } from '@creditwave/hooks';
 import { Typography } from '@creditwave/ui';
 import { Slot, usePathname } from 'expo-router';
 import React from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { CheckIcon } from 'react-native-heroicons/outline';
 
 export default function Layout() {
@@ -10,16 +10,17 @@ export default function Layout() {
   const pathname = usePathname();
   useTitle('KYC');
 
-  const currentIndex = React.useMemo(
-    () => +(pathname.split('/').pop() || '1'),
-    [pathname]
-  );
+  const currentIndex = React.useMemo(() => {
+    const numText = pathname.split('/').pop();
+    if (!numText || isNaN(+numText)) return 0;
+    return +numText;
+  }, [pathname]);
 
   const isActive = (index: number) => currentIndex === index;
   const isBefore = (index: number) => index < currentIndex;
 
   return (
-    <View style={{ gap: 6 }}>
+    <View style={{ gap: 6, flex: 1 }}>
       {pathname !== '/kyc/completed' && (
         <View
           style={{
@@ -84,9 +85,9 @@ export default function Layout() {
         </View>
       )}
 
-      <View>
+      <ScrollView>
         <Slot />
-      </View>
+      </ScrollView>
     </View>
   );
 }

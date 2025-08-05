@@ -68,7 +68,7 @@ export class HttpClient {
           error.response?.data?.errors?.map((error) => error.msg)?.join('\n') ||
           error.response?.data?.message ||
           error.message ||
-          'Une erreur est survenue';
+          'An error occured';
         requestState$.error.set(errorMessage);
         console.error('Response error:', errorMessage);
         return Promise.reject(error);

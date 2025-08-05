@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 import { isValidPhoneNumber } from 'libphonenumber-js';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '../../lib';
 
 export const loginValidator = [
   body('email')
@@ -82,7 +82,7 @@ export const customerLoginValidator = [
       // Vérification du format international si nécessaire
       if (!isValidPhoneNumber(formattedMobile)) {
         throw new Error(
-          'The number must be in international format (eg: +33612345678)'
+          'The number must be in international format (eg: +237612345678)'
         );
       }
 

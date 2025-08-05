@@ -1,7 +1,9 @@
 import { usePaginatedApi } from '@creditwave/hooks';
 import {
+  Borrow,
   Button,
   Filter,
+  Kyc,
   Pagination,
   Table,
   toastShow,
@@ -16,7 +18,23 @@ type Item = {
   prevRepaymentTime: string;
   appName: string;
   followUpPerson: string;
-  100: string;
+  kyc?: {
+    id: number;
+
+    first_name?: string;
+    last_name: string;
+    location: string;
+    birthdate: string;
+    emergency_number_1: string;
+    emergency_number_2?: string;
+    front_photo: string;
+    back_photo: string;
+    selfie: string;
+    status: string;
+  };
+  borrow?: {
+    id: number;
+  };
   whetherApply: string;
   appTime: string;
   allocationTime: string;
@@ -30,7 +48,7 @@ type Item = {
 export function TelemarketingNewCustomers() {
   useBreadcrumb(['Telemarketing', 'Cases of new customers']);
 
-  const { data, error, loading } = usePaginatedApi<Item>(
+  const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/telemarketing/new-customers'
   );
 
@@ -44,8 +62,10 @@ export function TelemarketingNewCustomers() {
     formData.append('file', file);
 
     const result = await telemarketingService.dataImport('new')(formData);
-    if (result.success)
-      return toastShow({ type: 'success', text: result.message });
+    if (result.success) {
+      refetch();
+      toastShow({ type: 'success', text: result.message });
+    }
   };
 
   return (
@@ -152,14 +172,49 @@ export function TelemarketingNewCustomers() {
       <Table
         error={error}
         loading={loading}
-        data={data?.items || []}
+        data={(data?.items || []).map((item) => ({
+          ...item,
+          operation: (
+            <div>
+              {item.kyc ? (
+                <Kyc
+                  uploadsUrl={import.meta.env.VITE_API_URL + '/../'}
+                  values={item.kyc}
+                  onSubmit={async (data) => {
+                    const result = await telemarketingService.kycValidation(
+                      data
+                    );
+                    if (result.success) refetch();
+                    return result;
+                  }}
+                />
+              ) : undefined}
+              {item.borrow ? (
+                <Borrow
+                  values={{
+                    ...item.borrow,
+                    name: item.name,
+                    mobile: item.mobile,
+                  }}
+                  onSubmit={async (data) => {
+                    const result = await telemarketingService.borrowValidation(
+                      data
+                    );
+                    if (result.success) refetch();
+                    return result;
+                  }}
+                />
+              ) : undefined}
+            </div>
+          ),
+        }))}
         fields={[
           { label: 'MOBILE', key: 'mobile', width: 100 },
           { label: 'NAME', key: 'name' },
           { label: 'PREVIOUS REPAYMENT TIME', key: 'prevRepaymentTime' },
           { label: 'APP NAME', key: 'appName' },
           { label: 'FOLLOW-UP PERSON', key: 'followUpPerson' },
-          { label: '100', key: '100' },
+          // { label: '100', key: '100' },
           { label: 'WHETHER TO APPLY', key: 'whetherApply' },
           { label: 'APPLICATION TIME', key: 'appTime' },
           { label: 'ALLOCATION TIME', key: 'allocationTime' },

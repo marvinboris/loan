@@ -1,3 +1,4 @@
+import { BorrowFormValues, KycFormValues } from '@creditwave/ui-web';
 import { authState$, getHttpClient } from '@creditwave/utils';
 
 type Response = { message: string; success: boolean };
@@ -59,7 +60,7 @@ export const authService = {
 
 // Service pour le telemarketing
 export const telemarketingService = {
-  dataImport: (type: 'new' | 'old' | 'registered') => async (file: any) => {
+  dataImport: (type: 'new' | 'old' | 'registered') => async (formData: any) => {
     const httpClient = getHttpClient();
     const results = await httpClient.post<Response>(
       '/admin/telemarketing/' +
@@ -69,7 +70,7 @@ export const telemarketingService = {
           registered: 'registered-customers',
         }[type] +
         '/import',
-      file,
+      formData,
       {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -78,6 +79,26 @@ export const telemarketingService = {
     );
 
     return results;
+  },
+
+  kycValidation: async (credentials: KycFormValues) => {
+    const httpClient = getHttpClient();
+    const result = await httpClient.post<Response>(
+      '/admin/telemarketing/kyc-validation',
+      credentials
+    );
+
+    return result;
+  },
+
+  borrowValidation: async (credentials: BorrowFormValues) => {
+    const httpClient = getHttpClient();
+    const result = await httpClient.post<Response>(
+      '/admin/telemarketing/borrow-validation',
+      credentials
+    );
+
+    return result;
   },
 };
 

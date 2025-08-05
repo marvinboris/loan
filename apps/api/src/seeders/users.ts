@@ -1,5 +1,5 @@
 // database/seeders/users.ts
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib';
 import bcrypt from 'bcryptjs';
 import { CreateUserInput, UserRole, UserStatus } from '../types';
 

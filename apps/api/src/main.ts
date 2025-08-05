@@ -1,12 +1,8 @@
 // main.ts
 import express from 'express';
 import cors from 'cors';
-import {
-  adminRouter,
-  authRouter,
-  customerRouter,
-  telemarketingRouter,
-} from './routes';
+import { config } from './config';
+import { authRouter, protectedRouter } from './routes';
 
 const app = express();
 const port = process.env.PORT || 4300;
@@ -14,11 +10,12 @@ const port = process.env.PORT || 4300;
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
+// Servir les fichiers statiques (images uploadées)
+app.use('/uploads', express.static(config.uploadsPath));
+
 // Routes
 app.use('/api/auth', authRouter);
-app.use('/api/admin', adminRouter);
-app.use('/api/customer', customerRouter);
-app.use('/api/telemarketing', telemarketingRouter);
+app.use('/api', protectedRouter);
 
 // Test endpoint
 app.get('/', (req, res) => {

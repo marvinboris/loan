@@ -51,22 +51,37 @@ export const authService = {
 
 // Service pour le telemarketing
 export const telemarketingService = {
-  dataImport: (type: 'new' | 'old' | 'registered') => async (file: any) => {
+  markAsDone: async (credentials: {
+    mobile: string;
+    callSituation: string;
+    reason?: string;
+    wishes?: string;
+    rejectionIssues?: string;
+    whetherSendLink?: string;
+    remark?: string;
+  }) => {
     const httpClient = getHttpClient();
     const results = await httpClient.post<Response>(
-      '/admin/telemarketing/' +
-        {
-          new: 'new-customers',
-          old: 'old-customers',
-          registered: 'registered-customers',
-        }[type] +
-        '/import',
-      file,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      }
+      '/telemarketing/mark-as-done',
+      credentials
+    );
+
+    return results;
+  },
+
+  recordOnce: async (credentials: {
+    mobile: string;
+    callSituation: string;
+    reason?: string;
+    wishes?: string;
+    rejectionIssues?: string;
+    whetherSendLink?: string;
+    remark?: string;
+  }) => {
+    const httpClient = getHttpClient();
+    const results = await httpClient.post<Response>(
+      '/telemarketing/record-once',
+      credentials
     );
 
     return results;

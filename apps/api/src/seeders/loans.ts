@@ -1,5 +1,5 @@
-import { supabase } from '../lib/supabase';
-import { CreateLoanInput } from '../types';
+import { supabase } from '../lib';
+import { CreateLoanInput, LoanStatus } from '../types';
 
 export async function seedLoans() {
   console.log('🌱 Seeding Loans...');
@@ -36,7 +36,7 @@ export async function seedLoans() {
       amount_repaid: 100000,
       tag: 'Good Customer',
       repeated_borrowing: false,
-      loan_status: 'Active',
+      loan_status: LoanStatus.ACCEPTED,
     },
     {
       loan_number: 'LN002',
@@ -58,7 +58,7 @@ export async function seedLoans() {
       amount_repaid: 200000,
       tag: 'Overdue',
       repeated_borrowing: true,
-      loan_status: 'Overdue',
+      loan_status: LoanStatus.ACCEPTED,
     },
     {
       loan_number: 'LN003',
@@ -80,7 +80,7 @@ export async function seedLoans() {
       amount_repaid: 50000,
       tag: 'High Risk',
       repeated_borrowing: false,
-      loan_status: 'Overdue',
+      loan_status: LoanStatus.ACCEPTED,
     },
     {
       loan_number: 'LN004',
@@ -102,7 +102,7 @@ export async function seedLoans() {
       amount_repaid: 150000,
       tag: 'Regular Customer',
       repeated_borrowing: false,
-      loan_status: 'Active',
+      loan_status: LoanStatus.ACCEPTED,
     },
     {
       loan_number: 'LN005',
@@ -124,7 +124,7 @@ export async function seedLoans() {
       amount_repaid: 400000,
       tag: 'VIP Customer',
       repeated_borrowing: true,
-      loan_status: 'Active',
+      loan_status: LoanStatus.ACCEPTED,
     },
   ];
 

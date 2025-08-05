@@ -1,5 +1,6 @@
 import { usePaginatedApi } from '@creditwave/hooks';
 import {
+  Borrow,
   Button,
   Filter,
   Pagination,
@@ -16,7 +17,9 @@ type Item = {
   prevRepaymentTime: string;
   appName: string;
   followUpPerson: string;
-  100: string;
+  borrow?: {
+    id: number;
+  };
   whetherApply: string;
   appTime: string;
   allocationTime: string;
@@ -30,7 +33,7 @@ type Item = {
 export function TelemarketingOldCustomers() {
   useBreadcrumb(['Telemarketing', 'Cases of old customers not loaning again']);
 
-  const { data, error, loading } = usePaginatedApi<Item>(
+  const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/telemarketing/old-customers'
   );
 
@@ -44,8 +47,10 @@ export function TelemarketingOldCustomers() {
     formData.append('file', file);
 
     const result = await telemarketingService.dataImport('old')(formData);
-    if (result.success)
-      return toastShow({ type: 'success', text: result.message });
+    if (result.success) {
+      refetch();
+      toastShow({ type: 'success', text: result.message });
+    }
   };
 
   return (
@@ -152,7 +157,29 @@ export function TelemarketingOldCustomers() {
       <Table
         error={error}
         loading={loading}
-        data={data?.items || []}
+        data={(data?.items || []).map((item) => ({
+          ...item,
+          operation: (
+            <div>
+              {item.borrow ? (
+                <Borrow
+                  values={{
+                    ...item.borrow,
+                    name: item.name,
+                    mobile: item.mobile,
+                  }}
+                  onSubmit={async (data) => {
+                    const result = await telemarketingService.borrowValidation(
+                      data
+                    );
+                    if (result.success) refetch();
+                    return result;
+                  }}
+                />
+              ) : undefined}
+            </div>
+          ),
+        }))}
         fields={[
           { label: 'MOBILE', key: 'mobile', width: 100 },
           { label: 'NAME', key: 'name' },

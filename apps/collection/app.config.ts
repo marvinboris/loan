@@ -28,9 +28,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     version,
     icon,
     splash: {
-      image: './assets/splash.png',
+      image: './assets/icon.png',
       resizeMode: 'contain',
-      backgroundColor: '#585572',
+      backgroundColor: '#ffffff',
     },
     updates: {
       fallbackToCacheTimeout: 0,
@@ -53,7 +53,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       package: packageName,
       adaptiveIcon: {
         foregroundImage: adaptiveIcon,
-        backgroundColor: '#252879',
+        backgroundColor: '#ffffff',
       },
       permissions: [
         'android.permission.CAMERA',

@@ -1,5 +1,5 @@
 // database/seeders/customers.ts
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib';
 import { CreateCustomerInput, CustomerType } from '../types/customer';
 
 export async function seedCustomers() {

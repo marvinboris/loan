@@ -21,7 +21,7 @@ export type CardProps = PressableProps & {
   collapsed?: boolean;
   collapsedContent?: React.ReactElement;
   onCollapseToggle?: (collapsed?: boolean) => void;
-  title?: string | JSX.Element;
+  title?: React.ReactNode;
   titleProps?: {
     style?: StyleProp<ViewStyle>;
     textStyle?: TextStyle;

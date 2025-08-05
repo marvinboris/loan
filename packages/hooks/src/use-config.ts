@@ -3,6 +3,7 @@ import { Colors } from '@rneui/themed';
 export function useConfig() {
   const theme: Partial<Colors> = {
     primary: '#252879',
+    secondary: '#0ea5e9',
     success: '#65a30d',
     error: '#dc2626',
     warning: '#d97706',

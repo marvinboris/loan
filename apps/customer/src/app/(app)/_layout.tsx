@@ -2,7 +2,7 @@ import { useAuth, useConfig, usePageTitle } from '@creditwave/hooks';
 import { Logo, Transition, Typography } from '@creditwave/ui';
 import { router, Slot, usePathname } from 'expo-router';
 import React from 'react';
-import { Dimensions, Pressable, View } from 'react-native';
+import { Dimensions, Pressable, ScrollView, View } from 'react-native';
 import {
   ArrowLeftIcon,
   Bars3Icon,
@@ -46,7 +46,7 @@ export default function Layout() {
   );
 
   return (
-    <View style={{ minHeight: '100%' }}>
+    <View style={{ flex: 1 }}>
       <Transition
         show={isMenuOpen}
         style={{
@@ -155,7 +155,7 @@ export default function Layout() {
         )}
       </View>
 
-      <View style={{ paddingHorizontal: 16 }}>
+      <View style={{ paddingHorizontal: 16, flex: 1 }}>
         <Slot />
       </View>
     </View>
