@@ -7,14 +7,15 @@ interface SmsResponse {
   message: string;
 }
 
-export async function sendSms(mobile: string, message: string) {
+export async function sendSms(mobile: string, originalMessage: string) {
   if (mobile.startsWith('+')) mobile = mobile.split('+').pop();
 
-  const urlBase = `https://obitsms.com/api/v2/bulksms?key_api=${encodeURIComponent(
-    config.smsKey
-  )}&sender=${encodeURIComponent(
-    config.appName
-  )}&destination=${encodeURIComponent(mobile)}&message=${message}`;
+  const keyApi = encodeURIComponent(config.smsKey);
+  const sender = 'SURETECH';
+  const destination = encodeURIComponent(mobile);
+  const message = originalMessage + ' (SURETECH)';
+
+  const urlBase = `https://obitsms.com/api/v2/bulksms?key_api=${keyApi}&sender=${sender}&destination=${destination}&message=${message}`;
 
   try {
     const response = await axios.get<SmsResponse>(urlBase, {
