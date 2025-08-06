@@ -7,7 +7,13 @@ interface SmsResponse {
   message: string;
 }
 
-export async function sendSms(mobile: string, originalMessage: string) {
+export async function sendSms(
+  mobile: string,
+  originalMessage: string
+): Promise<SmsResponse> {
+  if (config.modeTest)
+    return { success: true, code: 900, message: 'Test mode enabled' };
+
   if (mobile.startsWith('+')) mobile = mobile.split('+').pop();
 
   const keyApi = encodeURIComponent(config.smsKey);

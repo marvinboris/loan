@@ -53,7 +53,7 @@ export function ImageInput({
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images', 'livePhotos'],
       allowsEditing: true,
-      aspect: aspect || [4, 3],
+      aspect,
       quality: 0.8,
       allowsMultipleSelection: multiple,
     });

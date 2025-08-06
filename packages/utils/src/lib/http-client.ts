@@ -166,7 +166,7 @@ export const getHttpClient = (): HttpClient => {
 export const initializeHttpClient = (apiUrl: string) => {
   return createHttpClient({
     baseURL: apiUrl,
-    timeout: 15000,
+    timeout: 60000,
     headers: {
       Accept: 'application/json',
     },

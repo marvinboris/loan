@@ -9,7 +9,10 @@ import {
 import { kycState$ } from '@creditwave/utils';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
+import React from 'react';
 import { ArrowRightIcon } from 'react-native-heroicons/outline';
+import z from 'zod';
+import { toFormikValidate } from 'zod-formik-adapter';
 
 export default function Page() {
   const initialValues: {
@@ -19,12 +22,29 @@ export default function Page() {
     birthdate: string;
     emergencyNumber1: string;
     emergencyNumber2?: string;
-  } = {
-    lastName: '',
-    location: '',
-    birthdate: '',
-    emergencyNumber1: '',
-  };
+  } = React.useMemo(
+    () =>
+      kycState$.get() || {
+        lastName: '',
+        location: '',
+        birthdate: '',
+        emergencyNumber1: '',
+      },
+    []
+  );
+
+  const Schema = React.useMemo(
+    () =>
+      z.object({
+        firstName: z.string().optional(),
+        lastName: z.string().nonempty(),
+        location: z.string().nonempty(),
+        birthdate: z.string().date(),
+        emergencyNumber1: z.string().nonempty(),
+        emergencyNumber2: z.string().optional(),
+      }),
+    []
+  );
 
   return (
     <Section
@@ -33,12 +53,13 @@ export default function Page() {
     >
       <Formik
         initialValues={initialValues}
+        validate={toFormikValidate(Schema)}
         onSubmit={(data) => {
           kycState$.assign(data);
           router.navigate('/kyc/1');
         }}
       >
-        {({ errors, handleChange, handleSubmit, values }) => (
+        {({ errors, handleChange, handleSubmit, values, isValid }) => (
           <Form>
             <TextInput
               id="firstName"
@@ -101,6 +122,7 @@ export default function Page() {
             <Button
               iconRight
               title="Next"
+              disabled={!isValid}
               icon={ArrowRightIcon}
               onPress={() => handleSubmit()}
               containerStyle={{ alignItems: 'center' }}

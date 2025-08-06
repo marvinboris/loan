@@ -12,7 +12,7 @@ export class KycController {
       }
 
       Object.entries(req.files).forEach(([key, file]) => {
-        req.body[key] = (file as Express.Multer.File[]).at(0).path;
+        req.body[key] = 'uploads/' + (file as Express.Multer.File[]).at(0).filename;
       });
 
       req.body.customerId = req.user.id;

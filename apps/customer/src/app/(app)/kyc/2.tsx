@@ -2,7 +2,10 @@ import { Button, Form, ImageInput, Section } from '@creditwave/ui';
 import { kycState$ } from '@creditwave/utils';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
+import React from 'react';
 import { ArrowRightIcon } from 'react-native-heroicons/outline';
+import z from 'zod';
+import { toFormikValidate } from 'zod-formik-adapter';
 
 export default function Page() {
   const initialValues: {
@@ -11,6 +14,14 @@ export default function Page() {
     backPhoto: '',
   };
 
+  const Schema = React.useMemo(
+    () =>
+      z.object({
+        backPhoto: z.string().nonempty(),
+      }),
+    []
+  );
+
   return (
     <Section
       titleText="Document (Back)"
@@ -18,12 +29,13 @@ export default function Page() {
     >
       <Formik
         initialValues={initialValues}
+        validate={toFormikValidate(Schema)}
         onSubmit={(data) => {
           kycState$.backPhoto.set(data.backPhoto);
           router.navigate('/kyc/3');
         }}
       >
-        {({ handleSubmit, setFieldValue, values }) => (
+        {({ handleSubmit, setFieldValue, values, dirty, isValid }) => (
           <Form>
             <ImageInput
               value={values.backPhoto}
@@ -35,6 +47,7 @@ export default function Page() {
               iconRight
               title="Next"
               icon={ArrowRightIcon}
+              disabled={!(dirty && isValid)}
               onPress={() => handleSubmit()}
               containerStyle={{ alignItems: 'center' }}
             />

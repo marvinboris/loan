@@ -40,7 +40,7 @@ export class BorrowController {
       }
 
       req.body.customerId = req.user.id;
-      req.body.photo = req.file.path;
+      req.body.photo = 'uploads/' + req.file.filename;
       const result = await borrowService.submit(req.body as SubmitInput);
 
       res.status(result.success ? 200 : 400).json(result);

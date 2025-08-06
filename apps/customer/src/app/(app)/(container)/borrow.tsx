@@ -1,4 +1,4 @@
-import { useApi, useTitle } from '@creditwave/hooks';
+import { useApi, useRequest, useTitle } from '@creditwave/hooks';
 import {
   AmountLine,
   Button,
@@ -12,10 +12,13 @@ import { router } from 'expo-router';
 import { Formik } from 'formik';
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
+import { toFormikValidate } from 'zod-formik-adapter';
+import z from 'zod';
 import { borrowService } from '../../../services';
 
 export default function Page() {
   useTitle('Borrow');
+  const { loading: borrowLoading } = useRequest();
 
   const { data, loading } = useApi<{
     success: boolean;
@@ -28,6 +31,18 @@ export default function Page() {
     amount: 0,
     photo: '',
   };
+
+  const Schema = React.useMemo(
+    () =>
+      z.object({
+        amount: z
+          .number()
+          .positive()
+          .max(data?.maxAmount || 10000),
+        photo: z.string().nonempty(),
+      }),
+    [data?.maxAmount]
+  );
 
   React.useEffect(() => {
     if (data?.success) {
@@ -43,6 +58,7 @@ export default function Page() {
       <Section subtitleText="Please fill the form below with the needed amount and your photo.">
         <Formik
           initialValues={initialValues}
+          validate={toFormikValidate(Schema)}
           onSubmit={async (data) => {
             const result = await borrowService.submit(data);
             if (result.success) {
@@ -54,7 +70,7 @@ export default function Page() {
             }
           }}
         >
-          {({ handleSubmit, setFieldValue, values }) => (
+          {({ handleSubmit, setFieldValue, values, dirty, isValid }) => (
             <Form>
               <NumberInput
                 min={0}
@@ -78,12 +94,18 @@ export default function Page() {
               </Section>
 
               <ImageInput
+                aspect={[1, 1]}
                 value={values.photo}
                 placeholder="Upload your photo"
                 onChange={(photo) => setFieldValue('photo', photo)}
               />
 
-              <Button title="Confirm" onPress={() => handleSubmit()} />
+              <Button
+                title="Confirm"
+                loading={borrowLoading}
+                disabled={!(dirty && isValid)}
+                onPress={() => handleSubmit()}
+              />
             </Form>
           )}
         </Formik>

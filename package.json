@@ -11,7 +11,8 @@
     "seed:performances": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts performances",
     "seed:repayments": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts repayments",
     "seed:all": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts all",
-    "seed:user": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/user.ts"
+    "seed:user": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/user.ts",
+    "prepare-api": "nx build api && rm -rf ~/api.zip && cp -r dist/api ~ && zip -r ~/api.zip ~/api"
   },
   "private": true,
   "dependencies": {
