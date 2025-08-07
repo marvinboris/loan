@@ -1,4 +1,4 @@
-import { usePaginatedApi } from '@creditwave/hooks';
+import { useApi, usePaginatedApi } from '@creditwave/hooks';
 import {
   Borrow,
   Button,
@@ -53,6 +53,10 @@ export function TelemarketingNewCustomers() {
 
   const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/telemarketing/new-customers'
+  );
+
+  const { data: telemarketers } = useApi<Record<string, string>>(
+    '/admin/telemarketing/telemarketers'
   );
 
   const handleDataImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -178,6 +182,7 @@ export function TelemarketingNewCustomers() {
             }
             return result;
           }}
+          telemarketers={telemarketers}
         />
         <Button className="opacity-50">Release</Button>
       </div>

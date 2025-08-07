@@ -1,4 +1,3 @@
-import { useApi } from '@creditwave/hooks';
 import { cn } from '@creditwave/utils';
 import { Formik } from 'formik';
 import React from 'react';
@@ -16,6 +15,7 @@ export type ManualAssignmentFormValues = {
 
 export type ManualAssignmentProps = {
   selected: number[];
+  telemarketers?: Record<string, string>;
   onSubmit(
     values: ManualAssignmentFormValues
   ): Promise<{ message: string; success: boolean }>;
@@ -26,7 +26,9 @@ export function ManualAssignment(props: ManualAssignmentProps) {
 
   return (
     <>
-      <ManualAssignmentForm {...props} show={show} setShow={setShow} />
+      {props.telemarketers && (
+        <ManualAssignmentForm {...props} show={show} setShow={setShow} />
+      )}
 
       <Button
         onClick={() => setShow(true)}
@@ -44,13 +46,9 @@ function ManualAssignmentForm(
     setShow: (show: boolean) => void;
   }
 ) {
-  const { data, loading } = useApi<Record<string, string>>(
-    '/admin/telemarketing/telemarketers'
-  );
-
   const initialValues: ManualAssignmentFormValues = {
     selected: props.selected,
-    id: 0,
+    id: +Object.keys(props.telemarketers || {})[0],
   };
 
   const Schema = React.useMemo(
@@ -69,7 +67,6 @@ function ManualAssignmentForm(
         validate={toFormikValidate(Schema)}
         onSubmit={async (values) => {
           console.log({ values });
-          if (!values.id) values.id = +Object.keys(data || {})[0];
           const result = await props.onSubmit(values);
           if (result.success) {
             toastShow({ type: 'success', text: result.message });
@@ -89,8 +86,7 @@ function ManualAssignmentForm(
               id="id"
               name="id"
               value={values.id}
-              options={data || {}}
-              disabled={loading || !data}
+              options={props.telemarketers || {}}
               onChange={(e) => setFieldValue('id', +e.target.value)}
             />
 
