@@ -6,6 +6,7 @@ export * from './form';
 export * from './kyc';
 export * from './layout';
 export * from './logo';
+export * from './manual-assignment';
 export * from './modal';
 export * from './pagination';
 export * from './table';

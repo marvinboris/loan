@@ -9,3 +9,8 @@ export interface BorrowValidationInput {
   validated: boolean;
   reason?: string;
 }
+
+export interface ManualAssignmentInput {
+  id: number;
+  selected: number[];
+}

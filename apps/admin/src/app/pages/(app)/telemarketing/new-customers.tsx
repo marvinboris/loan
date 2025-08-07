@@ -4,6 +4,7 @@ import {
   Button,
   Filter,
   Kyc,
+  ManualAssignment,
   Pagination,
   Table,
   toastShow,
@@ -47,6 +48,8 @@ type Item = {
 
 export function TelemarketingNewCustomers() {
   useBreadcrumb(['Telemarketing', 'Cases of new customers']);
+
+  const [selected, setSelected] = React.useState<number[]>([]);
 
   const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/telemarketing/new-customers'
@@ -165,13 +168,27 @@ export function TelemarketingNewCustomers() {
         <Button color="disabled" className="text-red-600">
           Export Excel
         </Button>
-        <Button className="opacity-50">Manual Assignment</Button>
+        <ManualAssignment
+          selected={selected}
+          onSubmit={async (data) => {
+            const result = await telemarketingService.manualAssignment(data);
+            if (result.success) {
+              refetch();
+              setSelected([]);
+            }
+            return result;
+          }}
+        />
         <Button className="opacity-50">Release</Button>
       </div>
 
       <Table
         error={error}
         loading={loading}
+        selectable={{
+          selected,
+          setSelected,
+        }}
         data={(data?.items || []).map((item) => ({
           ...item,
           operation: (

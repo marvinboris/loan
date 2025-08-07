@@ -59,6 +59,7 @@ export class OperationController {
 
       const items =
         users?.map((user) => ({
+          id: user.id,
           serialNum: user.id,
           // account: user.account,
           email: user.email,

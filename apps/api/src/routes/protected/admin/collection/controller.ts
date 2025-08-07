@@ -39,6 +39,7 @@ export class CollectionController {
 
       const items =
         performances?.map((perf) => ({
+          id: perf.id,
           dateRange: perf.date_range,
           groupRange: perf.group_name,
           ranking: perf.ranking,
@@ -99,6 +100,7 @@ export class CollectionController {
 
       const items =
         performances?.map((perf) => ({
+          id: perf.id,
           date: perf.date,
           groupName: perf.group_name,
           ranking: perf.ranking,
@@ -164,6 +166,7 @@ export class CollectionController {
 
       const items =
         performances?.map((perf) => ({
+          id: perf.id,
           dateRange: perf.date_range,
           groupRange: perf.group_name,
           ranking: perf.ranking,
@@ -218,6 +221,7 @@ export class CollectionController {
 
       const items =
         performances?.map((perf) => ({
+          id: perf.id,
           date: perf.date,
           groupName: perf.group_name,
           ranking: perf.ranking,
@@ -320,6 +324,7 @@ export class CollectionController {
             ) || [];
 
           return {
+            id: loan.id,
             loanNum: loan.loan_number,
             loanOrderNum: loan.loan_order_number,
             appName: loan.app_name,
@@ -432,6 +437,7 @@ export class CollectionController {
             ) || [];
 
           return {
+            id: loan.id,
             loanNum: loan.loan_number,
             loanOrderNum: loan.loan_order_number,
             appName: loan.app_name,
@@ -549,6 +555,7 @@ export class CollectionController {
             ) || [];
 
           return {
+            id: record.id,
             personnel: record.collectors?.name,
             loanNum: record.loans?.loan_number,
             loanOrderNum: record.loans?.loan_order_number,

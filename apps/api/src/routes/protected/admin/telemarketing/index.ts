@@ -39,6 +39,10 @@ telemarketingRouter.get(
   '/old-customers',
   telemarketingController.getOldCustomers
 );
+telemarketingRouter.get(
+  '/telemarketers',
+  telemarketingController.getTelemarketers
+);
 telemarketingRouter.post(
   '/old-customers/import',
   upload.single('file'),
@@ -60,6 +64,10 @@ telemarketingRouter.post(
 telemarketingRouter.post(
   '/borrow-validation',
   telemarketingController.postBorrowValidation
+);
+telemarketingRouter.post(
+  '/manual-assignment',
+  telemarketingController.postManualAssignment
 );
 
 export { telemarketingRouter };

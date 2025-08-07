@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
-import { BorrowValidationInput, KycValidationInput } from './interfaces';
+import {
+  BorrowValidationInput,
+  KycValidationInput,
+  ManualAssignmentInput,
+} from './interfaces';
 import { telemarketingService } from './service';
 import { supabase } from '../../../../lib';
 import {
@@ -45,6 +49,7 @@ export class TelemarketingController {
 
       const items =
         performances?.map((perf) => ({
+          id: perf.id,
           dateRange: perf.date_range,
           groupRange: perf.group_name,
           ranking: perf.ranking,
@@ -105,6 +110,7 @@ export class TelemarketingController {
 
       const items =
         performances?.map((perf) => ({
+          id: perf.id,
           date: perf.date,
           groupName: perf.group_name,
           ranking: perf.ranking,
@@ -170,6 +176,7 @@ export class TelemarketingController {
 
       const items =
         performances?.map((perf) => ({
+          id: perf.id,
           dateRange: perf.date_range,
           groupRange: perf.group_name,
           ranking: perf.ranking,
@@ -224,6 +231,7 @@ export class TelemarketingController {
 
       const items =
         performances?.map((perf) => ({
+          id: perf.id,
           date: perf.date,
           groupName: perf.group_name,
           ranking: perf.ranking,
@@ -330,11 +338,13 @@ export class TelemarketingController {
 
       const items =
         customers?.map((customer) => ({
+          id: customer.id,
           mobile: customer.mobile,
           name: customer.name,
           prevRepaymentTime: customer.prev_repayment_time,
           appName: customer.app_name,
-          followUpPerson: customer.follow_up_person,
+          followUpPerson: customer.telemarketers?.name,
+          // followUpPerson: customer.follow_up_person,
           whetherApply: customer.whether_apply,
           appTime: customer.app_time,
           allocationTime: customer.allocation_time,
@@ -412,13 +422,27 @@ export class TelemarketingController {
 
       if (error) throw error;
 
+      const borrow = await supabase
+        .from('loans')
+        .select('id, customer_id')
+        .eq('loan_status', 'pending');
+
+      if (borrow.error) throw borrow.error;
+
+      const borrowRecord: Record<number, Partial<Loan>> = {};
+      borrow.data.forEach((item) => {
+        borrowRecord[item.customer_id] = item;
+      });
+
       const items =
         customers?.map((customer) => ({
+          id: customer.id,
           mobile: customer.mobile,
           name: customer.name,
           prevRepaymentTime: customer.prev_repayment_time,
           appName: customer.app_name,
-          followUpPerson: customer.follow_up_person,
+          followUpPerson: customer.telemarketers?.name,
+          // followUpPerson: customer.follow_up_person,
           whetherApply: customer.whether_apply,
           appTime: customer.app_time,
           allocationTime: customer.allocation_time,
@@ -427,6 +451,7 @@ export class TelemarketingController {
           descFollowUp: customer.desc_follow_up,
           whetherAssigned: customer.whether_assigned,
           telemarketer: customer.telemarketers?.name,
+          borrow: borrowRecord[customer.id],
         })) || [];
 
       res.json({
@@ -434,6 +459,26 @@ export class TelemarketingController {
         items,
         total,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getTelemarketers(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select()
+        .eq('role', 'telemarketer');
+
+      if (error) throw error;
+
+      const record: Record<string, string> = {};
+      data.forEach((item) => {
+        record[item.id] = item.name;
+      });
+
+      res.json(record);
     } catch (error) {
       next(error);
     }
@@ -496,13 +541,27 @@ export class TelemarketingController {
 
       if (error) throw error;
 
+      const borrow = await supabase
+        .from('loans')
+        .select('id, customer_id')
+        .eq('loan_status', 'pending');
+
+      if (borrow.error) throw borrow.error;
+
+      const borrowRecord: Record<number, Partial<Loan>> = {};
+      borrow.data.forEach((item) => {
+        borrowRecord[item.customer_id] = item;
+      });
+
       const items =
         customers?.map((customer) => ({
+          id: customer.id,
           mobile: customer.mobile,
           name: customer.name,
           prevRepaymentTime: customer.prev_repayment_time,
           appName: customer.app_name,
-          followUpPerson: customer.follow_up_person,
+          followUpPerson: customer.telemarketers?.name,
+          // followUpPerson: customer.follow_up_person,
           whetherApply: customer.whether_apply,
           appTime: customer.app_time,
           allocationTime: customer.allocation_time,
@@ -511,6 +570,7 @@ export class TelemarketingController {
           descFollowUp: customer.desc_follow_up,
           whetherAssigned: customer.whether_assigned,
           telemarketer: customer.telemarketers?.name,
+          borrow: borrowRecord[customer.id],
         })) || [];
 
       res.json({
@@ -573,6 +633,23 @@ export class TelemarketingController {
       const input: BorrowValidationInput = req.body;
 
       const result = await telemarketingService.borrowValidation(input);
+
+      res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async postManualAssignment(req: Request, res: Response, next: NextFunction) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const input: ManualAssignmentInput = req.body;
+
+      const result = await telemarketingService.manualAssignment(input);
 
       res.status(result.success ? 200 : 400).json(result);
     } catch (error) {

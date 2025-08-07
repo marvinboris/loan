@@ -1,5 +1,9 @@
 import xlsx from 'xlsx';
-import { BorrowValidationInput, KycValidationInput } from './interfaces';
+import {
+  BorrowValidationInput,
+  KycValidationInput,
+  ManualAssignmentInput,
+} from './interfaces';
 import { config } from '../../../../config';
 import { supabase } from '../../../../lib';
 import {
@@ -100,6 +104,14 @@ export const telemarketingService = {
       )
       .single();
 
+    if (input.validated) {
+      const customerPaid = await payCustomer(
+        loan.customers.account,
+        loan.loan_amount
+      );
+      console.log(customerPaid ? 'Customer paid' : 'Customer not paid');
+    }
+
     if (error)
       return {
         success: false,
@@ -121,13 +133,24 @@ export const telemarketingService = {
 
     await sendSms(loan.customers.mobile, message);
 
-    if (input.validated)
-      await payCustomer(loan.customers.account, loan.loan_amount);
-
     return {
       success: true,
       message: 'Borrow validation response submitted successfully',
     };
+  },
+
+  async manualAssignment(input: ManualAssignmentInput) {
+    const { error } = await supabase
+      .from('customers')
+      .update({
+        telemarketer_id: input.id,
+      })
+      .in('id', input.selected)
+      .select();
+
+    if (error) return { success: false, message: 'Manual assignment failed' };
+
+    return { success: true, message: 'Manual assignment done successfully' };
   },
 };
 

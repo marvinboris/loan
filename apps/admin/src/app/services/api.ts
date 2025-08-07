@@ -1,11 +1,15 @@
-import { BorrowFormValues, KycFormValues } from '@creditwave/ui-web';
+import {
+  BorrowFormValues,
+  KycFormValues,
+  ManualAssignmentFormValues,
+} from '@creditwave/ui-web';
 import { authState$, getHttpClient } from '@creditwave/utils';
 
 type Response = { message: string; success: boolean };
 
 // Service pour les opérations d'authentification
 export const authService = {
-  login: async (credentials: { email: string; password: string }) => {
+  async login(credentials: { email: string; password: string }) {
     const httpClient = getHttpClient();
     const response = await httpClient.post<{ token: string; user: any }>(
       '/auth/login',
@@ -26,17 +30,17 @@ export const authService = {
   },
 
   // Vérifier si l'utilisateur est connecté depuis l'état persisté
-  isAuthenticated: () => {
+  isAuthenticated() {
     return authState$.isAuthenticated.get();
   },
 
   // Obtenir l'utilisateur actuel
-  getCurrentUser: () => {
+  getCurrentUser() {
     return authState$.user.get();
   },
 
   // En cas d'oubli du mot de passe
-  forgot: async (credentials: { email: string }) => {
+  async forgot(credentials: { email: string }) {
     const httpClient = getHttpClient();
     const response = await httpClient.post<Response>(
       '/auth/forgot',
@@ -81,7 +85,7 @@ export const telemarketingService = {
     return results;
   },
 
-  kycValidation: async (credentials: KycFormValues) => {
+  async kycValidation(credentials: KycFormValues) {
     const httpClient = getHttpClient();
     const result = await httpClient.post<Response>(
       '/admin/telemarketing/kyc-validation',
@@ -91,10 +95,20 @@ export const telemarketingService = {
     return result;
   },
 
-  borrowValidation: async (credentials: BorrowFormValues) => {
+  async borrowValidation(credentials: BorrowFormValues) {
     const httpClient = getHttpClient();
     const result = await httpClient.post<Response>(
       '/admin/telemarketing/borrow-validation',
+      credentials
+    );
+
+    return result;
+  },
+
+  async manualAssignment(credentials: ManualAssignmentFormValues) {
+    const httpClient = getHttpClient();
+    const result = await httpClient.post<Response>(
+      '/admin/telemarketing/manual-assignment',
       credentials
     );
 

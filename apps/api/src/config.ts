@@ -18,4 +18,14 @@ export const config = {
   },
 
   uploadsPath: path.join(__dirname, '..', 'uploads'),
+
+  iwomiPay: {
+    url: process.env.IWOMIPAY_URL,
+    username: process.env.IWOMIPAY_USERNAME,
+    password: process.env.IWOMIPAY_PASSWORD,
+    momoApiKey: process.env.IWOMIPAY_MOMO_API_KEY,
+    momoApiSecret: process.env.IWOMIPAY_MOMO_API_SECRET,
+    omApiKey: process.env.IWOMIPAY_OM_API_KEY,
+    omApiSecret: process.env.IWOMIPAY_OM_API_SECRET,
+  },
 };

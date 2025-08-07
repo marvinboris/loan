@@ -88,6 +88,7 @@ export class FinancialController {
 
       const items =
         repayments?.map((repayment) => ({
+          id: repayment.id,
           repaymentNum: repayment.repayment_number,
           loanNum: repayment.loans?.loan_number,
           product: repayment.loans?.product_name,
@@ -203,6 +204,7 @@ export class FinancialController {
         loans?.flatMap(
           (loan) =>
             loan.repayments?.map((repayment) => ({
+              id: repayment.id,
               repaymentNum: repayment.repayment_number,
               loanNum: loan.loan_number,
               product: loan.product_name,
@@ -264,6 +266,7 @@ export class FinancialController {
 
       const items =
         repayments?.map((repayment) => ({
+          id: repayment.id,
           repaymentNum: repayment.repayment_number,
           loanNum: repayment.loans?.loan_number,
           product: repayment.loans?.product_name,

@@ -10,6 +10,10 @@ export type TableField = {
 export type TableProps<T extends object> = {
   data: T[];
   fields: TableField[];
+  selectable?: {
+    selected: number[];
+    setSelected: React.Dispatch<React.SetStateAction<number[]>>;
+  };
   loading?: boolean;
   error?: string;
 };
@@ -25,6 +29,24 @@ export function Table<T extends object>(props: TableProps<T>) {
       <table className="table-auto border-collapse border">
         <thead>
           <tr className="*:px-2.5 *:py-1.5 *:bg-primary/20 text-center text-sm *:border">
+            {props.selectable && (
+              <th>
+                <div>
+                  <input
+                    type="checkbox"
+                    onChange={(e) =>
+                      props.selectable?.setSelected(
+                        e.target.checked
+                          ? props.data.map(
+                              (item) => (item as { id: number }).id
+                            )
+                          : []
+                      )
+                    }
+                  />
+                </div>
+              </th>
+            )}
             {props.fields.map(({ key, label, width }) => (
               <th key={'th-' + key}>
                 <div style={{ width }}>{label}</div>
@@ -36,18 +58,39 @@ export function Table<T extends object>(props: TableProps<T>) {
         <tbody>
           {props.loading
             ? null
-            : props.data.map((datum, i) => (
-                <tr
-                  key={'tr-' + i}
-                  className="*:px-2.5 *:py-1.5 text-center text-sm *:border"
-                >
-                  {props.fields.map(({ key }) => (
-                    <td key={'td-' + i + '-' + key}>
-                      {datum[key as keyof T] as React.ReactNode}
-                    </td>
-                  ))}
-                </tr>
-              ))}
+            : props.data.map((datum, i) => {
+                const id = (datum as { id: number }).id;
+                return (
+                  <tr
+                    key={'tr-' + i}
+                    className="*:px-2.5 *:py-1.5 text-center text-sm *:border"
+                  >
+                    {props.selectable && (
+                      <th>
+                        <div>
+                          <input
+                            value={id}
+                            type="checkbox"
+                            checked={props.selectable.selected.includes(id)}
+                            onChange={(e) =>
+                              props.selectable?.setSelected((prev) =>
+                                e.target.checked
+                                  ? prev.concat(id)
+                                  : prev.filter((item) => item !== id)
+                              )
+                            }
+                          />
+                        </div>
+                      </th>
+                    )}
+                    {props.fields.map(({ key }) => (
+                      <td key={'td-' + i + '-' + key}>
+                        {datum[key as keyof T] as React.ReactNode}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
         </tbody>
       </table>
 
