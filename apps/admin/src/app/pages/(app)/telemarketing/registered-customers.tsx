@@ -5,6 +5,7 @@ import {
   Filter,
   ManualAssignment,
   Pagination,
+  Release,
   Table,
   toastShow,
   useBreadcrumb,
@@ -174,7 +175,17 @@ export function TelemarketingRegisteredCustomers() {
             return result;
           }}
         />
-        <Button className="opacity-50">Release</Button>
+        <Release
+          selected={selected}
+          onSubmit={async (data) => {
+            const result = await telemarketingService.release(data);
+            if (result.success) {
+              refetch();
+              setSelected([]);
+            }
+            return result;
+          }}
+        />
       </div>
 
       <Table
