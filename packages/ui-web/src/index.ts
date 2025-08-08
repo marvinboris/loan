@@ -9,5 +9,6 @@ export * from './logo';
 export * from './manual-assignment';
 export * from './modal';
 export * from './pagination';
+export * from './release';
 export * from './table';
 export * from './toast';

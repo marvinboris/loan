@@ -3,6 +3,7 @@ import {
   BorrowValidationInput,
   KycValidationInput,
   ManualAssignmentInput,
+  ReleaseInput,
 } from './interfaces';
 import { config } from '../../../../config';
 import { supabase } from '../../../../lib';
@@ -151,6 +152,20 @@ export const telemarketingService = {
     if (error) return { success: false, message: 'Manual assignment failed' };
 
     return { success: true, message: 'Manual assignment done successfully' };
+  },
+
+  async release(input: ReleaseInput) {
+    const { error } = await supabase
+      .from('customers')
+      .update({
+        telemarketer_id: null,
+      })
+      .in('id', input.selected)
+      .select();
+
+    if (error) return { success: false, message: 'Release failed' };
+
+    return { success: true, message: 'Release done successfully' };
   },
 };
 

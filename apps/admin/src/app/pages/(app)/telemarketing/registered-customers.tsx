@@ -1,8 +1,9 @@
-import { usePaginatedApi } from '@creditwave/hooks';
+import { useApi, usePaginatedApi } from '@creditwave/hooks';
 import {
   Borrow,
   Button,
   Filter,
+  ManualAssignment,
   Pagination,
   Table,
   toastShow,
@@ -36,8 +37,14 @@ export function TelemarketingRegisteredCustomers() {
     'Cases of registered customers did not apply for loan',
   ]);
 
+  const [selected, setSelected] = React.useState<number[]>([]);
+
   const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/telemarketing/registered-customers'
+  );
+
+  const { data: telemarketers } = useApi<Record<string, string>>(
+    '/admin/telemarketing/telemarketers'
   );
 
   const handleDataImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,13 +162,28 @@ export function TelemarketingRegisteredCustomers() {
         <Button color="disabled" className="text-red-600">
           Export Excel
         </Button>
-        <Button className="opacity-50">Manual Assignment</Button>
+        <ManualAssignment
+          selected={selected}
+          telemarketers={telemarketers}
+          onSubmit={async (data) => {
+            const result = await telemarketingService.manualAssignment(data);
+            if (result.success) {
+              refetch();
+              setSelected([]);
+            }
+            return result;
+          }}
+        />
         <Button className="opacity-50">Release</Button>
       </div>
 
       <Table
         error={error}
         loading={loading}
+        selectable={{
+          selected,
+          setSelected,
+        }}
         data={(data?.items || []).map((item) => ({
           ...item,
           operation: (
@@ -191,7 +213,7 @@ export function TelemarketingRegisteredCustomers() {
           { label: 'PREVIOUS REPAYMENT TIME', key: 'prevRepaymentTime' },
           { label: 'APP NAME', key: 'appName' },
           { label: 'FOLLOW-UP PERSON', key: 'followUpPerson' },
-          { label: '100', key: '100' },
+          // { label: '100', key: '100' },
           { label: 'WHETHER TO APPLY', key: 'whetherApply' },
           { label: 'APPLICATION TIME', key: 'appTime' },
           { label: 'ALLOCATION TIME', key: 'allocationTime' },

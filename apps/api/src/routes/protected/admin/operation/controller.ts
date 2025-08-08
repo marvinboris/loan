@@ -27,7 +27,7 @@ export class OperationController {
         role,
       } = req.query;
 
-      let query = supabase.from('users').select('*');
+      let query = supabase.from('users').select('*', { count: 'exact' });
 
       // Appliquer les filtres
       // if (account) query = query.eq('account', account as string);
@@ -53,7 +53,9 @@ export class OperationController {
 
       const total = (await query).count;
       const [from, to] = filter(req.query);
-      const { data: users, error } = await query.range(from, to);
+      const { data: users, error } = await query
+        .range(from, to)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 

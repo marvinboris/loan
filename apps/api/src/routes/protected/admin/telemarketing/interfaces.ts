@@ -14,3 +14,7 @@ export interface ManualAssignmentInput {
   id: number;
   selected: number[];
 }
+
+export interface ReleaseInput {
+  selected: number[];
+}

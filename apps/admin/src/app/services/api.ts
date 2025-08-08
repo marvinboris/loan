@@ -2,6 +2,7 @@ import {
   BorrowFormValues,
   KycFormValues,
   ManualAssignmentFormValues,
+  ReleaseFormValues,
 } from '@creditwave/ui-web';
 import { authState$, getHttpClient } from '@creditwave/utils';
 
@@ -109,6 +110,16 @@ export const telemarketingService = {
     const httpClient = getHttpClient();
     const result = await httpClient.post<Response>(
       '/admin/telemarketing/manual-assignment',
+      credentials
+    );
+
+    return result;
+  },
+
+  async release(credentials: ReleaseFormValues) {
+    const httpClient = getHttpClient();
+    const result = await httpClient.post<Response>(
+      '/admin/telemarketing/release',
       credentials
     );
 

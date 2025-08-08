@@ -6,6 +6,7 @@ import {
   Kyc,
   ManualAssignment,
   Pagination,
+  Release,
   Table,
   toastShow,
   useBreadcrumb,
@@ -174,6 +175,7 @@ export function TelemarketingNewCustomers() {
         </Button>
         <ManualAssignment
           selected={selected}
+          telemarketers={telemarketers}
           onSubmit={async (data) => {
             const result = await telemarketingService.manualAssignment(data);
             if (result.success) {
@@ -182,9 +184,18 @@ export function TelemarketingNewCustomers() {
             }
             return result;
           }}
-          telemarketers={telemarketers}
         />
-        <Button className="opacity-50">Release</Button>
+        <Release
+          selected={selected}
+          onSubmit={async (data) => {
+            const result = await telemarketingService.release(data);
+            if (result.success) {
+              refetch();
+              setSelected([]);
+            }
+            return result;
+          }}
+        />
       </div>
 
       <Table

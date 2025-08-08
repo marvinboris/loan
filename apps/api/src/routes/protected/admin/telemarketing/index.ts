@@ -69,5 +69,6 @@ telemarketingRouter.post(
   '/manual-assignment',
   telemarketingController.postManualAssignment
 );
+telemarketingRouter.post('/release', telemarketingController.postRelease);
 
 export { telemarketingRouter };
