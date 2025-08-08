@@ -23,9 +23,23 @@ export const config = {
     url: process.env.IWOMIPAY_URL,
     username: process.env.IWOMIPAY_USERNAME,
     password: process.env.IWOMIPAY_PASSWORD,
-    momoApiKey: process.env.IWOMIPAY_MOMO_API_KEY,
-    momoApiSecret: process.env.IWOMIPAY_MOMO_API_SECRET,
-    omApiKey: process.env.IWOMIPAY_OM_API_KEY,
-    omApiSecret: process.env.IWOMIPAY_OM_API_SECRET,
+    accountKeys: {
+      momo: {
+        credit: btoa(
+          `${process.env.IWOMIPAY_MOMO_CREDIT_API_KEY}:${process.env.IWOMIPAY_MOMO_CREDIT_API_SECRET}`
+        ),
+        debit: btoa(
+          `${process.env.IWOMIPAY_MOMO_DEBIT_API_KEY}:${process.env.IWOMIPAY_MOMO_DEBIT_API_SECRET}`
+        ),
+      },
+      om: {
+        credit: btoa(
+          `${process.env.IWOMIPAY_OM_CREDIT_API_KEY}:${process.env.IWOMIPAY_OM_CREDIT_API_SECRET}`
+        ),
+        debit: btoa(
+          `${process.env.IWOMIPAY_OM_DEBIT_API_KEY}:${process.env.IWOMIPAY_OM_DEBIT_API_SECRET}`
+        ),
+      },
+    },
   },
 };

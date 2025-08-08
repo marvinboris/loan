@@ -91,10 +91,11 @@ class IwomiPay {
     }
   }
 
-  private getAccountKey(type: 'momo' | 'om'): string {
-    return type === 'momo'
-      ? btoa(`${config.iwomiPay.momoApiKey}:${config.iwomiPay.momoApiSecret}`)
-      : btoa(`${config.iwomiPay.omApiKey}:${config.iwomiPay.omApiSecret}`);
+  private getAccountKey(
+    type: 'momo' | 'om',
+    op_type: 'debit' | 'credit'
+  ): string {
+    return config.iwomiPay.accountKeys[type][op_type];
   }
 
   private generateExternalId(): string {
@@ -103,7 +104,10 @@ class IwomiPay {
 
   async payment(credentials: PaymentCredentials): Promise<PaymentResponse> {
     const token = await this.authenticate();
-    const accountKey = this.getAccountKey(credentials.type);
+    const accountKey = this.getAccountKey(
+      credentials.type,
+      credentials.op_type
+    );
     const externalId = this.generateExternalId();
 
     try {
