@@ -1,4 +1,4 @@
-import { useApi, useRequest, useTitle } from '@creditwave/hooks';
+import { useApi, useTitle } from '@creditwave/hooks';
 import {
   AmountLine,
   Button,
@@ -18,7 +18,6 @@ import { borrowService } from '../../../services';
 
 export default function Page() {
   useTitle('Borrow');
-  const { loading: borrowLoading } = useRequest();
 
   const { data, loading } = useApi<{
     success: boolean;
@@ -70,7 +69,14 @@ export default function Page() {
             }
           }}
         >
-          {({ handleSubmit, setFieldValue, values, dirty, isValid }) => (
+          {({
+            handleSubmit,
+            setFieldValue,
+            values,
+            dirty,
+            isValid,
+            isSubmitting,
+          }) => (
             <Form>
               <NumberInput
                 min={0}
@@ -102,7 +108,7 @@ export default function Page() {
 
               <Button
                 title="Confirm"
-                loading={borrowLoading}
+                loading={isSubmitting}
                 disabled={!(dirty && isValid)}
                 onPress={() => handleSubmit()}
               />

@@ -1,16 +1,15 @@
-import { useAuth, useRequest } from '@creditwave/hooks';
+import { useAuth } from '@creditwave/hooks';
 import { Button, Form, PinCodeInput, Section, toastShow } from '@creditwave/ui';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Formik } from 'formik';
-import { ArrowDownTrayIcon } from 'react-native-heroicons/outline';
-import { beneficiaryService } from '../../../../services';
 import React from 'react';
+import { ArrowDownTrayIcon } from 'react-native-heroicons/outline';
 import z from 'zod';
 import { toFormikValidate } from 'zod-formik-adapter';
+import { beneficiaryService } from '../../../../services';
 
 export default function Page() {
   const { user } = useAuth();
-  const { loading } = useRequest();
   const { account } = useLocalSearchParams<{ account: string }>();
 
   const initialValues = {
@@ -45,7 +44,14 @@ export default function Page() {
           }
         }}
       >
-        {({ handleChange, handleSubmit, values, dirty, isValid }) => (
+        {({
+          handleChange,
+          handleSubmit,
+          values,
+          dirty,
+          isValid,
+          isSubmitting,
+        }) => (
           <Form>
             <PinCodeInput
               id="code"
@@ -57,7 +63,7 @@ export default function Page() {
             <Button
               iconRight
               title="Save"
-              loading={loading}
+              loading={isSubmitting}
               icon={ArrowDownTrayIcon}
               disabled={!(dirty && isValid)}
               onPress={() => handleSubmit()}

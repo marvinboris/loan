@@ -30,7 +30,7 @@ export default function Page() {
           }
         }}
       >
-        {({ errors, handleChange, handleSubmit, values }) => (
+        {({ errors, handleChange, handleSubmit, values, isSubmitting }) => (
           <Form>
             <PasswordInput
               id="oldPassword"
@@ -64,6 +64,7 @@ export default function Page() {
 
             <Button
               title="Confirm"
+              loading={isSubmitting}
               onPress={() => handleSubmit()}
               containerStyle={{ marginTop: 16 }}
             />

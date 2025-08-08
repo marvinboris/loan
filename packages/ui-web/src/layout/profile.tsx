@@ -1,15 +1,22 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import React from 'react';
-import { ChangePassword } from './change-password';
+import { ChangePassword, ChangePasswordFormValues } from './change-password';
 
-export type ProfileProps = { logout(): void };
+export type ProfileProps = {
+  logout(): void;
+  changePassword(data: ChangePasswordFormValues): void;
+};
 
-export function Profile({ logout }: ProfileProps) {
+export function Profile({ logout, changePassword }: ProfileProps) {
   const [changingPassword, setChangingPassword] = React.useState(false);
 
   return (
     <>
-      <ChangePassword show={changingPassword} setShow={setChangingPassword} />
+      <ChangePassword
+        show={changingPassword}
+        setShow={setChangingPassword}
+        onSubmit={changePassword}
+      />
 
       <Menu as="div" className="ml-auto">
         <MenuButton className="size-10 rounded-full flex items-center justify-center bg-primary text-white *:hover:bg-stone-100">

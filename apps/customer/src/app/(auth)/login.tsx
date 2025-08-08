@@ -1,4 +1,3 @@
-import { useRequest } from '@creditwave/hooks';
 import { Button, Form, PhoneNumberInput, toastShow } from '@creditwave/ui';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
@@ -6,8 +5,6 @@ import React from 'react';
 import { authService } from '../../services';
 
 export default function Page() {
-  const { loading } = useRequest();
-
   const initialValues = {
     mobile: '',
   };
@@ -26,7 +23,7 @@ export default function Page() {
         }
       }}
     >
-      {({ values, errors, handleChange, handleSubmit }) => (
+      {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
         <Form>
           <PhoneNumberInput
             id="mobile"
@@ -40,7 +37,7 @@ export default function Page() {
 
           <Button
             color="primary"
-            loading={loading}
+            loading={isSubmitting}
             title="Sign in / Sign up"
             onPress={() => handleSubmit()}
             containerStyle={{ marginTop: 16 }}

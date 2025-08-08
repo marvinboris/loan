@@ -145,6 +145,7 @@ export const telemarketingService = {
       .from('customers')
       .update({
         telemarketer_id: input.id,
+        allocation_time: new Date().toISOString(),
       })
       .in('id', input.selected)
       .select();

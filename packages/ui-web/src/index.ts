@@ -1,6 +1,7 @@
 export * from './borrow';
 export * from './buttons';
 export * from './card';
+export * from './distribution';
 export * from './filter';
 export * from './form';
 export * from './kyc';

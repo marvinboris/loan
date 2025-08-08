@@ -33,7 +33,15 @@ export function Forgot() {
         }
       }}
     >
-      {({ values, errors, handleChange, handleSubmit, dirty, isValid }) => (
+      {({
+        values,
+        errors,
+        handleChange,
+        handleSubmit,
+        dirty,
+        isValid,
+        isSubmitting,
+      }) => (
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -58,7 +66,7 @@ export function Forgot() {
                 </Button>
               </Link>
 
-              <Button disabled={!isValid} type="submit">
+              <Button disabled={!isValid} loading={isSubmitting} type="submit">
                 Reset Password
               </Button>
             </div>

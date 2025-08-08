@@ -1,13 +1,14 @@
-import { usePaginatedApi } from '@creditwave/hooks';
+import { useApi, usePaginatedApi } from '@creditwave/hooks';
 import {
   Button,
+  Distribution,
   Filter,
   Pagination,
   Table,
   useBreadcrumb,
 } from '@creditwave/ui-web';
-import { PlusIcon } from '@heroicons/react/24/outline';
 import React from 'react';
+import { collectionService } from '../../../services';
 
 type Item = {
   loanNum: string;
@@ -38,8 +39,14 @@ type Item = {
 export function CollectionCaseAllocation() {
   useBreadcrumb(['Collection', 'Case allocation']);
 
-  const { data, error, loading } = usePaginatedApi<Item>(
+  const [selected, setSelected] = React.useState<number[]>([]);
+
+  const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/collection/case-allocation'
+  );
+
+  const { data: collectors } = useApi<Record<string, string>>(
+    '/admin/collection/collectors'
   );
 
   return (
@@ -157,9 +164,18 @@ export function CollectionCaseAllocation() {
       />
 
       <div className="flex gap-2.5">
-        <Button disabled variant="outline" icon={PlusIcon}>
-          Distribution
-        </Button>
+        <Distribution
+          selected={selected}
+          collectors={collectors}
+          onSubmit={async (data) => {
+            const result = await collectionService.distribution(data);
+            if (result.success) {
+              refetch();
+              setSelected([]);
+            }
+            return result;
+          }}
+        />
         <Button disabled variant="outline">
           Assignment within large groups
         </Button>
@@ -171,13 +187,18 @@ export function CollectionCaseAllocation() {
       <Table
         error={error}
         loading={loading}
+        selectable={{
+          selected,
+          setSelected,
+        }}
         data={data?.items || []}
         fields={[
           { label: 'LOAN NUMBER', key: 'loanNum' },
           { label: 'LOAN ORDER NUMBER', key: 'loanOrderNum' },
           { label: 'APP NAME', key: 'appName' },
           { label: 'NAME', key: 'name' },
-          { label: 'DISTRICT', key: 'district' },
+          { label: 'COLLECTOR', key: 'collector' },
+          // { label: 'DISTRICT', key: 'district' },
           { label: 'MOBILE', key: 'mobile' },
           { label: 'DUE DATE', key: 'dueDate' },
           { label: 'DAYS OVERDUE', key: 'daysOverdue' },
@@ -195,7 +216,6 @@ export function CollectionCaseAllocation() {
           { label: 'APP STATUS', key: 'appStatus' },
           { label: 'APP CHANNEL', key: 'appChannel' },
           { label: 'AMOUNT REPAID', key: 'amtRepaid' },
-          { label: 'COLLECTOR', key: 'collector' },
         ]}
       />
 

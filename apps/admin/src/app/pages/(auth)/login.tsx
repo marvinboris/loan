@@ -13,7 +13,7 @@ type FormValues = {
 };
 
 export function Login() {
-  const { loading, clearError } = useRequest();
+  const { clearError } = useRequest();
 
   const initialValues: FormValues = {
     email: '',
@@ -34,7 +34,15 @@ export function Login() {
         await authService.login(data);
       }}
     >
-      {({ values, errors, handleChange, handleSubmit, dirty, isValid }) => (
+      {({
+        values,
+        errors,
+        handleChange,
+        handleSubmit,
+        dirty,
+        isValid,
+        isSubmitting,
+      }) => (
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -64,7 +72,7 @@ export function Login() {
               onChange={handleChange('password')}
             />
 
-            <Button disabled={!isValid} loading={loading} type="submit">
+            <Button disabled={!isValid} loading={isSubmitting} type="submit">
               Sign In
             </Button>
 

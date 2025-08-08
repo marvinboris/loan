@@ -28,5 +28,7 @@ collectionRouter.get(
   collectionController.getCaseAllocation
 );
 collectionRouter.get('/records', collectionController.getCollectionRecords);
+collectionRouter.get('/collectors', collectionController.getCollectors);
+collectionRouter.post('/distribution', collectionController.postDistribution);
 
 export { collectionRouter };

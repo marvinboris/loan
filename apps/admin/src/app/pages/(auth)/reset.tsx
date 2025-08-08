@@ -12,8 +12,8 @@ type FormValues = {
 };
 
 export function Reset() {
-  const [search] = useSearchParams();
   const navigate = useNavigate();
+  const [search] = useSearchParams();
 
   const initialValues: FormValues = {
     password: '',
@@ -43,7 +43,15 @@ export function Reset() {
         } else toastShow({ type: 'error', text: 'No token provided' });
       }}
     >
-      {({ values, errors, handleChange, handleSubmit, dirty, isValid }) => (
+      {({
+        values,
+        errors,
+        handleChange,
+        handleSubmit,
+        dirty,
+        isValid,
+        isSubmitting,
+      }) => (
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -71,7 +79,7 @@ export function Reset() {
               onChange={handleChange('passwordConfirmation')}
             />
 
-            <Button disabled={!isValid} type="submit">
+            <Button disabled={!isValid} loading={isSubmitting} type="submit">
               Reset password
             </Button>
           </Card>

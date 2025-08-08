@@ -1,60 +1,74 @@
-import { cn } from '@creditwave/utils';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import { Formik } from 'formik';
 import React from 'react';
 import z from 'zod';
 import { toFormikValidate } from 'zod-formik-adapter';
 import { Button } from './buttons';
+import { Select } from './form';
 import { Modal } from './modal';
 import { toastShow } from './toast';
 
-export type ReleaseFormValues = {
+export type DistributionFormValues = {
   selected: number[];
+  id: number;
 };
 
-export type ReleaseProps = {
+export type DistributionProps = {
   selected: number[];
+  collectors?: Record<string, string>;
   onSubmit(
-    values: ReleaseFormValues
+    values: DistributionFormValues
   ): Promise<{ message: string; success: boolean }>;
 };
 
-export function Release(props: ReleaseProps) {
+export function Distribution(props: DistributionProps) {
   const [show, setShow] = React.useState(false);
+
+  const disabled = React.useMemo(
+    () => !props.selected.length,
+    [props.selected.length]
+  );
 
   return (
     <>
-      <ReleaseForm {...props} show={show} setShow={setShow} />
+      {props.collectors && (
+        <DistributionForm {...props} show={show} setShow={setShow} />
+      )}
 
       <Button
-        className={cn({ 'opacity-50': !props.selected.length })}
-        onClick={props.selected.length ? () => setShow(true) : undefined}
+        icon={PlusIcon}
+        disabled={disabled}
+        variant={disabled ? 'outline' : undefined}
+        onClick={disabled ? undefined : () => setShow(true)}
       >
-        Release
+        Distribution
       </Button>
     </>
   );
 }
 
-function ReleaseForm(
-  props: ReleaseProps & {
+function DistributionForm(
+  props: DistributionProps & {
     show: boolean;
     setShow: (show: boolean) => void;
   }
 ) {
-  const initialValues: ReleaseFormValues = {
+  const initialValues: DistributionFormValues = {
     selected: props.selected,
+    id: +Object.keys(props.collectors || {})[0],
   };
 
   const Schema = React.useMemo(
     () =>
       z.object({
         selected: z.array(z.number()),
+        id: z.number(),
       }),
     []
   );
 
   return (
-    <Modal show={props.show} setShow={props.setShow} title="Release">
+    <Modal show={props.show} setShow={props.setShow} title="Distribution">
       <Formik
         initialValues={initialValues}
         validate={toFormikValidate(Schema)}
@@ -67,7 +81,7 @@ function ReleaseForm(
           }
         }}
       >
-        {({ handleSubmit, isValid, isSubmitting }) => (
+        {({ handleSubmit, setFieldValue, values, isValid, isSubmitting }) => (
           <form
             className="flex flex-col gap-2.5"
             onSubmit={(e) => {
@@ -75,9 +89,13 @@ function ReleaseForm(
               handleSubmit();
             }}
           >
-            <div className="text-center">
-              Are you sure you want to release the selected client(s) ?
-            </div>
+            <Select
+              id="id"
+              name="id"
+              value={values.id}
+              options={props.collectors || {}}
+              onChange={(e) => setFieldValue('id', +e.target.value)}
+            />
 
             <Button disabled={!isValid} loading={isSubmitting}>
               Submit

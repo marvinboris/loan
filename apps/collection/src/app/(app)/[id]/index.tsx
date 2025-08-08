@@ -33,32 +33,32 @@ export default function Page() {
       <View style={{ paddingVertical: 16 }}>
         <TextLine
           label="Loan number"
-          value={'#' + collection.detail.loanNumber}
+          value={'#' + collection.detail.loan_number}
         />
-        <TextLine label="Product name" value={collection.detail.productName} />
+        <TextLine label="Product name" value={collection.detail.product_name} />
         <TextLine label="Name" value={collection.detail.name} />
         <TextLine label="Mobile" value={collection.detail.mobile} />
         <TextLine label="Gender" value={collection.detail.gender} />
         <TextLine
           label="Reimbursement time"
-          value={collection.detail.reimbursementTime}
+          value={collection.detail.due_date}
         />
-        <TextLine label="Request date" value={collection.detail.date} />
+        <TextLine label="Request date" value={collection.detail.created_at} />
         <TextLine
           label="Reimbursement total"
-          value={collection.detail.total.toLocaleString('en')}
+          value={collection.detail.total_repayment.toLocaleString('en')}
         />
         <TextLine
           label="Reimbursement amount"
-          value={collection.detail.amount.toLocaleString('en')}
+          value={collection.detail.loan_amount.toLocaleString('en')}
         />
         <TextLine
           label="Real amount"
-          value={collection.detail.realAmount.toLocaleString('en')}
+          value={collection.detail.real_amount.toLocaleString('en')}
         />
         <TextLine
           label="Service fees"
-          value={collection.detail.serviceFees.toLocaleString('en')}
+          value={collection.detail.service_fees.toLocaleString('en')}
         />
         <TextLine
           label="Interest"
@@ -70,7 +70,7 @@ export default function Page() {
         />
         <TextLine
           label="Late days"
-          value={collection.detail.lateDays.toString()}
+          value={collection.detail.days_overdue.toString()}
         />
       </View>
 
@@ -113,7 +113,7 @@ function Add({
             toastShow({ type: 'success', text: result.message });
         }}
       >
-        {({ errors, handleChange, handleSubmit, values }) => (
+        {({ errors, handleChange, handleSubmit, values, isSubmitting }) => (
           <Form>
             <Select
               id="connection"
@@ -189,7 +189,11 @@ function Add({
               onChange={handleChange('remark')}
             />
 
-            <Button title="Submit" onPress={() => handleSubmit()} />
+            <Button
+              title="Submit"
+              loading={isSubmitting}
+              onPress={() => handleSubmit()}
+            />
           </Form>
         )}
       </Formik>

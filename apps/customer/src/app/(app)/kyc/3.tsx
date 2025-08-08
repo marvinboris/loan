@@ -1,4 +1,3 @@
-import { useRequest } from '@creditwave/hooks';
 import { Button, Form, ImageInput, Section } from '@creditwave/ui';
 import { KycState, kycState$ } from '@creditwave/utils';
 import { router } from 'expo-router';
@@ -10,8 +9,6 @@ import { toFormikValidate } from 'zod-formik-adapter';
 import { kycService } from '../../../services';
 
 export default function Page() {
-  const { loading } = useRequest();
-
   const initialValues: {
     selfie: string;
   } = {
@@ -43,7 +40,14 @@ export default function Page() {
           }
         }}
       >
-        {({ handleSubmit, setFieldValue, values, dirty, isValid }) => (
+        {({
+          handleSubmit,
+          setFieldValue,
+          values,
+          dirty,
+          isValid,
+          isSubmitting,
+        }) => (
           <Form>
             <ImageInput
               aspect={[1, 1]}
@@ -55,7 +59,7 @@ export default function Page() {
             <Button
               iconRight
               title="Submit"
-              loading={loading}
+              loading={isSubmitting}
               disabled={!(dirty && isValid)}
               onPress={() => handleSubmit()}
               icon={ArrowUpOnSquareStackIcon}

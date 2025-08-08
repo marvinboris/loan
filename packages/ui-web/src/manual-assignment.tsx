@@ -74,7 +74,7 @@ function ManualAssignmentForm(
           }
         }}
       >
-        {({ handleSubmit, setFieldValue, values, isValid }) => (
+        {({ handleSubmit, setFieldValue, values, isValid, isSubmitting }) => (
           <form
             className="flex flex-col gap-2.5"
             onSubmit={(e) => {
@@ -90,7 +90,9 @@ function ManualAssignmentForm(
               onChange={(e) => setFieldValue('id', +e.target.value)}
             />
 
-            <Button disabled={!isValid}>Submit</Button>
+            <Button disabled={!isValid} loading={isSubmitting}>
+              Submit
+            </Button>
           </form>
         )}
       </Formik>

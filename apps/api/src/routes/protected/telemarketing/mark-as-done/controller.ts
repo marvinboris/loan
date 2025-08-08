@@ -9,11 +9,22 @@ export class MarkAsDoneController {
     const { error } = await supabase
       .from('customers')
       .update({
-        type: 'registered',
+        // type: 'registered',
+        desc_follow_up: `
+        Situation: ${+input.callSituation ? 'Connected' : 'Disconnected'}\n
+        Wishes: ${input.wishes}\n
+        Rejection issues: ${
+          {
+            high_service_fee: 'High service fee',
+            not_interested: 'Not interested',
+            short_payment_duration: 'Short payment duration',
+            will_apply_later: 'Will apply later',
+          }[input.rejectionIssues]
+        }\n
+        Send the link: ${+input.whetherSendLink ? 'Yes' : 'No'}`,
         follow_up_results: input.remark,
-        desc_follow_up: input.reason,
         latest_follow_up_time: new Date().toISOString(),
-        whether_apply: Boolean(input.wishes),
+        whether_apply: true,
       })
       .eq('mobile', mobile);
 

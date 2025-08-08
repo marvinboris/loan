@@ -140,6 +140,21 @@ export const authService = {
     return { success: true, message: 'Password has been updated successfully' };
   },
 
+  async adminChangePassword(input: ChangePasswordInput): Promise<AuthResponse> {
+    const { password, userId } = input;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await supabase
+      .from('users')
+      .update({
+        password: hashedPassword,
+      })
+      .eq('id', userId);
+
+    return { success: true, message: 'Password has been updated successfully' };
+  },
+
   async customerLogin(input: CustomerLoginInput): Promise<AuthResponse> {
     const { mobile } = input;
 

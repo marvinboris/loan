@@ -1,5 +1,6 @@
 import {
   BorrowFormValues,
+  DistributionFormValues,
   KycFormValues,
   ManualAssignmentFormValues,
   ReleaseFormValues,
@@ -52,10 +53,21 @@ export const authService = {
   },
 
   // Pour changer le mot de passe
-  reset: async (credentials: { password: string; token: string }) => {
+  async reset(credentials: { password: string; token: string }) {
     const httpClient = getHttpClient();
     const response = await httpClient.post<Response>(
       '/auth/reset',
+      credentials
+    );
+
+    return response;
+  },
+
+  // Pour changer le mot de passe
+  async changePassword(credentials: { password: string }) {
+    const httpClient = getHttpClient();
+    const response = await httpClient.post<Response>(
+      '/auth/admin-change-password',
       credentials
     );
 
@@ -120,6 +132,19 @@ export const telemarketingService = {
     const httpClient = getHttpClient();
     const result = await httpClient.post<Response>(
       '/admin/telemarketing/release',
+      credentials
+    );
+
+    return result;
+  },
+};
+
+// Service pour la collection
+export const collectionService = {
+  async distribution(credentials: DistributionFormValues) {
+    const httpClient = getHttpClient();
+    const result = await httpClient.post<Response>(
+      '/admin/collection/distribution',
       credentials
     );
 

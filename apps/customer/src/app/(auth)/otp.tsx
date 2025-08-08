@@ -1,4 +1,3 @@
-import { useRequest } from '@creditwave/hooks';
 import {
   Button,
   Form,
@@ -8,12 +7,13 @@ import {
 } from '@creditwave/ui';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Formik } from 'formik';
+import React from 'react';
 import { Pressable } from 'react-native';
 import { authService } from '../../services';
 
 export default function Page() {
   const { mobile } = useLocalSearchParams<{ mobile: string }>();
-  const { loading } = useRequest();
+  const [resending, setResending] = React.useState(false);
 
   const initialValues = {
     code: '',
@@ -27,7 +27,7 @@ export default function Page() {
         if (result.token) router.navigate('/dashboard');
       }}
     >
-      {({ values, handleChange, handleSubmit, resetForm }) => (
+      {({ values, handleChange, handleSubmit, resetForm, isSubmitting }) => (
         <Form>
           <PinCodeInput
             id="code"
@@ -41,13 +41,14 @@ export default function Page() {
           <Button
             color="primary"
             title="Continue"
-            loading={loading}
+            loading={isSubmitting}
             onPress={() => handleSubmit()}
             containerStyle={{ marginVertical: 16 }}
           />
 
           <Pressable
             onPress={async () => {
+              setResending(true);
               const result = await authService.login({ mobile });
               if (result.success) {
                 toastShow({
@@ -56,10 +57,11 @@ export default function Page() {
                 });
                 resetForm();
               }
+              setResending(false);
             }}
           >
             <Typography underline align="center">
-              Resend code
+              {resending ? 'Resending...' : 'Resend code'}
             </Typography>
           </Pressable>
         </Form>

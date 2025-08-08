@@ -1,4 +1,4 @@
-import { usePaginatedApi } from '@creditwave/hooks';
+import { usePaginatedApi, useRequest } from '@creditwave/hooks';
 import {
   Button,
   Filter,
@@ -206,6 +206,7 @@ function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
           handleSubmit,
           resetForm,
           setFieldValue,
+          isSubmitting,
         }) => (
           <form
             className="flex flex-col gap-2.5"
@@ -415,7 +416,7 @@ function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
                 Cancel
               </Button>
 
-              <Button>Confirm</Button>
+              <Button loading={isSubmitting}>Confirm</Button>
             </div>
           </form>
         )}

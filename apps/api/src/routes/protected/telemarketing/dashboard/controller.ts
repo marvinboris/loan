@@ -7,6 +7,7 @@ export class DashboardController {
       .from('customers')
       .select('*')
       .eq('telemarketer_id', req.user.id)
+      .is('app_time', null)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -15,7 +16,7 @@ export class DashboardController {
 
     res.json({
       success: true,
-      data,
+      data: data.map((item) => ({ ...item, markedAsDone: item.whether_apply })),
     });
   }
 }

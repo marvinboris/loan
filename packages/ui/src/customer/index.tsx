@@ -23,17 +23,28 @@ export function Customer(props: CustomerProps) {
   const { theme } = useConfig();
   const [visible, setVisible] = React.useState(false);
 
+  const color = props.markedAsDone ? 'white' : 'black';
+
   return (
     <>
       <Modal title={mobile} show={visible} setShow={setVisible}>
-        <CustomerForm {...props} mobile={mobile} />
+        <CustomerForm
+          {...props}
+          mobile={mobile}
+          originalMobile={props.mobile}
+        />
       </Modal>
 
       <Pressable
         onPress={() => setVisible(true)}
         style={({ pressed }) => [
           { gap: 4, paddingVertical: 12, paddingHorizontal: 16 },
-          pressed && { backgroundColor: theme.primary + '22' },
+          (pressed || !props.markedAsDone) && {
+            backgroundColor: theme.primary + '22',
+          },
+          props.markedAsDone && {
+            backgroundColor: theme.primary,
+          },
         ]}
       >
         <View
@@ -43,10 +54,12 @@ export function Customer(props: CustomerProps) {
             alignItems: 'flex-start',
           }}
         >
-          <Typography family="BOLD">{mobile}</Typography>
+          <Typography color={color} family="BOLD">
+            {mobile}
+          </Typography>
 
           <Pressable onPress={() => Linking.openURL('tel:' + props.mobile)}>
-            <Typography>Dial</Typography>
+            <Typography color={color}>Dial</Typography>
           </Pressable>
         </View>
 
@@ -57,14 +70,16 @@ export function Customer(props: CustomerProps) {
           }}
         >
           <View style={{ flex: 1 }}>
-            <Typography size="sm">Record</Typography>
+            <Typography color={color} size="sm">
+              Record
+            </Typography>
           </View>
 
           <Pressable
             style={{ flex: 1 }}
             onPress={() => Linking.openURL('sms:' + props.mobile)}
           >
-            <Typography size="sm" align="center">
+            <Typography color={color} size="sm" align="center">
               Send SMS
             </Typography>
           </Pressable>
@@ -82,7 +97,7 @@ export function Customer(props: CustomerProps) {
               })
             }
           >
-            <Typography size="sm" align="right">
+            <Typography color={color} size="sm" align="right">
               WhatsApp
             </Typography>
           </Pressable>

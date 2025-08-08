@@ -1,12 +1,9 @@
-import { useRequest } from '@creditwave/hooks';
 import { Button, EmailInput, Form, PasswordInput } from '@creditwave/ui';
 import { Formik } from 'formik';
 import React from 'react';
 import { authService } from '../../services';
 
 export default function Page() {
-  const { loading } = useRequest();
-
   const initialValues = {
     email: '',
     password: '',
@@ -14,7 +11,7 @@ export default function Page() {
 
   return (
     <Formik initialValues={initialValues} onSubmit={authService.login}>
-      {({ values, errors, handleChange, handleSubmit }) => (
+      {({ values, errors, handleChange, handleSubmit, isSubmitting }) => (
         <Form>
           <EmailInput
             id="email"
@@ -39,7 +36,7 @@ export default function Page() {
           <Button
             color="primary"
             title="Sign in"
-            loading={loading}
+            loading={isSubmitting}
             onPress={() => handleSubmit()}
             containerStyle={{ marginTop: 16 }}
           />

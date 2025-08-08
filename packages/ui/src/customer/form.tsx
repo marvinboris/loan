@@ -18,6 +18,8 @@ type FormValues = {
 
 export type CustomerProps = {
   mobile: string;
+  originalMobile: string;
+  markedAsDone: boolean;
 
   onSubmit(data: FormValues): void;
   onRecordOnce(data: FormValues): void;
@@ -25,17 +27,18 @@ export type CustomerProps = {
 
 export function CustomerForm({
   mobile,
+  originalMobile,
   onSubmit,
   onRecordOnce,
 }: CustomerProps) {
   const initialValues: FormValues = {
-    mobile,
+    mobile: originalMobile,
     callSituation: '',
   };
 
   return (
     <Formik initialValues={initialValues} onSubmit={onSubmit}>
-      {({ errors, handleChange, handleSubmit, values }) => (
+      {({ errors, handleChange, handleSubmit, values, isSubmitting }) => (
         <Form>
           <View style={{ marginHorizontal: -16 }}>
             <TextLine label="Mobile" value={mobile} />
@@ -139,6 +142,7 @@ export function CustomerForm({
             <Button
               color="primary"
               title="Mark complete"
+              loading={isSubmitting}
               containerStyle={{ flex: 1 }}
               onPress={() => handleSubmit()}
             />

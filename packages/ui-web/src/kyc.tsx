@@ -146,7 +146,13 @@ function KycForm({
           }
         }}
       >
-        {({ handleChange, handleSubmit, setFieldValue, values }) => (
+        {({
+          handleChange,
+          handleSubmit,
+          setFieldValue,
+          values,
+          isSubmitting,
+        }) => (
           <form
             className="flex flex-col gap-2.5"
             onSubmit={(e) => {
@@ -168,7 +174,7 @@ function KycForm({
               onChange={handleChange('reason')}
             />
 
-            <Button>Submit</Button>
+            <Button loading={isSubmitting}>Submit</Button>
           </form>
         )}
       </Formik>

@@ -1,8 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../../lib';
-import { ConnectionStatus, WillingnessToPay } from '../../../../types';
+import {
+  ConnectionStatus,
+  LoanStatus,
+  WillingnessToPay,
+} from '../../../../types';
 import { filter } from '../../../../utils';
+import { DistributionInput } from './interfaces';
+import { collectionService } from './service';
 
 export class CollectionController {
   async getMonthlyPerformance(req: Request, res: Response, next: NextFunction) {
@@ -398,15 +404,18 @@ export class CollectionController {
         dueDate,
       } = req.query;
 
-      let query = supabase.from('loans').select(
-        `
+      let query = supabase
+        .from('loans')
+        .select(
+          `
           *,
           customers:customer_id (*),
           collectors:collector_id (name),
           collection_records:collection_records (*)
         `,
-        { count: 'exact' }
-      );
+          { count: 'exact' }
+        )
+        .eq('loan_status', LoanStatus.ACCEPTED);
 
       // Appliquer les filtres
       if (stage) query = query.eq('collection_stage', stage as string);
@@ -593,6 +602,43 @@ export class CollectionController {
         items,
         total,
       });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getCollectors(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select()
+        .eq('role', 'collector');
+
+      if (error) throw error;
+
+      const record: Record<string, string> = {};
+      data.forEach((item) => {
+        record[item.id] = item.name;
+      });
+
+      res.json(record);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async postDistribution(req: Request, res: Response, next: NextFunction) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const input: DistributionInput = req.body;
+
+      const result = await collectionService.distribution(input);
+
+      res.status(result.success ? 200 : 400).json(result);
     } catch (error) {
       next(error);
     }

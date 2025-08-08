@@ -1,10 +1,10 @@
-import React from 'react';
-import { Modal } from '../modal';
 import { Formik } from 'formik';
-import { Input } from '../form';
+import React from 'react';
 import { Button } from '../buttons';
+import { Input } from '../form';
+import { Modal } from '../modal';
 
-type FormValues = {
+export type ChangePasswordFormValues = {
   password: string;
   passwordConfirmation: string;
 };
@@ -12,18 +12,30 @@ type FormValues = {
 type ChangePasswordProps = {
   show: boolean;
   setShow: (show: boolean) => void;
+  onSubmit(data: ChangePasswordFormValues): void;
 };
 
-export function ChangePassword({ show, setShow }: ChangePasswordProps) {
-  const initialValues: FormValues = {
+export function ChangePassword({
+  show,
+  setShow,
+  onSubmit,
+}: ChangePasswordProps) {
+  const initialValues: ChangePasswordFormValues = {
     password: '',
     passwordConfirmation: '',
   };
 
   return (
     <Modal title="Change password" show={show} setShow={setShow}>
-      <Formik initialValues={initialValues} onSubmit={(data) => {}}>
-        {({ values, errors, handleChange, handleSubmit, resetForm }) => (
+      <Formik initialValues={initialValues} onSubmit={onSubmit}>
+        {({
+          values,
+          errors,
+          handleChange,
+          handleSubmit,
+          resetForm,
+          isSubmitting,
+        }) => (
           <form
             className="flex flex-col gap-2.5"
             onSubmit={(e) => {
@@ -70,7 +82,7 @@ export function ChangePassword({ show, setShow }: ChangePasswordProps) {
                 Cancel
               </Button>
 
-              <Button>Confirm</Button>
+              <Button loading={isSubmitting}>Confirm</Button>
             </div>
           </form>
         )}

@@ -1,4 +1,4 @@
-import { useConfig, useRequest } from '@creditwave/hooks';
+import { useConfig } from '@creditwave/hooks';
 import moment from 'moment';
 import { Pressable, View } from 'react-native';
 import { Typography } from '../typography';
@@ -106,8 +106,6 @@ function LoanForm({
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { loading } = useRequest();
-
   const initialValues: LoanFormValues = {
     id: values.id,
     amount: 0,
@@ -132,7 +130,14 @@ function LoanForm({
             toastShow({ type: 'success', text: result.message });
         }}
       >
-        {({ handleSubmit, setFieldValue, values, dirty, isValid }) => (
+        {({
+          handleSubmit,
+          setFieldValue,
+          values,
+          dirty,
+          isValid,
+          isSubmitting,
+        }) => (
           <Form>
             <NumberInput
               min={0}
@@ -146,7 +151,7 @@ function LoanForm({
 
             <Button
               title="Repay"
-              loading={loading}
+              loading={isSubmitting}
               disabled={!(dirty && isValid)}
               onPress={() => handleSubmit()}
             />

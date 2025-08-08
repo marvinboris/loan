@@ -240,6 +240,7 @@ export function TelemarketingNewCustomers() {
               ) : undefined}
             </div>
           ),
+          whetherAssigned: item.followUpPerson ? 'Yes' : 'No',
         }))}
         fields={[
           { label: 'MOBILE', key: 'mobile', width: 100 },
@@ -253,7 +254,11 @@ export function TelemarketingNewCustomers() {
           { label: 'ALLOCATION TIME', key: 'allocationTime' },
           { label: 'LATEST FOLLOW-UP TIME', key: 'latestFollowUpTime' },
           { label: 'FOLLOW-UP RESULTS', key: 'followUpResults' },
-          { label: 'DESCRIPTION OF FOLLOW-UP', key: 'descFollowUp' },
+          {
+            label: 'DESCRIPTION OF FOLLOW-UP',
+            key: 'descFollowUp',
+            width: 200,
+          },
           { label: 'WHETHER IT HAS BEEN ASSIGNED', key: 'whetherAssigned' },
           { label: 'OPERATION', key: 'operation' },
         ]}

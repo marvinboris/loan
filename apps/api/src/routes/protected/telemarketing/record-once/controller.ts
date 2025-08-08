@@ -9,8 +9,8 @@ export class RecordOnceController {
     const { error } = await supabase
       .from('customers')
       .update({
+        desc_follow_up: input.rejectionIssues,
         follow_up_results: input.remark,
-        desc_follow_up: input.reason,
         latest_follow_up_time: new Date().toISOString(),
       })
       .eq('mobile', mobile);

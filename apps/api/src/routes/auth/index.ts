@@ -7,8 +7,9 @@ import {
   customerLoginValidator,
   verifyCodeValidator,
   changePasswordValidator,
+  adminChangePasswordValidator,
 } from './validators';
-import { authenticate } from '../../middlewares';
+import { authenticate, authorize } from '../../middlewares';
 
 const authController = new AuthController();
 
@@ -25,6 +26,13 @@ authRouter.post(
   authenticate,
   changePasswordValidator,
   authController.changePassword
+);
+authRouter.post(
+  '/admin-change-password',
+  authenticate,
+  authorize('admin'),
+  adminChangePasswordValidator,
+  authController.adminChangePassword
 );
 authRouter.post(
   '/customer',

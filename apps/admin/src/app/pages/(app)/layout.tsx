@@ -1,8 +1,8 @@
-import { Breadcrumb, Profile, Sidebar } from '@creditwave/ui-web';
+import { useAuth } from '@creditwave/hooks';
+import { Breadcrumb, Profile, Sidebar, toastShow } from '@creditwave/ui-web';
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { authService } from '../../services';
-import { useAuth } from '@creditwave/hooks';
 
 export function AppLayout() {
   const { isAuthenticated, user } = useAuth();
@@ -20,7 +20,14 @@ export function AppLayout() {
         <header className="h-[60px] px-5 border-b border-stone-400 flex items-center">
           <Breadcrumb />
 
-          <Profile logout={authService.logout} />
+          <Profile
+            logout={authService.logout}
+            changePassword={async (data) => {
+              const result = await authService.changePassword(data);
+              if (result.success)
+                toastShow({ type: 'success', text: result.message });
+            }}
+          />
         </header>
 
         <main className="flex-1 overflow-auto px-5 py-4 flex flex-col gap-2.5">

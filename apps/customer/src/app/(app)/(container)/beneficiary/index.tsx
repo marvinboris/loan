@@ -1,4 +1,4 @@
-import { useAuth, useRequest, useTitle } from '@creditwave/hooks';
+import { useAuth, useTitle } from '@creditwave/hooks';
 import {
   Button,
   Form,
@@ -9,15 +9,14 @@ import {
 } from '@creditwave/ui';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
-import { ArrowDownTrayIcon } from 'react-native-heroicons/outline';
-import { beneficiaryService } from '../../../../services';
 import React from 'react';
+import { ArrowDownTrayIcon } from 'react-native-heroicons/outline';
 import z from 'zod';
 import { toFormikValidate } from 'zod-formik-adapter';
+import { beneficiaryService } from '../../../../services';
 
 export default function Page() {
   const { user } = useAuth();
-  const { loading } = useRequest();
   useTitle('Beneficiary account');
 
   const initialValues = {
@@ -53,7 +52,14 @@ export default function Page() {
           }
         }}
       >
-        {({ handleChange, handleSubmit, values, dirty, isValid }) => (
+        {({
+          handleChange,
+          handleSubmit,
+          values,
+          dirty,
+          isValid,
+          isSubmitting,
+        }) => (
           <Form>
             <PhoneNumberInput
               id="account"
@@ -78,7 +84,7 @@ export default function Page() {
             <Button
               iconRight
               title="Save"
-              loading={loading}
+              loading={isSubmitting}
               icon={ArrowDownTrayIcon}
               disabled={!(dirty && isValid)}
               onPress={() => handleSubmit()}
