@@ -3,7 +3,12 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "eas-build-post-install": "cd ../../ && node tools/scripts/eas-build-post-install.mjs . apps/collection"
+    "eas-build-post-install": "cd ../../ && node tools/scripts/eas-build-post-install.mjs . apps/collection",
+    "prebuild": "expo prebuild",
+    "android": "pnpm prebuild && expo run:android",
+    "android-prev": "dotenv -c -- eas build -p android --profile preview --local",
+    "android-prod": "eas build -p android",
+    "ios": "expo run:ios"
   },
   "dependencies": {
     "@testing-library/jest-native": "*",
