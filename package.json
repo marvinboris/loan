@@ -13,7 +13,10 @@
     "seed:all": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/index.ts all",
     "seed:user": "dotenv -e apps/api/.env -- tsx apps/api/src/seeders/user.ts",
     "prepare-api": "nx build api && rm -rf ~/api ~/api.zip && cp -r dist/api . && zip -r api.zip api && mv api.zip ~ && mv api ~",
-    "deploy-admin": "nx build admin && cd apps/admin && firebase deploy && cd ../.."
+    "deploy-admin": "nx build admin && cd apps/admin && firebase deploy && cd ../..",
+    "build-customer": "cd apps/customer && pnpm android-prev && cd ../..",
+    "build-telemarketing": "cd apps/telemarketing && pnpm android-prev && cd ../..",
+    "build-collection": "cd apps/collection && pnpm android-prev && cd ../.."
   },
   "private": true,
   "dependencies": {
