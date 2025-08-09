@@ -1,7 +1,7 @@
 import { ConfigContext, ExpoConfig } from 'expo/config';
 import { version } from './package.json';
 
-const SLUG = '@creditwave/collection';
+const SLUG = 'creditwave-collection';
 
 // App production config
 const APP_NAME = 'Credit Wave Collection';
@@ -27,6 +27,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     slug: SLUG,
     version,
     icon,
+    jsEngine: 'hermes',
     splash: {
       image: './assets/icon.png',
       resizeMode: 'contain',
@@ -86,14 +87,38 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         'expo-font',
         {
           fonts: [
-            './assets/fonts/SF-Pro-Display-Bold.otf',
-            './assets/fonts/SF-Pro-Display-Medium.otf',
-            './assets/fonts/SF-Pro-Display-Regular.otf',
-            './assets/fonts/SF-Pro-Display-Semibold.otf',
+            './assets/fonts/Inter_18pt-Bold.ttf',
+            './assets/fonts/Inter_18pt-Medium.ttf',
+            './assets/fonts/Inter_18pt-Regular.ttf',
+            './assets/fonts/Inter_18pt-SemiBold.ttf',
           ],
         },
       ],
+      [
+        'expo-build-properties',
+        {
+          android: {
+            enableBundleCompression: true,
+            enableProguardInReleaseBuilds: true,
+            enableShrinkResourcesInReleaseBuilds: true,
+            useLegacyPackaging: true,
+            enableSeparateBuildPerCPUArchitecture: true,
+            packagingOptions: {
+              pickFirst: [
+                '**/libc++_shared.so',
+                '**/libjsc.so',
+                '**/libreactnativejni.so',
+              ],
+            },
+          },
+        },
+      ],
     ],
+    extra: {
+      eas: {
+        projectId: '5b725e90-f6ba-479a-a4b9-14311d59296c',
+      },
+    },
   };
 };
 
@@ -133,3 +158,20 @@ export const getDynamicAppConfig = (
     scheme: `${SCHEME}-dev`,
   };
 };
+
+// Use current code to minify the android bundle
+// android/app/build.gradle
+/**
+ * ...
+ * android {
+ *    ...
+ *    splits {
+ *      abi {
+ *        enable true
+ *        reset()
+ *        include 'arm64-v8a'
+ *        universalApk false
+ *      }
+ *    }
+ * }
+ */
