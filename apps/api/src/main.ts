@@ -35,6 +35,9 @@ app.use(
   }
 );
 
+process.on('unhandledRejection', console.error);
+process.on('uncaughtException', console.error);
+
 // Start server
 app.listen(port, () => {
   console.log(`[ready] Server running on port ${port}`);
