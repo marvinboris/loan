@@ -4,11 +4,14 @@ import cors from 'cors';
 import { config } from './config';
 import { authRouter, protectedRouter } from './routes';
 
+process.env.TZ = 'UTC';
+
 const app = express();
 const port = process.env.PORT || 4300;
 
 app.use(cors({ origin: '*' }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Servir les fichiers statiques (images uploadées)
 app.use('/uploads', express.static(config.uploadsPath));
@@ -30,7 +33,8 @@ app.use(
     res: express.Response,
     next: express.NextFunction
   ) => {
-    console.error(err.stack);
+    console.error('Detailed error:', err);
+    console.error('Stack:', err.stack);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 );
