@@ -108,7 +108,9 @@ export default function Layout() {
       >
         <Pressable
           onPress={
-            onDashboard ? () => setIsMenuOpen(true) : () => router.back()
+            onDashboard
+              ? () => setIsMenuOpen(true)
+              : () => router.navigate('/dashboard')
           }
           style={{
             width: 48,

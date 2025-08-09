@@ -18,6 +18,7 @@ export type CollectionLoanProps = {
   interest: number;
   penalty: number;
   days_overdue: number;
+  collection_records?: never[];
 };
 
 export function CollectionLoan({
@@ -25,6 +26,16 @@ export function CollectionLoan({
   ...item
 }: CollectionLoanProps & { onPress: (item: CollectionLoanProps) => void }) {
   const { theme } = useConfig();
+
+  const qty = item.collection_records?.length || 0;
+  const color =
+    qty === 0
+      ? undefined
+      : qty === 1
+      ? theme.primary
+      : qty === 2
+      ? theme.warning
+      : theme.success;
 
   return (
     <Pressable
@@ -36,24 +47,36 @@ export function CollectionLoan({
           paddingHorizontal: 12,
           marginHorizontal: -12,
         },
-        pressed && { backgroundColor: theme.primary + '22' },
+        qty
+          ? { backgroundColor: color }
+          : pressed && { backgroundColor: theme.primary + '22' },
       ]}
     >
-      <Typography color="grey0">#{item.loan_number}</Typography>
+      <Typography color={qty ? 'white' : 'grey0'}>
+        #{item.loan_number}
+      </Typography>
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <View>
-          <Typography family="BOLD">{item.name}</Typography>
+          <Typography color={qty ? 'white' : undefined} family="BOLD">
+            {item.name}
+          </Typography>
           {item.days_overdue ? (
-            <Typography family="BOLD" size="sm">
+            <Typography
+              color={qty ? 'white' : undefined}
+              family="BOLD"
+              size="sm"
+            >
               {item.days_overdue}
             </Typography>
           ) : null}
         </View>
 
         <View>
-          <Typography>{item.total_repayment?.toLocaleString()} XAF</Typography>
-          <Typography color="grey0" size="sm" align="right">
+          <Typography color={qty ? 'white' : undefined} align="right">
+            {item.total_repayment?.toLocaleString()} XAF
+          </Typography>
+          <Typography color={qty ? 'white' : 'grey0'} size="sm" align="right">
             {moment(item.created_at).format('LL')}
           </Typography>
         </View>

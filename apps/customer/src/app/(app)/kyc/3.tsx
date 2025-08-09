@@ -3,10 +3,14 @@ import { KycState, kycState$ } from '@creditwave/utils';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
 import React from 'react';
-import { ArrowUpOnSquareStackIcon } from 'react-native-heroicons/outline';
+import {
+  ArrowLeftIcon,
+  ArrowUpOnSquareStackIcon,
+} from 'react-native-heroicons/outline';
 import z from 'zod';
 import { toFormikValidate } from 'zod-formik-adapter';
 import { kycService } from '../../../services';
+import { View } from 'react-native';
 
 export default function Page() {
   const initialValues: {
@@ -56,15 +60,25 @@ export default function Page() {
               onChange={(value) => setFieldValue('selfie', value)}
             />
 
-            <Button
-              iconRight
-              title="Submit"
-              loading={isSubmitting}
-              disabled={!(dirty && isValid)}
-              onPress={() => handleSubmit()}
-              icon={ArrowUpOnSquareStackIcon}
-              containerStyle={{ alignItems: 'center' }}
-            />
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}
+            >
+              <Button
+                title="Back"
+                type="clear"
+                icon={ArrowLeftIcon}
+                onPress={() => router.back()}
+              />
+
+              <Button
+                iconRight
+                title="Submit"
+                loading={isSubmitting}
+                disabled={!(dirty && isValid)}
+                onPress={() => handleSubmit()}
+                icon={ArrowUpOnSquareStackIcon}
+              />
+            </View>
           </Form>
         )}
       </Formik>

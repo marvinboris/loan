@@ -1,5 +1,4 @@
-import { CollectionLoan, Section } from '@creditwave/ui';
-import { router } from 'expo-router';
+import { CollectionRecord, Section } from '@creditwave/ui';
 import React from 'react';
 import { useCollection } from '../../../contexts';
 
@@ -8,13 +7,9 @@ export default function Page() {
 
   if (!collection) return null;
   return (
-    <Section>
+    <Section bodyStyle={{ gap: 8 }}>
       {(collection.mark || []).map((item, index) => (
-        <CollectionLoan
-          key={index}
-          {...item}
-          onPress={(item) => router.push('/' + item.loanNumber)}
-        />
+        <CollectionRecord key={index} {...item} />
       ))}
     </Section>
   );

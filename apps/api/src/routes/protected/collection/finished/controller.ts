@@ -9,12 +9,14 @@ export class FinishedController {
       .select(
         `
         *,
-        customers:customer_id (name)
+        customers:customer_id (name),
+        repayments:repayments (*),
+        collection_records:collection_records (*)
         `
       )
       .eq('collector_id', req.user.id)
       .eq('loan_status', LoanStatus.REPAID)
-      .order('created_at', { ascending: false });
+      .order('due_date', { ascending: false });
 
     if (error)
       return res.status(400).json({

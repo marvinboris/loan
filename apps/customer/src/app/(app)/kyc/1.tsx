@@ -3,7 +3,8 @@ import { kycState$ } from '@creditwave/utils';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
 import React from 'react';
-import { ArrowRightIcon } from 'react-native-heroicons/outline';
+import { View } from 'react-native';
+import { ArrowLeftIcon, ArrowRightIcon } from 'react-native-heroicons/outline';
 import z from 'zod';
 import { toFormikValidate } from 'zod-formik-adapter';
 
@@ -43,14 +44,24 @@ export default function Page() {
               onChange={(value) => setFieldValue('frontPhoto', value)}
             />
 
-            <Button
-              iconRight
-              title="Next"
-              icon={ArrowRightIcon}
-              disabled={!(dirty && isValid)}
-              onPress={() => handleSubmit()}
-              containerStyle={{ alignItems: 'center' }}
-            />
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}
+            >
+              <Button
+                title="Back"
+                type="clear"
+                icon={ArrowLeftIcon}
+                onPress={() => router.back()}
+              />
+
+              <Button
+                iconRight
+                title="Next"
+                icon={ArrowRightIcon}
+                disabled={!(dirty && isValid)}
+                onPress={() => handleSubmit()}
+              />
+            </View>
           </Form>
         )}
       </Formik>

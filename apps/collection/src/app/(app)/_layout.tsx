@@ -79,8 +79,8 @@ export default function Layout() {
             <Logo />
 
             <View>
-              <NavItem title="My performance" href="/my-performance" />
-              <NavItem title="Finished" href="/finished" />
+              <NavItem title="Active clients" href="/my-performance" />
+              <NavItem title="Finished clients" href="/finished" />
               <NavItem title="Profile" href="/profile" />
             </View>
 
@@ -106,7 +106,9 @@ export default function Layout() {
       >
         <Pressable
           onPress={
-            onDashboard ? () => setIsMenuOpen(true) : () => router.back()
+            onDashboard
+              ? () => setIsMenuOpen(true)
+              : () => router.navigate('/dashboard')
           }
           style={{
             width: 48,

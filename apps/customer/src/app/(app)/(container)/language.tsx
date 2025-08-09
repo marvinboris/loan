@@ -1,30 +1,35 @@
 import { useConfig, useTitle } from '@creditwave/hooks';
 import { Card, Section } from '@creditwave/ui';
-import { Pressable } from 'react-native';
+import { Pressable, ScrollView } from 'react-native';
 
 export default function Page() {
   useTitle('Language');
 
   return (
-    <Section
-      bodyStyle={{ gap: 8 }}
-      subtitleText="Please select your preferred display language for the application."
-    >
-      {Object.entries({
-        en: ['English', 'See all the application written in english language'],
-        fr: [
-          'Français',
-          'See all the application text written in french language',
-        ],
-      }).map(([abbr, [title, description]], index) => (
-        <Language
-          key={index}
-          abbr={abbr}
-          title={title}
-          description={description}
-        />
-      ))}
-    </Section>
+    <ScrollView>
+      <Section
+        bodyStyle={{ gap: 8 }}
+        subtitleText="Please select your preferred display language for the application."
+      >
+        {Object.entries({
+          en: [
+            'English',
+            'See all the application written in english language',
+          ],
+          fr: [
+            'Français',
+            'See all the application text written in french language',
+          ],
+        }).map(([abbr, [title, description]], index) => (
+          <Language
+            key={index}
+            abbr={abbr}
+            title={title}
+            description={description}
+          />
+        ))}
+      </Section>
+    </ScrollView>
   );
 }
 

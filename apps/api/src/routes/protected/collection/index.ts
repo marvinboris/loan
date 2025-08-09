@@ -9,6 +9,6 @@ const collectionRouter = express.Router();
 collectionRouter.use('/dashboard', dashboardRouter);
 collectionRouter.use('/finished', finishedRouter);
 collectionRouter.use('/my-performance', myPerformanceRouter);
-collectionRouter.use('/:id', detailRouter);
+collectionRouter.use(detailRouter);
 
 export { collectionRouter };

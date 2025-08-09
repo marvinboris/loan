@@ -76,11 +76,13 @@ export default function Page() {
 
       <Add show={adding} setShow={setAdding} />
 
-      <Button
-        title="Add remark"
-        onPress={() => setAdding(true)}
-        containerStyle={{ alignItems: 'center' }}
-      />
+      {collection.canAddRemark && (
+        <Button
+          title="Add remark"
+          onPress={() => setAdding(true)}
+          containerStyle={{ alignItems: 'center' }}
+        />
+      )}
     </View>
   );
 }
@@ -92,6 +94,7 @@ function Add({
   show: boolean;
   setShow: (show: boolean) => void;
 }) {
+  const collection = useCollection();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const initialValues: FormValues = {
@@ -103,14 +106,18 @@ function Add({
     remark: '',
   };
 
+  if (!collection) return null;
   return (
     <Modal show={show} setShow={setShow} title="Add remark">
       <Formik
         initialValues={initialValues}
         onSubmit={async (data) => {
           const result = await collectionService.addMark(id, data);
-          if (result.success)
+          if (result.success) {
             toastShow({ type: 'success', text: result.message });
+            collection.refetch();
+            setShow(false);
+          }
         }}
       >
         {({ errors, handleChange, handleSubmit, values, isSubmitting }) => (
@@ -139,22 +146,9 @@ function Add({
               placeholder="Select willingnessToPay"
               onChange={handleChange('willingnessToPay')}
               options={{
-                high: 'High',
-                medium: 'Medium',
-                low: 'Low',
-                refusal: 'Refusal',
+                high: 'Yes',
+                refusal: 'No',
               }}
-            />
-
-            <Select
-              id="location"
-              name="location"
-              label="Location"
-              error={errors.location}
-              value={values.location}
-              placeholder="Select location"
-              onChange={handleChange('location')}
-              options={{}}
             />
 
             <Select
@@ -165,18 +159,17 @@ function Add({
               value={values.contactTarget}
               placeholder="Select contact target"
               onChange={handleChange('contactTarget')}
-              options={{}}
-            />
-
-            <Select
-              id="collectionResult"
-              name="collectionResult"
-              label="Collection result"
-              error={errors.collectionResult}
-              value={values.collectionResult}
-              placeholder="Select collection result"
-              onChange={handleChange('collectionResult')}
-              options={{}}
+              options={{
+                [collection.detail.mobile]: 'Self',
+                [collection.kyc.emergency_number_1]:
+                  collection.kyc.emergency_number_1,
+                ...(collection.kyc.emergency_number_2
+                  ? {
+                      [collection.kyc.emergency_number_2]:
+                        collection.kyc.emergency_number_2,
+                    }
+                  : {}),
+              }}
             />
 
             <TextAreaInput

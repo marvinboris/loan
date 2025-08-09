@@ -8,16 +8,16 @@ import {
 } from '@creditwave/ui';
 import { router } from 'expo-router';
 import React from 'react';
-import { View } from 'react-native';
+import { RefreshControl, ScrollView, View } from 'react-native';
 
 export default function Page() {
   useTitle('Dashboard');
 
-  const { data, loading } = useApi<{
-    dayRevenue: string;
-    monthRevenue: string;
-    requestHistory: number;
-    reimbursementRate: number;
+  const { data, loading, refetch } = useApi<{
+    fullPayments: string;
+    weekPerformance: string;
+    partialPayments: string;
+    totalTickets: number;
     target: number;
     collectionAmount: number;
     requests: CollectionLoanProps[];
@@ -35,43 +35,49 @@ export default function Page() {
   );
 
   return (
-    <View style={{ gap: 10 }}>
-      <Card title="Day performance" bodyStyle={{ flexDirection: 'row' }}>
-        {data && (
-          <>
-            <View style={{ flex: 1 }}>
-              <Performance label="Day revenue" value={data.dayRevenue} />
-              <Performance
-                label="Request history"
-                value={data.requestHistory}
-              />
-              <Performance label="Target" value={data.target} />
-            </View>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={refetch} />
+      }
+    >
+      <View style={{ gap: 10 }}>
+        <Card title="Day performance" bodyStyle={{ flexDirection: 'row' }}>
+          {data && (
+            <>
+              <View style={{ flex: 1 }}>
+                <Performance label="Full payments" value={data.fullPayments} />
+                <Performance
+                  label="Partial payments"
+                  value={data.partialPayments}
+                />
+                <Performance label="Target" value={data.target} />
+              </View>
 
-            <View style={{ flex: 1 }}>
-              <Performance label="Month revenue" value={data.monthRevenue} />
-              <Performance
-                label="Reimbursement rate"
-                value={data.reimbursementRate}
-              />
-              <Performance
-                label="Collection amount"
-                value={data.collectionAmount}
-              />
-            </View>
-          </>
-        )}
-      </Card>
+              <View style={{ flex: 1 }}>
+                <Performance
+                  label="Week performance"
+                  value={data.weekPerformance}
+                />
+                <Performance label="Total tickets" value={data.totalTickets} />
+                <Performance
+                  label="Collection amount"
+                  value={data.collectionAmount}
+                />
+              </View>
+            </>
+          )}
+        </Card>
 
-      <Section titleText="Pending requests" loading={loading}>
-        {(data?.requests || []).map((item, index) => (
-          <CollectionLoan
-            key={index}
-            {...item}
-            onPress={(item) => router.push('/' + item.loanNumber)}
-          />
-        ))}
-      </Section>
-    </View>
+        <Section titleText="Pending requests" loading={loading}>
+          {(data?.requests || []).map((item, index) => (
+            <CollectionLoan
+              key={index}
+              {...item}
+              onPress={(item) => router.push('/' + item.loan_number)}
+            />
+          ))}
+        </Section>
+      </View>
+    </ScrollView>
   );
 }

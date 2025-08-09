@@ -2,6 +2,7 @@ export * from './amount-line';
 export * from './button';
 export * from './card';
 export * from './collection-loan';
+export * from './collection-record';
 export * from './country-input';
 export * from './customer';
 export * from './date-input';

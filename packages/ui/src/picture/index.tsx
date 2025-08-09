@@ -1,14 +1,26 @@
 import { useConfig } from '@creditwave/hooks';
-
+import React from 'react';
+import { Image } from 'react-native';
 import { Card, CardProps } from '../card';
-import { UserIcon } from 'react-native-heroicons/outline';
 
 export function Picture({
-  size = 64,
   style,
+  uri,
   ...props
-}: Omit<CardProps, 'size'> & { size?: number }) {
+}: Omit<CardProps, 'children' | 'size'> & { uri?: string }) {
   const { theme } = useConfig();
+  const [height, setHeight] = React.useState(0);
+  const [width, setWidth] = React.useState(0);
+
+  const execute = React.useCallback(async () => {
+    if (!uri) return;
+    const size = await Image.getSize(uri);
+    return setHeight((size.height * width) / size.width);
+  }, [uri, width]);
+
+  React.useEffect(() => {
+    execute();
+  }, [execute]);
 
   return (
     <Card
@@ -16,8 +28,6 @@ export function Picture({
       style={[
         {
           backgroundColor: theme.white,
-          width: size,
-          height: size,
           justifyContent: 'center',
           alignItems: 'center',
         },
@@ -25,7 +35,10 @@ export function Picture({
       ]}
       {...props}
     >
-      <UserIcon color={theme.secondary} size={size - 12} />
+      <Image
+        source={{ uri, height }}
+        onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
+      />
     </Card>
   );
 }

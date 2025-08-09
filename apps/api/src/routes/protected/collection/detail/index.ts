@@ -5,7 +5,7 @@ const detailRouter = express.Router();
 
 const detailController = new DetailController();
 
-detailRouter.get('/', detailController.get);
-detailRouter.post('/mark', detailController.mark);
+detailRouter.get('/:id', detailController.get);
+detailRouter.post('/:id/mark', detailController.mark);
 
 export { detailRouter };

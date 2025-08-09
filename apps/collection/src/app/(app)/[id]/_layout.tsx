@@ -2,7 +2,7 @@ import { useApi, useConfig, useTitle } from '@creditwave/hooks';
 import { Placeholder, Typography } from '@creditwave/ui';
 import { router, Slot, useLocalSearchParams, usePathname } from 'expo-router';
 import React from 'react';
-import { ActivityIndicator, Pressable, ScrollView, View } from 'react-native';
+import { Pressable, RefreshControl, ScrollView, View } from 'react-native';
 import { CollectionProvider, Data } from '../../../contexts';
 
 export default function Layout() {
@@ -12,16 +12,16 @@ export default function Layout() {
 
   useTitle('#' + id);
 
-  const { data, loading } = useApi<Data>('/collection/' + id);
+  const { data, loading, refetch } = useApi<Data>('/collection/' + id);
 
   const Menu = React.useCallback(
     ({ label, to }: { label: string; to: string }) => {
       const link = ['/' + id, to].filter(Boolean).join('/');
-      const active = pathname === to;
+      const active = pathname === link;
       return (
         <Pressable
           onPress={() => router.navigate(link)}
-          style={[
+          style={({ pressed }) => [
             {
               paddingHorizontal: 12,
               paddingVertical: 4,
@@ -30,36 +30,37 @@ export default function Layout() {
               borderColor: 'transparent',
             },
             active && { opacity: 1, borderColor: theme.black },
+            pressed && { backgroundColor: theme.primary + '22' },
           ]}
         >
           <Typography>{label}</Typography>
         </Pressable>
       );
     },
-    []
+    [pathname, id]
   );
 
-  return loading ? (
-    <ActivityIndicator size="large" />
-  ) : (
-    <View style={{ gap: 8 }}>
-      <ScrollView horizontal>
-        <Menu label="Collection" to="" />
-        <Menu label="Info" to="info" />
-        <Menu label="Mark" to="mark" />
-        <Menu label="Contacts" to="contacts" />
-        <Menu label="Emergency" to="emergency" />
-        <Menu label="Personalized contacts" to="personalized-contacts" />
-        <Menu label="Call history" to="call-history" />
-      </ScrollView>
+  return (
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={refetch} />
+      }
+    >
+      <View style={{ gap: 8 }}>
+        <ScrollView horizontal>
+          <Menu label="Collection" to="" />
+          <Menu label="Info" to="info" />
+          <Menu label="Mark" to="mark" />
+        </ScrollView>
 
-      {data ? (
-        <CollectionProvider {...data}>
-          <Slot />
-        </CollectionProvider>
-      ) : (
-        <Placeholder />
-      )}
-    </View>
+        {data ? (
+          <CollectionProvider {...data} refetch={refetch}>
+            <Slot />
+          </CollectionProvider>
+        ) : (
+          <Placeholder />
+        )}
+      </View>
+    </ScrollView>
   );
 }
