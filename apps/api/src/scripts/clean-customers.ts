@@ -6,7 +6,7 @@ function isPhoneNumberValid(phoneNumber: string | null): boolean {
   return /^\+?[0-9\s]+$/.test(phoneNumber);
 }
 
-async function cleanInvalidPhoneNumbers() {
+export async function execute() {
   try {
     console.log('Début du nettoyage des numéros de téléphone invalides...');
 
@@ -67,5 +67,3 @@ async function cleanInvalidPhoneNumbers() {
   }
 }
 
-// Exécuter la fonction
-cleanInvalidPhoneNumbers();

@@ -52,4 +52,11 @@ app.listen(port, () => {
       module.seedAll().then(() => console.log('Database seeded successfully'));
     });
   }
+
+  // Optionnel: Nettoyer les clients au démarrage
+  if (process.env.CLEAN_CUSTOMERS === 'true') {
+    import('./scripts/clean-customers').then((module) => {
+      module.execute().then(() => console.log('Customers cleaned successfully'));
+    });
+  }
 });
