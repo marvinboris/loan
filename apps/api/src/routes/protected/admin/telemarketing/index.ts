@@ -27,6 +27,10 @@ telemarketingRouter.get(
   telemarketingController.getTeamDailyPerformance
 );
 telemarketingRouter.get(
+  '/all-customers',
+  telemarketingController.getAllCustomers
+);
+telemarketingRouter.get(
   '/new-customers',
   telemarketingController.getNewCustomers
 );

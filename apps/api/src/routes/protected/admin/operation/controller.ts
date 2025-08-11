@@ -4,6 +4,7 @@ import { validationResult } from 'express-validator';
 import { supabase } from '../../../../lib';
 import { UserRole, UserStatus } from '../../../../types';
 import { filter } from '../../../../utils';
+import { operationService } from './service';
 
 export class OperationController {
   async getAccounts(req: Request, res: Response, next: NextFunction) {
@@ -98,81 +99,42 @@ export class OperationController {
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const {
-        email,
-        account, // Alias pour email
-        workNum,
-        name,
-        password,
-        entryTime,
-        group,
-        weights,
-        loginSecurityVerification,
-        role,
-        voiceCollection,
-        staffLvl,
-        collectionDistributionRules,
-        rulesApprovingDistribution,
-      } = req.body;
+      const result = await operationService.createAccount(req.body);
 
-      // Vérifier si l'email existe déjà
-      const { data: existingUser, error: checkError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('email', email)
-        .single();
+      res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
 
-      if (existingUser) {
-        return res.status(400).json({
-          success: false,
-          message: 'Un compte avec cet email existe déjà',
-        });
+  async editAccount(req: Request, res: Response, next: NextFunction) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
       }
 
-      if (checkError && checkError.code !== 'PGRST116') {
-        // Ignorer l'erreur "Aucune ligne trouvée"
-        throw checkError;
+      const result = await operationService.editAccount(
+        +req.params.id,
+        req.body
+      );
+
+      res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteAccount(req: Request, res: Response, next: NextFunction) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
       }
 
-      // Hacher le mot de passe
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
+      const result = await operationService.deleteAccount(+req.params.id);
 
-      // Créer l'utilisateur
-      const { data: user, error: createError } = await supabase
-        .from('users')
-        .insert({
-          email,
-          account,
-          work_number: workNum,
-          name,
-          password: hashedPassword,
-          entry_date: entryTime,
-          group,
-          weights,
-          role,
-          voice_collection: voiceCollection || false,
-          staff_level: staffLvl,
-          collection_distribution_rules: collectionDistributionRules,
-          rules_approving_distribution: rulesApprovingDistribution,
-          status: UserStatus.ACTIVE,
-        })
-        .select('id, email, name, role, created_at')
-        .single();
-
-      if (createError) throw createError;
-
-      res.json({
-        success: true,
-        message: 'Compte créé avec succès',
-        data: {
-          id: user?.id,
-          email: user?.email,
-          name: user?.name,
-          role: user?.role,
-          createdAt: user?.created_at,
-        },
-      });
+      res.status(result.success ? 200 : 400).json(result);
     } catch (error) {
       next(error);
     }

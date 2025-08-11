@@ -4,6 +4,7 @@ import { initializeHttpClient } from '@creditwave/utils';
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import {
+  AllCustomers,
   AppLayout,
   AuthLayout,
   CollectionCase,
@@ -27,7 +28,6 @@ import {
   TelemarketingRegisteredCustomers,
   TelemarketingTeamDailyReport,
   TelemarketingTeamMonthlyReport,
-  Uploads,
 } from './pages';
 
 export function App() {
@@ -53,7 +53,7 @@ export function App() {
 
       <Routes>
         <Route element={<AppLayout />}>
-          <Route path="/files" element={<Uploads />} />
+          <Route path="/all-customers" element={<AllCustomers />} />
 
           <Route path="/operation/account" element={<OperationAccount />} />
 

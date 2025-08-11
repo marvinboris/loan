@@ -23,7 +23,7 @@ export const telemarketingService = {
     if (!sheetName) {
       return {
         success: false,
-        message: 'Le fichier ne contient aucune feuille',
+        message: 'The file contains no sheet',
       };
     }
 
@@ -31,12 +31,15 @@ export const telemarketingService = {
     const rows: object[] = xlsx.utils.sheet_to_json(worksheet);
 
     if (rows.length === 0) {
-      return { success: false, message: 'Le fichier est vide ou mal formaté' };
+      return { success: false, message: 'File is empty or wrong formatted' };
     }
 
-    const results = await processCustomers(type)(rows);
+    await processCustomers(type)(rows);
 
-    return { success: true, message: 'Le fichier a été bien importé', results };
+    return {
+      success: true,
+      message: 'The file has been successfully imported',
+    };
   },
 
   async kycValidation(input: KycValidationInput) {
@@ -181,91 +184,64 @@ function processCustomers(type: CustomerType) {
       details: [] as any[],
     };
 
+    const dataToInsert: Record<string, CreateCustomerInput> = {};
+
+    const isFirstColClientName = isNaN(+Object.values(rows[0])[0]);
+    const clientNameIdx = isFirstColClientName ? 0 : 1;
+    const clientPhoneNumberIdx = isFirstColClientName ? 1 : 0;
+
     let index = 0;
     for (const obj of rows) {
-      const [clientName, clientPhoneNumber, clientId] = Object.values(obj);
+      const values = Object.values(obj);
+
+      const clientName = values[clientNameIdx];
+      const clientPhoneNumber = values[clientPhoneNumberIdx];
 
       const lineNumber = index + 1; // +1 car Excel commence à 1
       const rowData = {
         name: clientName?.toString().trim(),
         mobile: clientPhoneNumber?.toString().trim(),
-        externalId: clientId ? Number(clientId) : null,
       };
 
       // Validation des données
-      if (!rowData.name || !rowData.mobile) {
+      if (!rowData.mobile) {
         report.invalid++;
         report.details.push({
           line: lineNumber,
           status: 'invalid',
-          message:
-            !rowData.name && !rowData.mobile
-              ? 'Name and mobile are missing'
-              : !rowData.name
-              ? 'Name is missing'
-              : 'Mobile is missing',
+          message: 'Mobile is missing',
         });
-        continue;
-      }
-
-      // Vérification des doublons
-      const { data: existingCustomer, error: duplicateError } = await supabase
-        .from('customers')
-        .select('id')
-        .eq('mobile', rowData.mobile)
-        .single();
-
-      if (existingCustomer) {
-        report.duplicates++;
-        report.details.push({
-          line: lineNumber,
-          status: 'duplicate',
-          mobile: rowData.mobile,
-          existingId: existingCustomer.id,
-        });
-        index++;
         continue;
       }
 
       // Création du client
-      const customerData: CreateCustomerInput = {
+      dataToInsert[rowData.mobile] = {
         name: rowData.name,
         mobile: rowData.mobile,
         type, // Valeur par défaut
         app_name: config.appName,
         whether_apply: false,
         whether_assigned: false,
-        ...(rowData.externalId && { external_id: rowData.externalId }), // Stockage optionnel de l'ID externe
       };
-
-      try {
-        const { data: newCustomer, error } = await supabase
-          .from('customers')
-          .insert([customerData])
-          .select('id')
-          .single();
-
-        if (error) throw error;
-
-        report.success++;
-        report.details.push({
-          line: lineNumber,
-          status: 'success',
-          customerId: newCustomer.id,
-          mobile: rowData.mobile,
-        });
-      } catch (error) {
-        report.errors++;
-        report.details.push({
-          line: lineNumber,
-          status: 'error',
-          message: error.message,
-          mobile: rowData.mobile,
-        });
-      }
 
       index++;
     }
+
+    const allCustomersMobile = await supabase
+      .from('customers')
+      .select('mobile');
+
+    if (allCustomersMobile.error) throw allCustomersMobile.error;
+
+    allCustomersMobile.data.forEach((item) => {
+      if (item.mobile in dataToInsert) delete dataToInsert[item.mobile];
+    });
+
+    const { error } = await supabase
+      .from('customers')
+      .insert(Object.values(dataToInsert));
+
+    if (error) throw error;
 
     return report;
   };

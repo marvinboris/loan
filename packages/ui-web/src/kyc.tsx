@@ -27,7 +27,7 @@ export type KycProps = {
     back_photo: string;
     selfie: string;
   };
-  onSubmit(
+  onSubmit?(
     values: KycFormValues
   ): Promise<{ message: string; success: boolean }>;
 };
@@ -136,48 +136,50 @@ function KycForm({
         </div>
       </Card>
 
-      <Formik
-        initialValues={initialValues}
-        onSubmit={async (data) => {
-          const result = await onSubmit(data);
-          if (result.success) {
-            toastShow({ type: 'success', text: result.message });
-            setShow(false);
-          }
-        }}
-      >
-        {({
-          handleChange,
-          handleSubmit,
-          setFieldValue,
-          values,
-          isSubmitting,
-        }) => (
-          <form
-            className="flex flex-col gap-2.5"
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSubmit();
-            }}
-          >
-            <input type="hidden" value={values.id} />
+      {onSubmit ? (
+        <Formik
+          initialValues={initialValues}
+          onSubmit={async (data) => {
+            const result = await onSubmit(data);
+            if (result.success) {
+              toastShow({ type: 'success', text: result.message });
+              setShow(false);
+            }
+          }}
+        >
+          {({
+            handleChange,
+            handleSubmit,
+            setFieldValue,
+            values,
+            isSubmitting,
+          }) => (
+            <form
+              className="flex flex-col gap-2.5"
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
+            >
+              <input type="hidden" value={values.id} />
 
-            <Switch
-              label="Validate ?"
-              checked={values.validated}
-              onChange={(value) => setFieldValue('validated', value)}
-            />
+              <Switch
+                label="Validate ?"
+                checked={values.validated}
+                onChange={(value) => setFieldValue('validated', value)}
+              />
 
-            <TextArea
-              label="Reason for denying"
-              value={values.reason}
-              onChange={handleChange('reason')}
-            />
+              <TextArea
+                label="Reason for denying"
+                value={values.reason}
+                onChange={handleChange('reason')}
+              />
 
-            <Button loading={isSubmitting}>Submit</Button>
-          </form>
-        )}
-      </Formik>
+              <Button loading={isSubmitting}>Submit</Button>
+            </form>
+          )}
+        </Formik>
+      ) : null}
     </Modal>
   );
 }

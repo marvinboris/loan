@@ -56,7 +56,7 @@ export function Pagination({ total: totalItems = 0 }: PaginationProps) {
             return prev;
           })
         }
-        options={{ 10: '10', 25: '25', 50: '50', 100: '100' }}
+        options={{ 10: '10', 25: '25', 50: '50', 100: '100', 500: '500' }}
       />
 
       <div>{totalItems || 0} items</div>

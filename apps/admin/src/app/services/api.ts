@@ -163,4 +163,45 @@ export const operationService = {
 
     return createdAccount;
   },
+
+  editAccount: async (userData: any) => {
+    const httpClient = getHttpClient();
+    const editedAccount = await httpClient.put<Response>(
+      '/admin/operation/account/' + userData.id,
+      userData
+    );
+
+    return editedAccount;
+  },
+
+  freezeAccount: async (userData: any) => {
+    const httpClient = getHttpClient();
+    userData.status = 'inactive';
+    const editedAccount = await httpClient.put<Response>(
+      '/admin/operation/account/' + userData.id,
+      userData
+    );
+
+    return editedAccount;
+  },
+
+  unfreezeAccount: async (userData: any) => {
+    const httpClient = getHttpClient();
+    userData.status = 'active';
+    const editedAccount = await httpClient.put<Response>(
+      '/admin/operation/account/' + userData.id,
+      userData
+    );
+
+    return editedAccount;
+  },
+
+  deleteAccount: async (userData: any) => {
+    const httpClient = getHttpClient();
+    const editedAccount = await httpClient.delete<Response>(
+      '/admin/operation/account/' + userData.id,
+    );
+
+    return editedAccount;
+  },
 };

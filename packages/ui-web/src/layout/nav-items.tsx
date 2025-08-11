@@ -5,6 +5,7 @@ import {
   ChartBarIcon,
   FolderIcon,
   PhoneArrowUpRightIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
@@ -19,6 +20,8 @@ type NavItemProps = {
 export function NavItems() {
   return (
     <div className="flex-1 overflow-auto pl-2.5">
+      <NavItem to="/all-customers" label="All customers" icon={UserGroupIcon} />
+
       <NavItem
         to="/telemarketing"
         label="Telemarketing"
@@ -53,10 +56,6 @@ export function NavItems() {
         items={[
           { to: '/repayment-inquiries', label: 'Repayment inquiries' },
           { to: '/loan-inquiry', label: 'Loan inquiry' },
-          {
-            to: '/reconciliation',
-            label: 'Reconciliation',
-          },
         ]}
       />
 

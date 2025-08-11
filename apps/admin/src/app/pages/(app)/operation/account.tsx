@@ -1,4 +1,4 @@
-import { usePaginatedApi, useRequest } from '@creditwave/hooks';
+import { usePaginatedApi } from '@creditwave/hooks';
 import {
   Button,
   Filter,
@@ -16,10 +16,11 @@ import { Formik } from 'formik';
 import moment from 'moment';
 import React from 'react';
 import { operationService } from '../../../services';
+import { cn } from '@creditwave/utils';
 
 type FormValues = {
+  id?: string;
   email: string;
-  account: string;
   workNum?: string;
   name: string;
   password?: string;
@@ -51,6 +52,7 @@ type Item = {
   voiceCollection: string;
   updateTime: string;
   loginIp: string;
+  status: 'active' | 'inactive';
   changePwd?: React.ReactNode;
   operation?: React.ReactNode;
 };
@@ -58,13 +60,20 @@ type Item = {
 export function OperationAccount() {
   useBreadcrumb(['Operation', 'Account']);
 
-  const { data, error, loading } = usePaginatedApi<Item>('/operation/account');
+  const { data, error, loading, refetch } =
+    usePaginatedApi<Item>('/operation/account');
 
   const [adding, setAdding] = React.useState(false);
+  const [editing, setEditing] = React.useState(false);
+  const [freezing, setFreezing] = React.useState(false);
+  const [unfreezing, setUnfreezing] = React.useState(false);
+  const [deleting, setDeleting] = React.useState(false);
+
+  const [userId, setUserId] = React.useState<number>();
 
   return (
     <>
-      <Create show={adding} setShow={setAdding} />
+      <Create show={adding} setShow={setAdding} refetch={refetch} />
 
       <Filter
         className="grid-cols-3"
@@ -138,13 +147,123 @@ export function OperationAccount() {
       <Table
         error={error}
         loading={loading}
-        data={data?.items || []}
+        data={(data?.items || []).map((item) => {
+          const user = {
+            id: item.serialNum,
+            account: item.account,
+            distributionRules: item.collectionDistributionRules,
+            email: item.email,
+            entryTime: item.entryTime.split('T')[0],
+            group: item.group,
+            name: item.name,
+            role: item.role,
+            rulesApprovingDistribution: item.rulesApprovingDistribution,
+            staffLvl: item.staffLvl,
+            weights: +item.weights,
+            loginSecurityVerification: true,
+            status: item.status,
+          };
+          const isActive = userId?.toString() === user.id.toString();
+          return {
+            ...item,
+            status: (
+              <div
+                className={cn(
+                  'capitalize font-medium',
+                  { active: 'text-green-600', inactive: 'text-red-600' }[
+                    item.status
+                  ]
+                )}
+              >
+                {item.status}
+              </div>
+            ),
+            operation: (
+              <div className="flex gap-2 flex-wrap">
+                {isActive && (
+                  <Create
+                    show={editing}
+                    setShow={setEditing}
+                    user={user}
+                    refetch={refetch}
+                  />
+                )}
+                <Button
+                  onClick={() => {
+                    setEditing(true);
+                    setUserId(+user.id);
+                  }}
+                >
+                  Edit
+                </Button>
+
+                {user.status === 'active' ? (
+                  <>
+                    {isActive && (
+                      <Freeze
+                        show={freezing}
+                        setShow={setFreezing}
+                        user={user}
+                        refetch={refetch}
+                      />
+                    )}
+                    <Button
+                      onClick={() => {
+                        setFreezing(true);
+                        setUserId(+user.id);
+                      }}
+                    >
+                      Freeze
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    {isActive && (
+                      <Unfreeze
+                        show={unfreezing}
+                        setShow={setUnfreezing}
+                        user={user}
+                        refetch={refetch}
+                      />
+                    )}
+                    <Button
+                      onClick={() => {
+                        setUnfreezing(true);
+                        setUserId(+user.id);
+                      }}
+                    >
+                      Unfreeze
+                    </Button>
+                  </>
+                )}
+
+                {isActive && (
+                  <Delete
+                    show={deleting}
+                    setShow={setDeleting}
+                    user={user}
+                    refetch={refetch}
+                  />
+                )}
+                <Button
+                  onClick={() => {
+                    setDeleting(true);
+                    setUserId(+user.id);
+                  }}
+                >
+                  Delete
+                </Button>
+              </div>
+            ),
+          };
+        })}
         fields={[
           { label: 'SERIAL NUMBER', key: 'serialNum' },
           { label: 'ACCOUNT', key: 'account' },
           { label: 'EMAIL', key: 'email' },
           { label: 'NAME', key: 'name' },
           { label: 'WORK NUMBER', key: 'workNum' },
+          { label: 'STATUS', key: 'status' },
           { label: 'CREATION TIME', key: 'creationTime' },
           { label: 'ENTRY TIME', key: 'entryTime' },
           { label: 'GROUP', key: 'group' },
@@ -172,10 +291,14 @@ export function OperationAccount() {
   );
 }
 
-function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
-  const initialValues: FormValues = {
+function Create(props: {
+  show: boolean;
+  setShow: (show: boolean) => void;
+  refetch(): void;
+  user?: FormValues;
+}) {
+  const initialValues: FormValues = props.user || {
     email: '',
-    account: '',
     name: '',
     entryTime: moment().format('YYYY-MM-DD'),
     group: '',
@@ -187,15 +310,18 @@ function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
   };
 
   return (
-    <Modal title="Create account" {...props}>
+    <Modal title={props.user ? 'Edit account' : 'Create account'} {...props}>
       <Formik
         initialValues={initialValues}
         onSubmit={async (data, { resetForm }) => {
-          const result = await operationService.createAccount(data);
+          const result = await operationService[
+            props.user ? 'editAccount' : 'createAccount'
+          ](data);
           if (result.success) {
             toastShow({ type: 'success', text: result.message });
-            resetForm();
+            if (!props.user) resetForm();
             props.setShow(false);
+            props.refetch();
           }
         }}
       >
@@ -226,18 +352,6 @@ function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
               value={values.email}
               onChange={handleChange('email')}
               labelClassName="w-1/3 text-right"
-            />
-
-            <Input
-              inline
-              required
-              name="account"
-              label="Account"
-              id="create-account"
-              error={errors.account}
-              value={values.account}
-              labelClassName="w-1/3 text-right"
-              onChange={handleChange('account')}
             />
 
             <Input
@@ -404,6 +518,180 @@ function Create(props: { show: boolean; setShow: (show: boolean) => void }) {
             />
 
             <div className="flex justify-end gap-2.5 mt-10">
+              <Button
+                type="button"
+                color="disabled"
+                variant="outline"
+                onClick={() => {
+                  resetForm();
+                  props.setShow(false);
+                }}
+              >
+                Cancel
+              </Button>
+
+              <Button loading={isSubmitting}>Confirm</Button>
+            </div>
+          </form>
+        )}
+      </Formik>
+    </Modal>
+  );
+}
+
+function Freeze(props: {
+  show: boolean;
+  setShow: (show: boolean) => void;
+  refetch(): void;
+  user: FormValues;
+}) {
+  const initialValues = {
+    id: props.user.id,
+  };
+
+  return (
+    <Modal title="Freeze account" {...props}>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={async (data, { resetForm }) => {
+          const result = await operationService.freezeAccount(data);
+          if (result.success) {
+            toastShow({ type: 'success', text: result.message });
+            resetForm();
+            props.setShow(false);
+            props.refetch();
+          }
+        }}
+      >
+        {({ handleSubmit, resetForm, isSubmitting }) => (
+          <form
+            className="flex flex-col gap-2.5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            <div className="text-center">
+              Are you sure you want to freeze this account?
+            </div>
+
+            <div className="flex justify-center gap-2.5 mt-10">
+              <Button
+                type="button"
+                color="disabled"
+                variant="outline"
+                onClick={() => {
+                  resetForm();
+                  props.setShow(false);
+                }}
+              >
+                Cancel
+              </Button>
+
+              <Button loading={isSubmitting}>Confirm</Button>
+            </div>
+          </form>
+        )}
+      </Formik>
+    </Modal>
+  );
+}
+
+function Unfreeze(props: {
+  show: boolean;
+  setShow: (show: boolean) => void;
+  user: FormValues;
+  refetch(): void;
+}) {
+  const initialValues = {
+    id: props.user.id,
+  };
+
+  return (
+    <Modal title="Freeze account" {...props}>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={async (data, { resetForm }) => {
+          const result = await operationService.unfreezeAccount(data);
+          if (result.success) {
+            toastShow({ type: 'success', text: result.message });
+            resetForm();
+            props.setShow(false);
+            props.refetch();
+          }
+        }}
+      >
+        {({ handleSubmit, resetForm, isSubmitting }) => (
+          <form
+            className="flex flex-col gap-2.5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            <div className="text-center">
+              Are you sure you want to unfreeze this account?
+            </div>
+
+            <div className="flex justify-center gap-2.5 mt-10">
+              <Button
+                type="button"
+                color="disabled"
+                variant="outline"
+                onClick={() => {
+                  resetForm();
+                  props.setShow(false);
+                }}
+              >
+                Cancel
+              </Button>
+
+              <Button loading={isSubmitting}>Confirm</Button>
+            </div>
+          </form>
+        )}
+      </Formik>
+    </Modal>
+  );
+}
+
+function Delete(props: {
+  show: boolean;
+  setShow: (show: boolean) => void;
+  user: FormValues;
+  refetch(): void;
+}) {
+  const initialValues = {
+    id: props.user.id,
+  };
+
+  return (
+    <Modal title="Delete account" {...props}>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={async (data, { resetForm }) => {
+          const result = await operationService.deleteAccount(data);
+          if (result.success) {
+            toastShow({ type: 'success', text: result.message });
+            resetForm();
+            props.setShow(false);
+            props.refetch();
+          }
+        }}
+      >
+        {({ handleSubmit, resetForm, isSubmitting }) => (
+          <form
+            className="flex flex-col gap-2.5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            <div className="text-center">
+              Are you sure you want to delete this account?
+            </div>
+
+            <div className="flex justify-center gap-2.5 mt-10">
               <Button
                 type="button"
                 color="disabled"
