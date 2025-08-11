@@ -3,6 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import { config } from './config';
 import { authRouter, protectedRouter } from './routes';
+import { cleanCustomers } from './scripts';
+import { seedAll } from './seeders';
 
 process.env.TZ = 'UTC';
 
@@ -48,15 +50,11 @@ app.listen(port, () => {
 
   // Optionnel: Exécuter les seeders au démarrage
   if (process.env.RUN_SEEDERS === 'true') {
-    import('./seeders').then((module) => {
-      module.seedAll().then(() => console.log('Database seeded successfully'));
-    });
+    seedAll().then(() => console.log('Database seeded successfully'));
   }
 
   // Optionnel: Nettoyer les clients au démarrage
   if (process.env.CLEAN_CUSTOMERS === 'true') {
-    import('./scripts/clean-customers').then((module) => {
-      module.execute().then(() => console.log('Customers cleaned successfully'));
-    });
+    cleanCustomers().then(() => console.log('Customers cleaned successfully'));
   }
 });
