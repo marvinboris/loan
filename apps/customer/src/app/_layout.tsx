@@ -2,16 +2,18 @@ import {
   useAuthWatcher,
   useConfig,
   useIsFirstUse,
+  useLanguage,
   useRequest,
 } from '@creditwave/hooks';
 import { Onboarding, Toast, toastShow } from '@creditwave/ui';
-import { initializeHttpClient } from '@creditwave/utils';
+import { i18n, initializeHttpClient, languageState$ } from '@creditwave/utils';
 import { useFonts } from 'expo-font';
 import { Slot } from 'expo-router';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import { I18nextProvider } from 'react-i18next';
 import { Platform, View } from 'react-native';
 import {
   SafeAreaView,
@@ -67,6 +69,9 @@ SplashScreen.preventAutoHideAsync();
 
 function Content() {
   useAuthWatcher();
+
+  const { setLanguage } = useLanguage();
+
   const { theme } = useConfig();
   const { isFirstUse, setIsFirstUse } = useIsFirstUse();
   const { error } = useRequest();
@@ -87,6 +92,7 @@ function Content() {
         // Artificially delay for two seconds to simulate a slow loading
         // experience. Please remove this if you copy and paste the code!
         await new Promise((resolve) => setTimeout(resolve, 2000));
+        setLanguage(languageState$.get());
       } catch (e) {
         console.warn(e);
       } finally {
@@ -122,10 +128,12 @@ function Content() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.white }}>
-      <Toast />
+    <I18nextProvider i18n={i18n}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.white }}>
+        <Toast />
 
-      <Slot />
-    </SafeAreaView>
+        <Slot />
+      </SafeAreaView>
+    </I18nextProvider>
   );
 }

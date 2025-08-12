@@ -2,7 +2,8 @@ import { useAuth, useConfig, usePageTitle } from '@creditwave/hooks';
 import { Logo, Transition, Typography } from '@creditwave/ui';
 import { router, Slot, usePathname } from 'expo-router';
 import React from 'react';
-import { Dimensions, Pressable, ScrollView, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { Dimensions, Pressable, View } from 'react-native';
 import {
   ArrowLeftIcon,
   Bars3Icon,
@@ -10,6 +11,8 @@ import {
 } from 'react-native-heroicons/outline';
 
 export default function Layout() {
+  const { t } = useTranslation();
+
   const { isAuthenticated } = useAuth();
   const { theme } = useConfig();
   const { title } = usePageTitle();
@@ -79,11 +82,14 @@ export default function Layout() {
             <Logo />
 
             <View>
-              <NavItem title="Request history" href="/applications" />
-              <NavItem title="Beneficiary account" href="/beneficiary" />
-              <NavItem title="Privacy policy" href="/privacy-policy" />
-              <NavItem title="About us" href="/about-us" />
-              <NavItem title="Language" href="/language" />
+              <NavItem title={t('menu.applications')} href="/applications" />
+              <NavItem title={t('menu.beneficiary')} href="/beneficiary" />
+              <NavItem
+                title={t('menu.privacy_policy')}
+                href="/privacy-policy"
+              />
+              <NavItem title={t('menu.about_us')} href="/about-us" />
+              <NavItem title={t('menu.language')} href="/language" />
             </View>
 
             <View
@@ -92,7 +98,7 @@ export default function Layout() {
                 marginBottom: 40,
               }}
             >
-              <NavItem title="Logout" href="/logout" />
+              <NavItem title={t('menu.logout')} href="/logout" />
             </View>
           </Pressable>
         </Pressable>

@@ -1,31 +1,26 @@
-import { useConfig, useTitle } from '@creditwave/hooks';
+import { useConfig, useLanguage, useTitle } from '@creditwave/hooks';
 import { Card, Section } from '@creditwave/ui';
-import { Pressable, ScrollView } from 'react-native';
+import { LanguageState } from '@creditwave/utils';
+import { useTranslation } from 'react-i18next';
+import { ScrollView } from 'react-native';
 
 export default function Page() {
-  useTitle('Language');
+  const { t } = useTranslation();
+
+  useTitle(t('language.title'));
 
   return (
     <ScrollView>
-      <Section
-        bodyStyle={{ gap: 8 }}
-        subtitleText="Please select your preferred display language for the application."
-      >
+      <Section bodyStyle={{ gap: 8 }} subtitleText={t('language.subtitle')}>
         {Object.entries({
-          en: [
-            'English',
-            'See all the application written in english language',
-          ],
-          fr: [
-            'Français',
-            'See all the application text written in french language',
-          ],
+          en: ['English', t('language.en')],
+          fr: ['Français', t('language.fr')],
         }).map(([abbr, [title, description]], index) => (
           <Language
             key={index}
-            abbr={abbr}
             title={title}
             description={description}
+            abbr={abbr as LanguageState}
           />
         ))}
       </Section>
@@ -38,25 +33,26 @@ function Language({
   title,
   description,
 }: {
-  abbr: string;
+  abbr: LanguageState;
   title: string;
   description: string;
 }) {
+  const { language, setLanguage } = useLanguage();
+
   const { theme } = useConfig();
 
-  const active = abbr === 'en';
+  const active = abbr === language;
 
   return (
-    <Pressable>
-      <Card
-        title={title}
-        subtitleText={description}
-        style={active && { backgroundColor: theme.primary }}
-        titleProps={{ textStyle: { color: active ? theme.white : undefined } }}
-        subtitleProps={{
-          textStyle: { color: active ? theme.white : undefined },
-        }}
-      />
-    </Pressable>
+    <Card
+      onPress={() => setLanguage(abbr)}
+      title={title}
+      subtitleText={description}
+      style={active && { backgroundColor: theme.primary }}
+      titleProps={{ textStyle: { color: active ? theme.white : undefined } }}
+      subtitleProps={{
+        textStyle: { color: active ? theme.white : undefined },
+      }}
+    />
   );
 }

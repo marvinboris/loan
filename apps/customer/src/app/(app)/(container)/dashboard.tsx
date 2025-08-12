@@ -1,12 +1,15 @@
 import { useApi, useConfig, useTitle } from '@creditwave/hooks';
 import { Button, Loan, LoanType, Section, Typography } from '@creditwave/ui';
 import { router } from 'expo-router';
+import { useTranslation } from 'react-i18next';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import { repaymentService } from '../../../services';
 
 export default function Page() {
+  const { t } = useTranslation();
+
   const { theme } = useConfig();
-  useTitle('Dashboard');
+  useTitle(t('dashboard.title'));
 
   const { data, loading, refetch } = useApi<{
     data: LoanType[];
@@ -34,7 +37,7 @@ export default function Page() {
               borderRadius: 6,
             }}
           >
-            Loan validation pending...
+            {t('dashboard.pending')}
           </Typography>
         ) : data?.accepted ? (
           <Typography
@@ -48,8 +51,7 @@ export default function Page() {
               borderRadius: 6,
             }}
           >
-            Your loan application was validated. Repay before requesting a new
-            one.
+            {t('dashboard.accepted')}
           </Typography>
         ) : (
           <View>
@@ -64,7 +66,7 @@ export default function Page() {
               }}
             >
               <Typography size="xl" color="primary">
-                Stuck and need to make a little quick mobile payment ?
+                {t('dashboard.stuck')}
               </Typography>
             </View>
 
@@ -72,12 +74,12 @@ export default function Page() {
               onPress={() => router.push('/borrow')}
               containerStyle={{ alignSelf: 'center' }}
             >
-              Borrow now
+              {t('dashboard.borrow')}
             </Button>
           </View>
         )}
 
-        <Section loading={loading} titleText="History">
+        <Section loading={loading} titleText={t('dashboard.history')}>
           {data?.data?.map((item, index) => (
             <Loan
               key={index}

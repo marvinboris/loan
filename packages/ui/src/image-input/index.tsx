@@ -1,5 +1,6 @@
 import * as ImagePicker from 'expo-image-picker';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Image, View } from 'react-native';
 import { Button } from '../button';
 import { Card } from '../card';
@@ -24,6 +25,8 @@ export function ImageInput({
   placeholder,
   value,
 }: ImageInputProps) {
+  const { t } = useTranslation();
+
   const styles = useInputStyles({ normal: true });
 
   const [width, setWidth] = React.useState(0);
@@ -36,8 +39,8 @@ export function ImageInput({
       toastShow({
         type: 'error',
         text: [
-          'Permission denied',
-          'We need your permission to access your photos',
+          t('ui.image_input.permissions.media_library.title'),
+          t('ui.image_input.permissions.media_library.subtitle'),
         ].join('.\n'),
       });
       return false;
@@ -70,8 +73,8 @@ export function ImageInput({
       toastShow({
         type: 'error',
         text: [
-          'Permission refusée',
-          'Nous avons besoin de la permission pour utiliser la caméra',
+          t('ui.image_input.permissions.camera.title'),
+          t('ui.image_input.permissions.camera.subtitle'),
         ].join('.\n'),
       });
       return;
@@ -79,7 +82,7 @@ export function ImageInput({
 
     const result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect,
       quality: 0.8,
     });
 
@@ -100,7 +103,7 @@ export function ImageInput({
   return (
     <View>
       <Typography style={styles.label}>
-        {placeholder || 'Upload an image'}
+        {placeholder || t('ui.image_input.placeholder')}
       </Typography>
 
       <Card bodyStyle={{ gap: 8 }}>
@@ -115,15 +118,15 @@ export function ImageInput({
           <Button
             type="outline"
             onPress={pickImage}
-            title="Pick image"
             containerStyle={{ flex: 1 }}
+            title={t('ui.image_input.pick_image')}
           />
 
           <Button
             type="outline"
             onPress={takePhoto}
-            title="Take photo"
             containerStyle={{ flex: 1 }}
+            title={t('ui.image_input.take_photo')}
           />
         </View>
       </Card>

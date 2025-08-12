@@ -8,10 +8,13 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { Formik } from 'formik';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Pressable } from 'react-native';
 import { authService } from '../../services';
 
 export default function Page() {
+  const { t } = useTranslation();
+
   const { mobile } = useLocalSearchParams<{ mobile: string }>();
   const [resending, setResending] = React.useState(false);
 
@@ -33,15 +36,15 @@ export default function Page() {
             id="code"
             name="code"
             value={values.code}
-            label="Verification code"
+            label={t('auth.otp.code')}
             onChange={handleChange('code')}
-            description="Enter the code received via SMS"
+            description={t('auth.otp.description')}
           />
 
           <Button
             color="primary"
-            title="Continue"
             loading={isSubmitting}
+            title={t('auth.otp.continue')}
             onPress={() => handleSubmit()}
             containerStyle={{ marginVertical: 16 }}
           />
@@ -53,7 +56,7 @@ export default function Page() {
               if (result.success) {
                 toastShow({
                   type: 'success',
-                  text: 'Verification code resent',
+                  text: t('auth.otp.code_resent'),
                 });
                 resetForm();
               }
@@ -61,7 +64,7 @@ export default function Page() {
             }}
           >
             <Typography underline align="center">
-              {resending ? 'Resending...' : 'Resend code'}
+              {t(resending ? 'auth.otp.resending' : 'auth.otp.resend_code')}
             </Typography>
           </Pressable>
         </Form>

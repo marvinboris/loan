@@ -41,6 +41,8 @@ export interface KycState {
   selfie: string;
 }
 
+export type LanguageState = 'en' | 'fr';
+
 // État global observable avec persistance
 export const authState$ = observable<AuthState>({
   token: null,
@@ -63,6 +65,8 @@ export const titleState$ = observable<string>('');
 // Etat du formulaire KYC
 export const kycState$ = observable<KycState>();
 
+export const languageState$ = observable<LanguageState>('en');
+
 // Configuration de la persistance pour l'authentification
 syncObservable(authState$, {
   persist: {
@@ -81,6 +85,13 @@ syncObservable(isFirstUseState$, {
 syncObservable(kycState$, {
   persist: {
     name: 'kyc-state',
+    plugin,
+  },
+});
+
+syncObservable(languageState$, {
+  persist: {
+    name: 'language-state',
     plugin,
   },
 });

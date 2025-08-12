@@ -3,12 +3,15 @@ import { kycState$ } from '@creditwave/utils';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { View } from 'react-native';
 import { ArrowLeftIcon, ArrowRightIcon } from 'react-native-heroicons/outline';
 import z from 'zod';
 import { toFormikValidate } from 'zod-formik-adapter';
 
 export default function Page() {
+  const { t } = useTranslation();
+
   const initialValues: {
     frontPhoto: string;
   } = {
@@ -25,8 +28,8 @@ export default function Page() {
 
   return (
     <Section
-      titleText="Document (Front)"
-      subtitleText="Please upload your document below for completing your second step of KYC."
+      titleText={t('kyc.front_id.title')}
+      subtitleText={t('kyc.front_id.subtitle')}
     >
       <Formik
         initialValues={initialValues}
@@ -40,7 +43,7 @@ export default function Page() {
           <Form>
             <ImageInput
               value={values.frontPhoto}
-              placeholder="Upload document front photo"
+              placeholder={t('kyc.front_photo')}
               onChange={(value) => setFieldValue('frontPhoto', value)}
             />
 
@@ -48,16 +51,16 @@ export default function Page() {
               style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}
             >
               <Button
-                title="Back"
                 type="clear"
                 icon={ArrowLeftIcon}
+                title={t('kyc.back')}
                 onPress={() => router.back()}
               />
 
               <Button
                 iconRight
-                title="Next"
                 icon={ArrowRightIcon}
+                title={t('kyc.next')}
                 disabled={!(dirty && isValid)}
                 onPress={() => handleSubmit()}
               />

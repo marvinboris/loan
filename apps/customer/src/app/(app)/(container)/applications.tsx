@@ -1,10 +1,13 @@
 import { useApi, useTitle } from '@creditwave/hooks';
 import { Section, Loan, LoanType } from '@creditwave/ui';
-import { repaymentService } from '../../../services';
 import { ScrollView, RefreshControl } from 'react-native';
+import { useTranslation } from 'react-i18next';
+import { repaymentService } from '../../../services';
 
 export default function Page() {
-  useTitle('Request history');
+  const { t } = useTranslation();
+
+  useTitle(t('applications.title'));
 
   const { data, loading, refetch } = useApi<{
     data: LoanType[];

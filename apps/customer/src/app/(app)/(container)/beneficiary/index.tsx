@@ -10,14 +10,17 @@ import {
 import { router } from 'expo-router';
 import { Formik } from 'formik';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowDownTrayIcon } from 'react-native-heroicons/outline';
 import z from 'zod';
 import { toFormikValidate } from 'zod-formik-adapter';
 import { beneficiaryService } from '../../../../services';
 
 export default function Page() {
+  const { t } = useTranslation();
+
   const { user } = useAuth();
-  useTitle('Beneficiary account');
+  useTitle(t('beneficiary.title'));
 
   const initialValues = {
     account: '',
@@ -34,7 +37,7 @@ export default function Page() {
   );
 
   return (
-    <Section subtitleText="Please fill the form below with the needed amount and your photo.">
+    <Section subtitleText={t('beneficiary.subtitle')}>
       <Formik
         initialValues={initialValues}
         validate={toFormikValidate(Schema)}
@@ -64,8 +67,8 @@ export default function Page() {
             <PhoneNumberInput
               id="account"
               name="account"
-              label="Phone number"
               value={values.account}
+              label={t('beneficiary.account')}
               onChange={handleChange('account')}
             />
 
@@ -73,19 +76,19 @@ export default function Page() {
               id="provider"
               name="provider"
               value={values.provider}
-              placeholder="Select a provider"
               onChange={handleChange('provider')}
+              placeholder={t('beneficiary.provider.placeholder')}
               options={{
-                mtn: 'MTN Cameroon',
-                orange: 'Orange Cameroon',
+                mtn: t('beneficiary.provider.mtn'),
+                orange: t('beneficiary.provider.orange'),
               }}
             />
 
             <Button
               iconRight
-              title="Save"
               loading={isSubmitting}
               icon={ArrowDownTrayIcon}
+              title={t('beneficiary.save')}
               disabled={!(dirty && isValid)}
               onPress={() => handleSubmit()}
             />

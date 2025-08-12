@@ -10,11 +10,14 @@ import { kycState$ } from '@creditwave/utils';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ArrowRightIcon } from 'react-native-heroicons/outline';
 import z from 'zod';
 import { toFormikValidate } from 'zod-formik-adapter';
 
 export default function Page() {
+  const { t } = useTranslation();
+
   const initialValues: {
     firstName?: string;
     lastName: string;
@@ -48,8 +51,8 @@ export default function Page() {
 
   return (
     <Section
-      titleText="Personal info"
-      subtitleText="Please fill the form below with your personal information."
+      titleText={t('kyc.personal_info.title')}
+      subtitleText={t('kyc.personal_info.subtitle')}
     >
       <Formik
         initialValues={initialValues}
@@ -64,9 +67,9 @@ export default function Page() {
             <TextInput
               id="firstName"
               name="firstName"
-              label="First name"
               error={errors.firstName}
               value={values.firstName}
+              label={t('kyc.first_name')}
               onChange={handleChange('firstName')}
             />
 
@@ -74,9 +77,9 @@ export default function Page() {
               required
               id="lastName"
               name="lastName"
-              label="Last name"
               error={errors.lastName}
               value={values.lastName}
+              label={t('kyc.last_name')}
               onChange={handleChange('lastName')}
             />
 
@@ -84,9 +87,9 @@ export default function Page() {
               required
               id="location"
               name="location"
-              label="Location"
               error={errors.location}
               value={values.location}
+              label={t('kyc.location')}
               onChange={handleChange('location')}
             />
 
@@ -94,9 +97,9 @@ export default function Page() {
               required
               id="birthdate"
               name="birthdate"
-              label="Birthdate"
               error={errors.birthdate}
               value={values.birthdate}
+              label={t('kyc.birthdate')}
               onChange={handleChange('birthdate')}
             />
 
@@ -104,26 +107,26 @@ export default function Page() {
               required
               id="emergencyNumber1"
               name="emergencyNumber1"
-              label="Emergency number #1"
               error={errors.emergencyNumber1}
               value={values.emergencyNumber1}
+              label={t('kyc.emergency_number_1')}
               onChange={handleChange('emergencyNumber1')}
             />
 
             <PhoneNumberInput
               id="emergencyNumber2"
               name="emergencyNumber2"
-              label="Emergency number #2"
               error={errors.emergencyNumber2}
               value={values.emergencyNumber2}
+              label={t('kyc.emergency_number_2')}
               onChange={handleChange('emergencyNumber2')}
             />
 
             <Button
               iconRight
-              title="Next"
               disabled={!isValid}
               icon={ArrowRightIcon}
+              title={t('kyc.next')}
               onPress={() => handleSubmit()}
               containerStyle={{ alignItems: 'center' }}
             />

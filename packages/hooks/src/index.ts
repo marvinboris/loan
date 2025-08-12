@@ -6,6 +6,7 @@ export * from './use-auth';
 export * from './use-auth-watcher';
 export * from './use-config';
 export * from './use-is-first-use';
+export * from './use-language';
 export * from './use-paginated-api';
 export * from './use-request';
 export * from './use-title';
