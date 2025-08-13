@@ -1,5 +1,6 @@
 import { useApi, useTitle } from '@creditwave/hooks';
-import { Section, Loan, LoanType } from '@creditwave/ui';
+import { Loan as LoanType } from '@creditwave/types';
+import { Section, Loan } from '@creditwave/ui';
 import { ScrollView, RefreshControl } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { repaymentService } from '../../../services';

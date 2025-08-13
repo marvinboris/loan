@@ -92,6 +92,12 @@ export const fr = {
     stuck: 'Coincé et besoin de faire un petit paiement mobile rapide ?',
     borrow: 'Emprunter maintenant',
     history: 'Historique',
+    info: "Les remboursements se font toujours via l'application",
+    customer_service: {
+      title: 'Infos du service client',
+      email: 'E-mail',
+      phone: 'Téléphone'
+    }
   },
   privacy_policy: {
     title: 'Politique de confidentialité',
