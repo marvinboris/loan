@@ -352,6 +352,7 @@ export class TelemarketingController {
           whetherAssigned: customer.whether_assigned,
           telemarketer: customer.telemarketers?.name,
           kyc: kycRecord[customer.id],
+          otp: customer.verification_code,
         })) || [];
 
       res.json({

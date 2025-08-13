@@ -1,4 +1,5 @@
 import { usePaginatedApi } from '@creditwave/hooks';
+import { Kyc as KycType } from '@creditwave/types';
 import {
   Filter,
   Kyc,
@@ -14,20 +15,7 @@ type Item = {
   prevRepaymentTime: string;
   appName: string;
   followUpPerson: string;
-  kyc?: {
-    id: number;
-
-    first_name?: string;
-    last_name: string;
-    location: string;
-    birthdate: string;
-    emergency_number_1: string;
-    emergency_number_2?: string;
-    front_photo: string;
-    back_photo: string;
-    selfie: string;
-    status: string;
-  };
+  kyc?: KycType;
   borrow?: {
     id: number;
   };
@@ -38,6 +26,7 @@ type Item = {
   followUpResults: string;
   descFollowUp: string;
   whetherAssigned: string;
+  otp: string;
   operation: string;
 };
 
@@ -151,6 +140,7 @@ export function AllCustomers() {
           { label: 'MOBILE', key: 'mobile', width: 100 },
           { label: 'NAME', key: 'name' },
           { label: 'PREVIOUS REPAYMENT TIME', key: 'prevRepaymentTime' },
+          { label: 'OTP', key: 'otp' },
           { label: 'APP NAME', key: 'appName' },
           { label: 'FOLLOW-UP PERSON', key: 'followUpPerson' },
           // { label: '100', key: '100' },
