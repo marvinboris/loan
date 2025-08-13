@@ -24,7 +24,7 @@ export interface Loan {
   collector_id?: number | null;
   collection_stage?: string | null;
   days_overdue?: number | null;
-  total_repayment?: number | null;
+  total_repayment: number;
   amount_repaid?: number | null;
   tag?: string | null;
   repeated_borrowing: boolean;
@@ -38,36 +38,3 @@ export type CreateLoanInput = Omit<Loan, 'id' | 'created_at' | 'updated_at'>;
 export type UpdateLoanInput = Partial<
   Omit<Loan, 'id' | 'created_at' | 'loan_number' | 'customer_id'>
 >;
-
-// Types pour les relations
-export type LoanWithRelations = Loan & {
-  customer?: {
-    id: number;
-    name: string;
-    mobile: string;
-  };
-  collector?: {
-    id: number;
-    name: string;
-    work_number: string;
-  };
-  collection_records?: Array<{
-    id: number;
-    record_time: string;
-    result: string;
-  }>;
-  repayments?: Array<{
-    id: number;
-    repayment_amount: number;
-    trading_status: string;
-  }>;
-};
-
-// Type pour les statistiques de prêt
-export type LoanStats = {
-  total_loans: number;
-  total_amount: number;
-  average_loan_amount: number;
-  overdue_loans: number;
-  repayment_rate: number;
-};

@@ -24,7 +24,9 @@ export default function Page() {
     location: string;
     birthdate: string;
     emergencyNumber1: string;
+    emergencyNumber1Name: string;
     emergencyNumber2?: string;
+    emergencyNumber2Name?: string;
   } = React.useMemo(
     () =>
       kycState$.get() || {
@@ -32,6 +34,7 @@ export default function Page() {
         location: '',
         birthdate: '',
         emergencyNumber1: '',
+        emergencyNumber1Name: '',
       },
     []
   );
@@ -113,6 +116,16 @@ export default function Page() {
               onChange={handleChange('emergencyNumber1')}
             />
 
+            <TextInput
+              required
+              id="emergencyNumber1Name"
+              name="emergencyNumber1Name"
+              error={errors.emergencyNumber1Name}
+              value={values.emergencyNumber1Name}
+              label={t('kyc.emergency_number_1_name')}
+              onChange={handleChange('emergencyNumber1Name')}
+            />
+
             <PhoneNumberInput
               id="emergencyNumber2"
               name="emergencyNumber2"
@@ -120,6 +133,15 @@ export default function Page() {
               value={values.emergencyNumber2}
               label={t('kyc.emergency_number_2')}
               onChange={handleChange('emergencyNumber2')}
+            />
+
+            <TextInput
+              id="emergencyNumber2Name"
+              name="emergencyNumber2Name"
+              error={errors.emergencyNumber2Name}
+              value={values.emergencyNumber2Name}
+              label={t('kyc.emergency_number_2_name')}
+              onChange={handleChange('emergencyNumber2Name')}
             />
 
             <Button

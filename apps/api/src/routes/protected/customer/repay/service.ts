@@ -1,7 +1,6 @@
-import moment from 'moment';
+import { CustomerType, LoanStatus, TradingStatus } from '@creditwave/types';
 import { SubmitInput } from './interfaces';
 import { supabase } from '../../../../lib';
-import { CustomerType, LoanStatus, TradingStatus } from '../../../../types';
 import { repay } from '../../../../utils';
 
 export const repayService = {

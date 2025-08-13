@@ -1,7 +1,7 @@
 // database/seeders/users.ts
-import { supabase } from '../lib';
+import { CreateUserInput, UserRole, UserStatus } from '@creditwave/types';
 import bcrypt from 'bcryptjs';
-import { CreateUserInput, UserRole, UserStatus } from '../types';
+import { supabase } from '../lib';
 
 export async function seedUsers() {
   console.log('🌱 Seeding Users...');

@@ -19,17 +19,15 @@ type FormValues = {
 export type CustomerProps = {
   mobile: string;
   originalMobile: string;
-  markedAsDone: boolean;
+  remarks: number;
 
   onSubmit(data: FormValues): void;
-  onRecordOnce(data: FormValues): void;
 };
 
 export function CustomerForm({
   mobile,
   originalMobile,
   onSubmit,
-  onRecordOnce,
 }: CustomerProps) {
   const initialValues: FormValues = {
     mobile: originalMobile,
@@ -110,7 +108,7 @@ export function CustomerForm({
                 label="Remark"
                 error={errors.remark}
                 value={values.remark}
-                placeholder="Select a remark"
+                placeholder="Enter a remark"
                 onChange={handleChange('remark')}
               />
             </>
@@ -131,22 +129,13 @@ export function CustomerForm({
             />
           )}
 
-          <View style={{ flexDirection: 'row', gap: 4, marginTop: 16 }}>
-            <Button
-              type="clear"
-              title="Record once"
-              containerStyle={{ flex: 1 }}
-              onPress={() => onRecordOnce(values)}
-            />
-
-            <Button
-              color="primary"
-              title="Mark complete"
-              loading={isSubmitting}
-              containerStyle={{ flex: 1 }}
-              onPress={() => handleSubmit()}
-            />
-          </View>
+          <Button
+            color="primary"
+            title="Mark complete"
+            loading={isSubmitting}
+            onPress={() => handleSubmit()}
+            containerStyle={{ marginTop: 16, alignItems: 'center' }}
+          />
         </Form>
       )}
     </Formik>

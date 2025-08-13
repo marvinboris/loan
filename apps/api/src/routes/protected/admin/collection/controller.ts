@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
-import { validationResult } from 'express-validator';
-import { supabase } from '../../../../lib';
 import {
   ConnectionStatus,
   LoanStatus,
   WillingnessToPay,
-} from '../../../../types';
+} from '@creditwave/types';
+import { Request, Response, NextFunction } from 'express';
+import { validationResult } from 'express-validator';
+import { supabase } from '../../../../lib';
 import { filter } from '../../../../utils';
 import { DistributionInput } from './interfaces';
 import { collectionService } from './service';

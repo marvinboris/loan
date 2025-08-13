@@ -1,7 +1,7 @@
+import { CreateLoanInput, LoanStatus } from '@creditwave/types';
 import moment from 'moment';
-import { SubmitInput } from './interfaces';
 import { supabase } from '../../../../lib';
-import { CreateLoanInput, LoanStatus } from '../../../../types';
+import { SubmitInput } from './interfaces';
 
 export const borrowService = {
   async submit(input: SubmitInput) {

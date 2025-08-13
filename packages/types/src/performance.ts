@@ -47,25 +47,3 @@ export type CreatePerformanceInput = Omit<
 export type UpdatePerformanceInput = Partial<
   Omit<Performance, 'id' | 'created_at' | 'user_id' | 'date' | 'type'>
 >;
-
-// Types pour les relations
-export type PerformanceWithRelations = Performance & {
-  user?: {
-    id: number;
-    name: string;
-    work_number: string;
-    role: string;
-  };
-};
-
-// Type pour les statistiques de performance
-export type PerformanceStats = {
-  total_bonus: number;
-  average_app_rate: number;
-  top_performers: PerformanceWithRelations[];
-  performance_trend: Array<{
-    date: string;
-    average_handle_num: number;
-    average_app_rate: number;
-  }>;
-};

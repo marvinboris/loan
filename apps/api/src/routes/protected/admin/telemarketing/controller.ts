@@ -1,13 +1,13 @@
-import { Request, Response, NextFunction } from 'express';
-import { validationResult } from 'express-validator';
-import { supabase } from '../../../../lib';
 import {
   CustomerType,
   Kyc,
   KycStatus,
   Loan,
   PerformanceType,
-} from '../../../../types';
+} from '@creditwave/types';
+import { Request, Response, NextFunction } from 'express';
+import { validationResult } from 'express-validator';
+import { supabase } from '../../../../lib';
 import { filter } from '../../../../utils';
 import {
   BorrowValidationInput,
@@ -286,15 +286,13 @@ export class TelemarketingController {
         appName,
       } = req.query;
 
-      let query = supabase
-        .from('customers')
-        .select(
-          `
+      let query = supabase.from('customers').select(
+        `
           *,
           telemarketers:telemarketer_id (name)
         `,
-          { count: 'exact' }
-        );
+        { count: 'exact' }
+      );
 
       // Appliquer les filtres
       if (importDate) query = query.eq('created_at', importDate as string);

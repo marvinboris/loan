@@ -1,10 +1,10 @@
 import { cn } from '@creditwave/utils';
+import { ArrowsUpDownIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { Formik } from 'formik';
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Input, Select } from './form';
 import { Button } from './buttons';
-import { ArrowsUpDownIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { Input, Select } from './form';
 
 export type FilterFieldSelect = {
   type: 'select';

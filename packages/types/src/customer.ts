@@ -1,4 +1,4 @@
-// src/types/customer.ts
+// src/customer.ts
 export enum CustomerType {
   NEW = 'new',
   OLD = 'old',

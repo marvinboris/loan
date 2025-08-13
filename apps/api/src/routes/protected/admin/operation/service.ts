@@ -1,6 +1,6 @@
+import { CreateUserInput, UserStatus } from '@creditwave/types';
 import bcrypt from 'bcryptjs';
 import { supabase } from '../../../../lib';
-import { CreateUserInput, UserStatus } from '../../../../types';
 import { CreateAccountInput, EditAccountInput } from './interfaces';
 
 export const operationService = {

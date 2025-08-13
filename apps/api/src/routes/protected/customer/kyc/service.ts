@@ -1,6 +1,6 @@
+import { CreateKycInput, KycStatus } from '@creditwave/types';
 import { SubmitInput } from './interfaces';
 import { supabase } from '../../../../lib';
-import { CreateKycInput, KycStatus } from '../../../../types';
 
 export const kycService = {
   async submit(input: SubmitInput) {
@@ -12,7 +12,9 @@ export const kycService = {
       location,
       birthdate,
       emergencyNumber1,
+      emergencyNumber1Name,
       emergencyNumber2,
+      emergencyNumber2Name,
       frontPhoto,
       backPhoto,
       selfie,
@@ -36,7 +38,9 @@ export const kycService = {
               location,
               birthdate,
               emergency_number_1: emergencyNumber1,
+              emergency_number_1_name: emergencyNumber1Name,
               emergency_number_2: emergencyNumber2,
+              emergency_number_2_name: emergencyNumber2Name,
               front_photo: frontPhoto,
               back_photo: backPhoto,
               selfie,

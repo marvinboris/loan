@@ -1,8 +1,7 @@
-import bcrypt from 'bcryptjs';
+import { UserRole, UserStatus } from '@creditwave/types';
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../../lib';
-import { UserRole, UserStatus } from '../../../../types';
 import { filter } from '../../../../utils';
 import { operationService } from './service';
 

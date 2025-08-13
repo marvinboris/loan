@@ -1,5 +1,5 @@
+import { CreateRepaymentInput, TradingStatus } from '@creditwave/types';
 import { supabase } from '../lib';
-import { CreateRepaymentInput, TradingStatus } from '../types';
 
 export async function seedRepayments() {
   console.log('🌱 Seeding Repayments...');

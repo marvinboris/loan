@@ -1,6 +1,6 @@
+import { LoanStatus } from '@creditwave/types';
 import { NextFunction, Request, Response } from 'express';
 import { supabase } from '../../../../lib';
-import { LoanStatus } from '../../../../types';
 
 export class FinishedController {
   async get(req: Request, res: Response, next: NextFunction) {

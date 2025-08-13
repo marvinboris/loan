@@ -1,4 +1,4 @@
-// src/types/collectionRecord.ts
+// src/collectionRecord.ts
 export enum ConnectionStatus {
   CONNECTED = 'connected',
   NO_ANSWER = 'no_answer',
@@ -7,8 +7,8 @@ export enum ConnectionStatus {
 
 export enum WillingnessToPay {
   HIGH = 'high',
-  MEDIUM = 'medium',
-  LOW = 'low',
+  // MEDIUM = 'medium',
+  // LOW = 'low',
   REFUSAL = 'refusal',
 }
 
@@ -37,31 +37,3 @@ export type CreateCollectionRecordInput = Omit<
 export type UpdateCollectionRecordInput = Partial<
   Omit<CollectionRecord, 'id' | 'created_at' | 'loan_id' | 'collector_id'>
 >;
-
-// Types pour les relations
-export type CollectionRecordWithRelations = CollectionRecord & {
-  loan?: {
-    id: number;
-    loan_number: string;
-    customer?: {
-      id: number;
-      name: string;
-      mobile: string;
-    };
-  };
-  collector?: {
-    id: number;
-    name: string;
-    work_number: string;
-  };
-};
-
-// Type pour les statistiques d'appel
-export type CallStats = {
-  total_calls: number;
-  connected_calls: number;
-  connection_rate: number;
-  average_call_duration: number; // En minutes
-  promises_to_pay: number;
-  refusal_count: number;
-};

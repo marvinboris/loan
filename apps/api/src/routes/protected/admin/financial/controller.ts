@@ -1,7 +1,7 @@
+import { TradingStatus } from '@creditwave/types';
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../../lib';
-import { TradingStatus } from '../../../../types';
 import { filter } from '../../../../utils';
 
 export class FinancialController {

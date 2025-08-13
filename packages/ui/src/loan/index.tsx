@@ -1,32 +1,17 @@
 import { useConfig } from '@creditwave/hooks';
-import moment from 'moment';
-import { Pressable, View } from 'react-native';
-import { Typography } from '../typography';
-import { Modal } from '../modal';
-import { Card } from '../card';
-import { AmountLine } from '../amount-line';
+import { Loan as LoanType, LoanStatus } from '@creditwave/types';
 import { Formik } from 'formik';
-import { toastShow } from '../toast';
-import { Form } from '../form';
-import { Button } from '../button';
-import { NumberInput } from '../number-input';
+import moment from 'moment';
 import React from 'react';
-
-export enum LoanStatus {
-  PENDING = 'pending',
-  ACCEPTED = 'accepted',
-  DENIED = 'denied',
-  REPAID = 'repaid',
-}
-
-export type LoanType = {
-  id: number;
-  loan_amount: number;
-  total_repayment: number;
-  amount_repaid?: number;
-  due_date: string;
-  loan_status: LoanStatus;
-};
+import { Pressable, View } from 'react-native';
+import { AmountLine } from '../amount-line';
+import { Button } from '../button';
+import { Card } from '../card';
+import { Form } from '../form';
+import { Modal } from '../modal';
+import { NumberInput } from '../number-input';
+import { toastShow } from '../toast';
+import { Typography } from '../typography';
 
 export type LoanFormValues = {
   id: number;

@@ -1,4 +1,4 @@
-// src/types/kyc.ts
+// src/kyc.ts
 export enum KycStatus {
   PENDING = 'pending',
   SUCCESS = 'success',
@@ -13,7 +13,9 @@ export interface Kyc {
   location: string;
   birthdate: string;
   emergency_number_1: string;
+  emergency_number_1_name: string;
   emergency_number_2?: string;
+  emergency_number_2_name?: string;
   front_photo: string;
   back_photo: string;
   selfie: string;

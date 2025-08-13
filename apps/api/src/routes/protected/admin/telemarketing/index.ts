@@ -1,7 +1,7 @@
+import { CustomerType } from '@creditwave/types';
 import express from 'express';
 import multer, { Multer } from 'multer';
 import { TelemarketingController } from './controller';
-import { CustomerType } from '../../../../types';
 
 const telemarketingRouter = express.Router();
 

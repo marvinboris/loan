@@ -1,11 +1,11 @@
 // routes/auth/service.ts
+import { Customer, CustomerType } from '@creditwave/types';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import { config } from '../../config';
 import { supabase } from '../../lib';
-import { Customer, CustomerType } from '../../types';
 import { generateVerificationCode, sendEmail, sendSms } from '../../utils';
 import {
   LoginInput,

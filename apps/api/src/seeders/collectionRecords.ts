@@ -1,9 +1,9 @@
-import { supabase } from '../lib';
 import {
   ConnectionStatus,
   CreateCollectionRecordInput,
   WillingnessToPay,
-} from '../types';
+} from '@creditwave/types';
+import { supabase } from '../lib';
 
 export async function seedCollectionRecords() {
   console.log('🌱 Seeding Collection Records...');

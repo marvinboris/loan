@@ -3,8 +3,8 @@ import React from 'react';
 import { Linking, Pressable, View } from 'react-native';
 import { Modal } from '../modal';
 import { Typography } from '../typography';
-import { CustomerForm, CustomerProps } from './form';
 import { toastShow } from '../toast';
+import { CustomerForm, CustomerProps } from './form';
 
 export { CustomerProps };
 
@@ -23,7 +23,15 @@ export function Customer(props: CustomerProps) {
   const { theme } = useConfig();
   const [visible, setVisible] = React.useState(false);
 
-  const color = props.markedAsDone ? 'white' : 'black';
+  const color = props.remarks ? 'white' : 'black';
+  const backgroundColor =
+    props.remarks === 0
+      ? undefined
+      : props.remarks === 1
+      ? theme.primary
+      : props.remarks === 2
+      ? theme.warning
+      : theme.success;
 
   return (
     <>
@@ -39,11 +47,12 @@ export function Customer(props: CustomerProps) {
         onPress={() => setVisible(true)}
         style={({ pressed }) => [
           { gap: 4, paddingVertical: 12, paddingHorizontal: 16 },
-          (pressed || !props.markedAsDone) && {
-            backgroundColor: theme.primary + '22',
-          },
-          props.markedAsDone && {
-            backgroundColor: theme.primary,
+          pressed &&
+            !props.remarks && {
+              backgroundColor: theme.primary + '22',
+            },
+          {
+            backgroundColor,
           },
         ]}
       >

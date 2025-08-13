@@ -34,30 +34,3 @@ export type CreateRepaymentInput = Omit<
 export type UpdateRepaymentInput = Partial<
   Omit<Repayment, 'id' | 'created_at' | 'repayment_number' | 'loan_id'>
 >;
-
-// Types pour les relations
-export type RepaymentWithRelations = Repayment & {
-  loan?: {
-    id: number;
-    loan_number: string;
-    customer?: {
-      id: number;
-      name: string;
-      mobile: string;
-    };
-  };
-  collector?: {
-    id: number;
-    name: string;
-    work_number: string;
-  };
-};
-
-// Type pour les statistiques de remboursement
-export type RepaymentStats = {
-  total_amount: number;
-  success_rate: number;
-  pending_amount: number;
-  failed_amount: number;
-  average_repayment_time: number; // En heures
-};

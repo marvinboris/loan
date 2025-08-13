@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instanciate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.3 (519615d)"
+    PostgrestVersion: "13.0.4"
   }
   public: {
     Tables: {
@@ -170,7 +170,9 @@ export type Database = {
           created_at: string
           customer_id: number
           emergency_number_1: string
+          emergency_number_1_name: string | null
           emergency_number_2: string | null
+          emergency_number_2_name: string | null
           first_name: string | null
           front_photo: string
           id: number
@@ -186,7 +188,9 @@ export type Database = {
           created_at?: string
           customer_id: number
           emergency_number_1: string
+          emergency_number_1_name?: string | null
           emergency_number_2?: string | null
+          emergency_number_2_name?: string | null
           first_name?: string | null
           front_photo: string
           id?: number
@@ -202,7 +206,9 @@ export type Database = {
           created_at?: string
           customer_id?: number
           emergency_number_1?: string
+          emergency_number_1_name?: string | null
           emergency_number_2?: string | null
+          emergency_number_2_name?: string | null
           first_name?: string | null
           front_photo?: string
           id?: number
@@ -311,6 +317,63 @@ export type Database = {
             columns: ["customer_id"]
             isOneToOne: false
             referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketing_records: {
+        Row: {
+          applying: boolean | null
+          connected: boolean
+          created_at: string
+          customer_id: number
+          id: number
+          reason: string | null
+          rejection_issues: string | null
+          remark: string | null
+          telemarketer_id: number
+          updated_at: string
+          whether_send_link: boolean | null
+        }
+        Insert: {
+          applying?: boolean | null
+          connected?: boolean
+          created_at?: string
+          customer_id: number
+          id?: number
+          reason?: string | null
+          rejection_issues?: string | null
+          remark?: string | null
+          telemarketer_id: number
+          updated_at?: string
+          whether_send_link?: boolean | null
+        }
+        Update: {
+          applying?: boolean | null
+          connected?: boolean
+          created_at?: string
+          customer_id?: number
+          id?: number
+          reason?: string | null
+          rejection_issues?: string | null
+          remark?: string | null
+          telemarketer_id?: number
+          updated_at?: string
+          whether_send_link?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketing_records_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketing_records_telemarketer_id_fkey"
+            columns: ["telemarketer_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -496,6 +559,7 @@ export type Database = {
       }
       users: {
         Row: {
+          account: string
           collection_distribution_rules: string | null
           created_at: string
           email: string
@@ -517,6 +581,7 @@ export type Database = {
           work_number: string
         }
         Insert: {
+          account: string
           collection_distribution_rules?: string | null
           created_at?: string
           email: string
@@ -538,6 +603,7 @@ export type Database = {
           work_number: string
         }
         Update: {
+          account?: string
           collection_distribution_rules?: string | null
           created_at?: string
           email?: string

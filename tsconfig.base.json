@@ -14,8 +14,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@creditwave/*": ["packages/*/src"],
-      "@creditwave/ui": ["packages/ui/src/index.ts"]
+      "@creditwave/*": ["packages/*/src"]
     }
   },
   "exclude": ["node_modules", "tmp"]

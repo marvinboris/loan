@@ -1,3 +1,9 @@
+import {
+  CreateCustomerInput,
+  CustomerType,
+  KycStatus,
+  LoanStatus,
+} from '@creditwave/types';
 import xlsx from 'xlsx';
 import {
   BorrowValidationInput,
@@ -7,12 +13,6 @@ import {
 } from './interfaces';
 import { config } from '../../../../config';
 import { supabase } from '../../../../lib';
-import {
-  CreateCustomerInput,
-  CustomerType,
-  KycStatus,
-  LoanStatus,
-} from '../../../../types';
 import { payCustomer, sendSms } from '../../../../utils';
 
 export const telemarketingService = {

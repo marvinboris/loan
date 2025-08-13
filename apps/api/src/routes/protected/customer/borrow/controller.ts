@@ -1,9 +1,9 @@
+import { KycStatus } from '@creditwave/types';
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { SubmitInput } from './interfaces';
 import { borrowService } from './service';
 import { supabase } from '../../../../lib';
-import { KycStatus } from '../../../../types';
 
 export class BorrowController {
   async check(req: Request, res: Response, next: NextFunction) {

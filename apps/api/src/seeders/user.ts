@@ -1,10 +1,9 @@
 // database/seeders/user.ts
+import { UserRole, UserStatus } from '@creditwave/types';
 import bcrypt from 'bcryptjs';
-import { config } from '../config';
-import { supabase } from '../lib';
-import { UserRole, UserStatus } from '../types/user';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { supabase } from '../lib';
 
 /**
  * Fonction pour créer un seul utilisateur via CLI

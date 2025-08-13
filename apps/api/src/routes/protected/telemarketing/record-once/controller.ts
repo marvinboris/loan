@@ -1,26 +1,48 @@
+import {
+  CreateMarketingRecordInput,
+  MarketingRecordReason,
+  MarketingRecordRejectionIssues,
+} from '@creditwave/types';
 import { NextFunction, Request, Response } from 'express';
 import { supabase } from '../../../../lib';
 import { RecordOnceInput } from './interfaces';
 
 export class RecordOnceController {
   async post(req: Request, res: Response, next: NextFunction) {
-    const { mobile, ...input }: RecordOnceInput = req.body;
+    try {
+      const { mobile, ...input }: RecordOnceInput = req.body;
 
-    const { error } = await supabase
-      .from('customers')
-      .update({
-        desc_follow_up: input.rejectionIssues,
-        follow_up_results: input.remark,
-        latest_follow_up_time: new Date().toISOString(),
-      })
-      .eq('mobile', mobile);
+      const { data: customer, error } = await supabase
+        .from('customers')
+        .update({
+          latest_follow_up_time: new Date().toISOString(),
+        })
+        .eq('mobile', mobile)
+        .select()
+        .single();
 
-    if (error)
-      return res.status(400).json({ success: false, message: error.message });
+      if (error) throw error;
 
-    res.json({
-      success: true,
-      message: 'Customer status updated (recorded once)',
-    });
+      const insert = await supabase.from('marketing_records').insert({
+        connected: input.callSituation === '1',
+        customer_id: customer.id,
+        telemarketer_id: customer.telemarketer_id,
+        applying: input.wishes === '1',
+        reason: input.reason as MarketingRecordReason,
+        rejection_issues:
+          input.rejectionIssues as MarketingRecordRejectionIssues,
+        remark: input.remark,
+        whether_send_link: input.whetherSendLink === '1',
+      } satisfies CreateMarketingRecordInput);
+
+      if (insert.error) throw insert.error;
+
+      res.json({
+        success: true,
+        message: 'Customer status updated (recorded once)',
+      });
+    } catch (error) {
+      next(error);
+    }
   }
 }

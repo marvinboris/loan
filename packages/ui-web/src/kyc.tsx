@@ -1,3 +1,4 @@
+import { Kyc as KycType } from '@creditwave/types';
 import { Formik } from 'formik';
 import React from 'react';
 import { Button } from './buttons';
@@ -14,19 +15,7 @@ export type KycFormValues = {
 
 export type KycProps = {
   uploadsUrl: string;
-  values: {
-    id: number;
-
-    first_name?: string;
-    last_name: string;
-    location: string;
-    birthdate: string;
-    emergency_number_1: string;
-    emergency_number_2?: string;
-    front_photo: string;
-    back_photo: string;
-    selfie: string;
-  };
+  values: KycType;
   onSubmit?(
     values: KycFormValues
   ): Promise<{ message: string; success: boolean }>;
@@ -104,11 +93,27 @@ function KycForm({
             </div>
           </div>
 
+          <div>
+            <div>Emergency number 1 name</div>
+            <div>
+              <span>{values.emergency_number_1_name}</span>
+            </div>
+          </div>
+
           {values.emergency_number_2 ? (
             <div>
               <div>Emergency number 2</div>
               <div>
                 <span>{values.emergency_number_2}</span>
+              </div>
+            </div>
+          ) : null}
+
+          {values.emergency_number_2_name ? (
+            <div>
+              <div>Emergency number 2 name</div>
+              <div>
+                <span>{values.emergency_number_2_name}</span>
               </div>
             </div>
           ) : null}

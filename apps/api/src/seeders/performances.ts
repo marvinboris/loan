@@ -1,5 +1,5 @@
+import { CreatePerformanceInput, PerformanceType } from '@creditwave/types';
 import { supabase } from '../lib';
-import { CreatePerformanceInput, PerformanceType } from '../types';
 
 export async function seedPerformances() {
   console.log('🌱 Seeding Performances...');

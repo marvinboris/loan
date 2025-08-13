@@ -1,7 +1,7 @@
+import { LoanStatus } from '@creditwave/types';
 import { NextFunction, Request, Response } from 'express';
 import moment from 'moment';
 import { supabase } from '../../../../lib';
-import { LoanStatus } from '../../../../types';
 import { MarkInput } from './interfaces';
 
 export class DetailController {

@@ -1,24 +1,12 @@
 import { useConfig } from '@creditwave/hooks';
+import { Loan } from '@creditwave/types';
 import moment from 'moment';
 import { Pressable, View } from 'react-native';
 import { Typography } from '../typography';
 
-export type CollectionLoanProps = {
-  loan_number: number;
-  loan_amount: number;
-  product_name: string;
+export type CollectionLoanProps = Loan & {
   name: string;
-  mobile: string;
-  gender: string;
-  due_date: string;
-  created_at: string;
-  total_repayment: number;
-  real_amount: number;
-  service_fees: number;
-  interest: number;
-  penalty: number;
-  days_overdue: number;
-  collection_records?: never[];
+  collection_records?: [];
 };
 
 export function CollectionLoan({
