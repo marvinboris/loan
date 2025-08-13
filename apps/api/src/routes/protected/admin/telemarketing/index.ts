@@ -1,4 +1,4 @@
-import { CustomerType } from '@creditwave/types';
+import { CustomerType } from '../../../../types';
 import express from 'express';
 import multer, { Multer } from 'multer';
 import { TelemarketingController } from './controller';
@@ -68,6 +68,10 @@ telemarketingRouter.post(
 telemarketingRouter.post(
   '/borrow-validation',
   telemarketingController.postBorrowValidation
+);
+telemarketingRouter.post(
+  '/borrow-cancellation',
+  telemarketingController.postBorrowCancellation
 );
 telemarketingRouter.post(
   '/manual-assignment',

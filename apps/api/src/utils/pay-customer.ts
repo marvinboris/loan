@@ -15,7 +15,13 @@ export async function payCustomer(account: string, amount: number) {
       type,
       tel,
     });
-    const success = result.status === '01';
+    let status = result.status;
+    while (status === '1000') {
+      await new Promise((resolve) => setTimeout(resolve, 10000));
+      const res = await iwomiPay.check(result.internal_id);
+      status = res.status;
+    }
+    const success = status === '01';
     if (success)
       console.log(
         `An amount of "${amount} XAF" has been sent to the account "${tel}".`

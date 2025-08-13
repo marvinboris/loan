@@ -1,4 +1,4 @@
-import { LoanStatus } from '@creditwave/types';
+import { LoanStatus } from '../../../../types';
 import { NextFunction, Request, Response } from 'express';
 import { supabase } from '../../../../lib';
 

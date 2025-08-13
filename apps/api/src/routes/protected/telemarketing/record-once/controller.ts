@@ -2,7 +2,7 @@ import {
   CreateMarketingRecordInput,
   MarketingRecordReason,
   MarketingRecordRejectionIssues,
-} from '@creditwave/types';
+} from '../../../../types';
 import { NextFunction, Request, Response } from 'express';
 import { supabase } from '../../../../lib';
 import { RecordOnceInput } from './interfaces';

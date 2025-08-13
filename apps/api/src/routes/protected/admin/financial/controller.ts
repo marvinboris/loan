@@ -1,4 +1,4 @@
-import { TradingStatus } from '@creditwave/types';
+import { TradingStatus } from '../../../../types';
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../../lib';

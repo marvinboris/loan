@@ -1,4 +1,4 @@
-import { CreateLoanInput, LoanStatus } from '@creditwave/types';
+import { CreateLoanInput, LoanStatus } from '../types';
 import { supabase } from '../lib';
 
 export async function seedLoans() {

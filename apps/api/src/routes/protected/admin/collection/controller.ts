@@ -2,7 +2,7 @@ import {
   ConnectionStatus,
   LoanStatus,
   WillingnessToPay,
-} from '@creditwave/types';
+} from '../../../../types';
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../../lib';

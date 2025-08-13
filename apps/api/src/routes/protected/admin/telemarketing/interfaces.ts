@@ -10,6 +10,10 @@ export interface BorrowValidationInput {
   reason?: string;
 }
 
+export interface BorrowCancellationInput {
+  id: number;
+}
+
 export interface ManualAssignmentInput {
   id: number;
   selected: number[];

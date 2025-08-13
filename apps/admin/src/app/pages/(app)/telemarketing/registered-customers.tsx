@@ -2,6 +2,7 @@ import { useApi, usePaginatedApi } from '@creditwave/hooks';
 import {
   Borrow,
   Button,
+  CancelBorrow,
   Filter,
   ManualAssignment,
   Pagination,
@@ -21,6 +22,11 @@ type Item = {
   followUpPerson: string;
   borrow?: {
     id: number;
+    amount: number;
+  };
+  cancelBorrow?: {
+    id: number;
+    amount: number;
   };
   whetherApply: string;
   appTime: string;
@@ -198,7 +204,7 @@ export function TelemarketingRegisteredCustomers() {
         data={(data?.items || []).map((item) => ({
           ...item,
           operation: (
-            <div>
+            <div className="flex flex-wrap gap-2">
               {item.borrow ? (
                 <Borrow
                   values={{
@@ -210,6 +216,21 @@ export function TelemarketingRegisteredCustomers() {
                     const result = await telemarketingService.borrowValidation(
                       data
                     );
+                    if (result.success) refetch();
+                    return result;
+                  }}
+                />
+              ) : undefined}
+              {item.cancelBorrow ? (
+                <CancelBorrow
+                  values={{
+                    ...item.cancelBorrow,
+                    name: item.name,
+                    mobile: item.mobile,
+                  }}
+                  onSubmit={async (data) => {
+                    const result =
+                      await telemarketingService.borrowCancellation(data);
                     if (result.success) refetch();
                     return result;
                   }}

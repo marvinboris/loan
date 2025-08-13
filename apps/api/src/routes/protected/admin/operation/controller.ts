@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from '@creditwave/types';
+import { UserRole, UserStatus } from '../../../../types';
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../../lib';

@@ -1,4 +1,4 @@
-import { CreateUserInput, UserStatus } from '@creditwave/types';
+import { CreateUserInput, UserStatus } from '../../../../types';
 import bcrypt from 'bcryptjs';
 import { supabase } from '../../../../lib';
 import { CreateAccountInput, EditAccountInput } from './interfaces';

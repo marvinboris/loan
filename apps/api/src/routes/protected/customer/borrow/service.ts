@@ -1,4 +1,4 @@
-import { CreateLoanInput, LoanStatus } from '@creditwave/types';
+import { CreateLoanInput, LoanStatus } from '../../../../types';
 import moment from 'moment';
 import { supabase } from '../../../../lib';
 import { SubmitInput } from './interfaces';

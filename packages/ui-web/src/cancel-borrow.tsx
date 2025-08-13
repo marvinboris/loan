@@ -2,17 +2,14 @@ import { Formik } from 'formik';
 import React from 'react';
 import { Button } from './buttons';
 import { Card } from './card';
-import { Switch, TextArea } from './form';
 import { Modal } from './modal';
 import { toastShow } from './toast';
 
-export type BorrowFormValues = {
+export type CancelBorrowFormValues = {
   id: number;
-  validated: boolean;
-  reason?: string;
 };
 
-export type BorrowProps = {
+export type CancelBorrowProps = {
   values: {
     id: number;
 
@@ -21,43 +18,42 @@ export type BorrowProps = {
     amount: number;
   };
   onSubmit(
-    values: BorrowFormValues
+    values: CancelBorrowFormValues
   ): Promise<{ message: string; success: boolean }>;
 };
 
-export function Borrow({ values, onSubmit }: BorrowProps) {
+export function CancelBorrow({ values, onSubmit }: CancelBorrowProps) {
   const [show, setShow] = React.useState(false);
 
   return (
     <>
-      <BorrowForm
+      <CancelBorrowForm
         values={values}
         show={show}
         setShow={setShow}
         onSubmit={onSubmit}
       />
 
-      <Button onClick={() => setShow(true)}>Borrow</Button>
+      <Button onClick={() => setShow(true)}>Cancel borrow</Button>
     </>
   );
 }
 
-function BorrowForm({
+function CancelBorrowForm({
   show,
   setShow,
   values,
   onSubmit,
-}: BorrowProps & {
+}: CancelBorrowProps & {
   show: boolean;
   setShow: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const initialValues: BorrowFormValues = {
+  const initialValues: CancelBorrowFormValues = {
     id: values.id,
-    validated: false,
   };
 
   return (
-    <Modal show={show} setShow={setShow} title="Borrow validation form">
+    <Modal show={show} setShow={setShow} title="CancelBorrow validation form">
       <Card className="mb-2.5">
         <div className="*:flex *:justify-between *:*:*:last:font-bold">
           <div>
@@ -93,13 +89,7 @@ function BorrowForm({
           }
         }}
       >
-        {({
-          handleChange,
-          handleSubmit,
-          setFieldValue,
-          values,
-          isSubmitting,
-        }) => (
+        {({ handleSubmit, values, isSubmitting }) => (
           <form
             className="flex flex-col gap-2.5"
             onSubmit={(e) => {
@@ -108,18 +98,6 @@ function BorrowForm({
             }}
           >
             <input type="hidden" value={values.id} />
-
-            <Switch
-              label="Validate ?"
-              checked={values.validated}
-              onChange={(value) => setFieldValue('validated', value)}
-            />
-
-            <TextArea
-              label="Reason for denying"
-              value={values.reason}
-              onChange={handleChange('reason')}
-            />
 
             <Button loading={isSubmitting}>Submit</Button>
           </form>

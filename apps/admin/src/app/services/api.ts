@@ -1,5 +1,6 @@
 import {
   BorrowFormValues,
+  CancelBorrowFormValues,
   DistributionFormValues,
   KycFormValues,
   ManualAssignmentFormValues,
@@ -118,6 +119,16 @@ export const telemarketingService = {
     return result;
   },
 
+  async borrowCancellation(credentials: CancelBorrowFormValues) {
+    const httpClient = getHttpClient();
+    const result = await httpClient.post<Response>(
+      '/admin/telemarketing/borrow-cancellation',
+      credentials
+    );
+
+    return result;
+  },
+
   async manualAssignment(credentials: ManualAssignmentFormValues) {
     const httpClient = getHttpClient();
     const result = await httpClient.post<Response>(
@@ -199,7 +210,7 @@ export const operationService = {
   deleteAccount: async (userData: any) => {
     const httpClient = getHttpClient();
     const editedAccount = await httpClient.delete<Response>(
-      '/admin/operation/account/' + userData.id,
+      '/admin/operation/account/' + userData.id
     );
 
     return editedAccount;

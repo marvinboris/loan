@@ -1,7 +1,9 @@
 import { useApi, usePaginatedApi } from '@creditwave/hooks';
+import { Kyc as KycType } from '@creditwave/types';
 import {
   Borrow,
   Button,
+  CancelBorrow,
   Filter,
   Kyc,
   ManualAssignment,
@@ -20,22 +22,14 @@ type Item = {
   prevRepaymentTime: string;
   appName: string;
   followUpPerson: string;
-  kyc?: {
-    id: number;
-
-    first_name?: string;
-    last_name: string;
-    location: string;
-    birthdate: string;
-    emergency_number_1: string;
-    emergency_number_2?: string;
-    front_photo: string;
-    back_photo: string;
-    selfie: string;
-    status: string;
-  };
+  kyc?: KycType;
   borrow?: {
     id: number;
+    amount: number;
+  };
+  cancelBorrow?: {
+    id: number;
+    amount: number;
   };
   whetherApply: string;
   appTime: string;
@@ -208,7 +202,7 @@ export function TelemarketingNewCustomers() {
         data={(data?.items || []).map((item) => ({
           ...item,
           operation: (
-            <div>
+            <div className="flex flex-wrap gap-2">
               {item.kyc ? (
                 <Kyc
                   uploadsUrl={import.meta.env.VITE_API_URL + '/../'}
@@ -233,6 +227,21 @@ export function TelemarketingNewCustomers() {
                     const result = await telemarketingService.borrowValidation(
                       data
                     );
+                    if (result.success) refetch();
+                    return result;
+                  }}
+                />
+              ) : undefined}
+              {item.cancelBorrow ? (
+                <CancelBorrow
+                  values={{
+                    ...item.cancelBorrow,
+                    name: item.name,
+                    mobile: item.mobile,
+                  }}
+                  onSubmit={async (data) => {
+                    const result =
+                      await telemarketingService.borrowCancellation(data);
                     if (result.success) refetch();
                     return result;
                   }}

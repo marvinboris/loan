@@ -1,5 +1,5 @@
 // routes/auth/service.ts
-import { Customer, CustomerType } from '@creditwave/types';
+import { Customer, CustomerType } from '../../types';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';

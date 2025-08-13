@@ -1,4 +1,4 @@
-import { CreateKycInput, KycStatus } from '@creditwave/types';
+import { CreateKycInput, KycStatus } from '../../../../types';
 import { SubmitInput } from './interfaces';
 import { supabase } from '../../../../lib';
 

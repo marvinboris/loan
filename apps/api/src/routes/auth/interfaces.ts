@@ -1,4 +1,4 @@
-import { Customer } from '@creditwave/types';
+import { Customer } from '../../types';
 
 export interface LoginInput {
   email: string;

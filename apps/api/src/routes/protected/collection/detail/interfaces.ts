@@ -1,4 +1,4 @@
-import { ConnectionStatus, WillingnessToPay } from '@creditwave/types';
+import { ConnectionStatus, WillingnessToPay } from '../../../../types';
 
 export interface MarkInput {
   connection: ConnectionStatus;

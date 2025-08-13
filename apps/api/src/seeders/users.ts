@@ -1,5 +1,5 @@
 // database/seeders/users.ts
-import { CreateUserInput, UserRole, UserStatus } from '@creditwave/types';
+import { CreateUserInput, UserRole, UserStatus } from '../types';
 import bcrypt from 'bcryptjs';
 import { supabase } from '../lib';
 

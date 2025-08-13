@@ -1,4 +1,4 @@
-import { KycStatus } from '@creditwave/types';
+import { KycStatus } from '../../../../types';
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { SubmitInput } from './interfaces';

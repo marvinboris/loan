@@ -1,4 +1,4 @@
-import { CustomerType, LoanStatus, TradingStatus } from '@creditwave/types';
+import { CustomerType, LoanStatus, TradingStatus } from '../../../../types';
 import { SubmitInput } from './interfaces';
 import { supabase } from '../../../../lib';
 import { repay } from '../../../../utils';

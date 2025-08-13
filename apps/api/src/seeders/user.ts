@@ -1,5 +1,5 @@
 // database/seeders/user.ts
-import { UserRole, UserStatus } from '@creditwave/types';
+import { UserRole, UserStatus } from '../types';
 import bcrypt from 'bcryptjs';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';

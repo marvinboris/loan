@@ -3,9 +3,10 @@ import {
   CustomerType,
   KycStatus,
   LoanStatus,
-} from '@creditwave/types';
+} from '../../../../types';
 import xlsx from 'xlsx';
 import {
+  BorrowCancellationInput,
   BorrowValidationInput,
   KycValidationInput,
   ManualAssignmentInput,
@@ -140,6 +141,26 @@ export const telemarketingService = {
     return {
       success: true,
       message: 'Borrow validation response submitted successfully',
+    };
+  },
+
+  async borrowCancellation(input: BorrowCancellationInput) {
+    const { error } = await supabase
+      .from('loans')
+      .update({
+        loan_status: LoanStatus.REPAID,
+      })
+      .eq('id', input.id);
+
+    if (error)
+      return {
+        success: false,
+        message: 'Borrow cancellation response not submitted',
+      };
+
+    return {
+      success: true,
+      message: 'Borrow cancellation response submitted successfully',
     };
   },
 

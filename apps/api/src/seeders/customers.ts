@@ -1,5 +1,5 @@
 // database/seeders/customers.ts
-import { CreateCustomerInput, CustomerType } from '@creditwave/types';
+import { CreateCustomerInput, CustomerType } from '../types';
 import { supabase } from '../lib';
 
 export async function seedCustomers() {

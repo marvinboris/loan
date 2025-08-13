@@ -1,4 +1,4 @@
-import { UserRole, UserStatus } from '@creditwave/types';
+import { UserRole, UserStatus } from '../../../../types';
 
 export interface CreateAccountInput {
   email: string;

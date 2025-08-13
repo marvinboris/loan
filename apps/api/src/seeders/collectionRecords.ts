@@ -2,7 +2,7 @@ import {
   ConnectionStatus,
   CreateCollectionRecordInput,
   WillingnessToPay,
-} from '@creditwave/types';
+} from '../types';
 import { supabase } from '../lib';
 
 export async function seedCollectionRecords() {
@@ -55,7 +55,7 @@ export async function seedCollectionRecords() {
       contact: '+237651234567',
       target_contact: '+237651234567',
       connection: ConnectionStatus.NO_ANSWER,
-      willingness_to_pay: WillingnessToPay.MEDIUM,
+      willingness_to_pay: WillingnessToPay.HIGH,
       overdue_reason: 'Business cash flow issues',
       result: 'Left voicemail',
       record_time: '2024-02-02T14:30:00Z',
@@ -68,7 +68,7 @@ export async function seedCollectionRecords() {
       contact: '+237652345678',
       target_contact: '+237652345678',
       connection: ConnectionStatus.CONNECTED,
-      willingness_to_pay: WillingnessToPay.LOW,
+      willingness_to_pay: WillingnessToPay.HIGH,
       overdue_reason: 'Lost job',
       result: 'Negotiated payment plan',
       record_time: '2024-02-03T09:15:00Z',

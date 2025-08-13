@@ -3,13 +3,15 @@ import {
   Kyc,
   KycStatus,
   Loan,
+  LoanStatus,
   PerformanceType,
-} from '@creditwave/types';
+} from '../../../../types';
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../../lib';
 import { filter } from '../../../../utils';
 import {
+  BorrowCancellationInput,
   BorrowValidationInput,
   KycValidationInput,
   ManualAssignmentInput,
@@ -433,14 +435,20 @@ export class TelemarketingController {
 
       const borrow = await supabase
         .from('loans')
-        .select('id, customer_id')
-        .eq('loan_status', 'pending');
+        .select('id, customer_id, loan_status, loan_amount')
+        .in('loan_status', [LoanStatus.PENDING, LoanStatus.ACCEPTED]);
 
       if (borrow.error) throw borrow.error;
 
       const borrowRecord: Record<number, Partial<Loan>> = {};
+      const cancelBorrowRecord: Record<number, Partial<Loan>> = {};
       borrow.data.forEach((item) => {
-        borrowRecord[item.customer_id] = item;
+        (item.loan_status === LoanStatus.PENDING
+          ? borrowRecord
+          : cancelBorrowRecord)[item.customer_id] = {
+          ...item,
+          amount: item.loan_amount,
+        } as unknown as Loan;
       });
 
       const items =
@@ -462,6 +470,7 @@ export class TelemarketingController {
           telemarketer: customer.telemarketers?.name,
           kyc: kycRecord[customer.id],
           borrow: borrowRecord[customer.id],
+          cancelBorrow: cancelBorrowRecord[customer.id],
         })) || [];
 
       res.json({
@@ -533,14 +542,20 @@ export class TelemarketingController {
 
       const borrow = await supabase
         .from('loans')
-        .select('id, customer_id')
-        .eq('loan_status', 'pending');
+        .select('id, customer_id, loan_status, loan_amount')
+        .in('loan_status', [LoanStatus.PENDING, LoanStatus.ACCEPTED]);
 
       if (borrow.error) throw borrow.error;
 
       const borrowRecord: Record<number, Partial<Loan>> = {};
+      const cancelBorrowRecord: Record<number, Partial<Loan>> = {};
       borrow.data.forEach((item) => {
-        borrowRecord[item.customer_id] = item;
+        (item.loan_status === LoanStatus.PENDING
+          ? borrowRecord
+          : cancelBorrowRecord)[item.customer_id] = {
+          ...item,
+          amount: item.loan_amount,
+        } as unknown as Loan;
       });
 
       const items =
@@ -561,6 +576,7 @@ export class TelemarketingController {
           whetherAssigned: customer.whether_assigned,
           telemarketer: customer.telemarketers?.name,
           borrow: borrowRecord[customer.id],
+          cancelBorrow: cancelBorrowRecord[customer.id],
         })) || [];
 
       res.json({
@@ -634,14 +650,20 @@ export class TelemarketingController {
 
       const borrow = await supabase
         .from('loans')
-        .select('id, customer_id')
-        .eq('loan_status', 'pending');
+        .select('id, customer_id, loan_status, loan_amount')
+        .in('loan_status', [LoanStatus.PENDING, LoanStatus.ACCEPTED]);
 
       if (borrow.error) throw borrow.error;
 
       const borrowRecord: Record<number, Partial<Loan>> = {};
+      const cancelBorrowRecord: Record<number, Partial<Loan>> = {};
       borrow.data.forEach((item) => {
-        borrowRecord[item.customer_id] = item;
+        (item.loan_status === LoanStatus.PENDING
+          ? borrowRecord
+          : cancelBorrowRecord)[item.customer_id] = {
+          ...item,
+          amount: item.loan_amount,
+        } as unknown as Loan;
       });
 
       const items =
@@ -662,6 +684,7 @@ export class TelemarketingController {
           whetherAssigned: customer.whether_assigned,
           telemarketer: customer.telemarketers?.name,
           borrow: borrowRecord[customer.id],
+          cancelBorrow: cancelBorrowRecord[customer.id],
         })) || [];
 
       res.json({
@@ -744,6 +767,27 @@ export class TelemarketingController {
       const input: BorrowValidationInput = req.body;
 
       const result = await telemarketingService.borrowValidation(input);
+
+      res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async postBorrowCancellation(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const input: BorrowCancellationInput = req.body;
+
+      const result = await telemarketingService.borrowCancellation(input);
 
       res.status(result.success ? 200 : 400).json(result);
     } catch (error) {
