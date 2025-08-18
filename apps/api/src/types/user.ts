@@ -18,7 +18,7 @@ export interface User {
   name: string;
   work_number: string;
   role: UserRole;
-  group?: string | null;
+  group_id?: number | null;
   entry_date?: string | null; // ISO string format
   weights?: number | null;
   voice_collection: boolean;

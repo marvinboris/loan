@@ -1,8 +1,10 @@
+import { useAuth } from '@creditwave/hooks';
 import { cn } from '@creditwave/utils';
 import {
   ArrowDownTrayIcon,
   ArrowUpIcon,
   ChartBarIcon,
+  CheckCircleIcon,
   FolderIcon,
   PhoneArrowUpRightIcon,
   UserGroupIcon,
@@ -18,10 +20,13 @@ type NavItemProps = {
 };
 
 export function NavItems() {
-  return (
-    <div className="flex-1 overflow-auto pl-2.5">
-      <NavItem to="/all-customers" label="All customers" icon={UserGroupIcon} />
+  const { user } = useAuth();
 
+  const navItems = {
+    'all-customers': (
+      <NavItem to="/all-customers" label="All customers" icon={UserGroupIcon} />
+    ),
+    telemarketing: (
       <NavItem
         to="/telemarketing"
         label="Telemarketing"
@@ -48,7 +53,8 @@ export function NavItems() {
           },
         ]}
       />
-
+    ),
+    financial: (
       <NavItem
         to="/financial"
         label="Financial"
@@ -58,7 +64,8 @@ export function NavItems() {
           { to: '/loan-inquiry', label: 'Loan inquiry' },
         ]}
       />
-
+    ),
+    collection: (
       <NavItem
         to="/collection"
         label="Collection"
@@ -85,13 +92,36 @@ export function NavItems() {
           },
         ]}
       />
-
+    ),
+    operation: (
       <NavItem
         to="/operation"
         label="Operation"
         icon={FolderIcon}
-        items={[{ to: '/account', label: 'Account' }]}
+        items={[
+          { to: '/account', label: 'Account' },
+          { to: '/group', label: 'Group' },
+        ]}
       />
+    ),
+    validation: (
+      <NavItem
+        to="/validation"
+        label="Validation"
+        icon={CheckCircleIcon}
+        items={[
+          { to: '/kyc', label: 'KYC' },
+          { to: '/borrow', label: 'Borrow' },
+        ]}
+      />
+    ),
+  };
+
+  return (
+    <div className="flex-1 overflow-auto pl-2.5">
+      {Object.keys(user?.features || navItems).map(
+        (feature) => navItems[feature as keyof typeof navItems]
+      )}
     </div>
   );
 }

@@ -36,7 +36,7 @@ export function CollectionDailyReport() {
     'Collector stats daily',
   ]);
 
-  const { data, error, loading } = usePaginatedApi<Item>(
+  const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/collection/performance-management/daily'
   );
 
@@ -44,6 +44,7 @@ export function CollectionDailyReport() {
     <>
       <Filter
         exportable
+        refetch={refetch}
         className="grid-cols-2"
         fields={[
           {

@@ -29,7 +29,7 @@ export default function Layout() {
   }, [isAuthenticated]);
 
   const NavItem = React.useCallback(
-    (props: { title: string; href: string }) => {
+    (props: { title: string; href: string; static?: boolean }) => {
       return (
         <Pressable
           style={({ pressed }) => [
@@ -38,7 +38,7 @@ export default function Layout() {
           ]}
           onPress={() => {
             router.push(props.href);
-            setIsMenuOpen(false);
+            if (!props.static) setIsMenuOpen(false);
           }}
         >
           <Typography>{props.title}</Typography>
@@ -98,7 +98,7 @@ export default function Layout() {
                 marginBottom: 40,
               }}
             >
-              <NavItem title={t('menu.logout')} href="/logout" />
+              <NavItem static title={t('menu.logout')} href="/logout" />
             </View>
           </Pressable>
         </Pressable>

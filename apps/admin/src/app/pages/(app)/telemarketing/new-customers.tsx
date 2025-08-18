@@ -1,11 +1,7 @@
 import { useApi, usePaginatedApi } from '@creditwave/hooks';
-import { Kyc as KycType } from '@creditwave/types';
 import {
-  Borrow,
   Button,
-  CancelBorrow,
   Filter,
-  Kyc,
   ManualAssignment,
   Pagination,
   Release,
@@ -22,15 +18,6 @@ type Item = {
   prevRepaymentTime: string;
   appName: string;
   followUpPerson: string;
-  kyc?: KycType;
-  borrow?: {
-    id: number;
-    amount: number;
-  };
-  cancelBorrow?: {
-    id: number;
-    amount: number;
-  };
   whetherApply: string;
   appTime: string;
   allocationTime: string;
@@ -38,7 +25,6 @@ type Item = {
   followUpResults: string;
   descFollowUp: string;
   whetherAssigned: string;
-  operation: string;
 };
 
 export function TelemarketingNewCustomers() {
@@ -73,6 +59,7 @@ export function TelemarketingNewCustomers() {
   return (
     <>
       <Filter
+        refetch={refetch}
         className="grid-cols-3"
         fields={[
           {
@@ -201,54 +188,6 @@ export function TelemarketingNewCustomers() {
         }}
         data={(data?.items || []).map((item) => ({
           ...item,
-          operation: (
-            <div className="flex flex-wrap gap-2">
-              {item.kyc ? (
-                <Kyc
-                  uploadsUrl={import.meta.env.VITE_API_URL + '/../'}
-                  values={item.kyc}
-                  onSubmit={async (data) => {
-                    const result = await telemarketingService.kycValidation(
-                      data
-                    );
-                    if (result.success) refetch();
-                    return result;
-                  }}
-                />
-              ) : undefined}
-              {item.borrow ? (
-                <Borrow
-                  values={{
-                    ...item.borrow,
-                    name: item.name,
-                    mobile: item.mobile,
-                  }}
-                  onSubmit={async (data) => {
-                    const result = await telemarketingService.borrowValidation(
-                      data
-                    );
-                    if (result.success) refetch();
-                    return result;
-                  }}
-                />
-              ) : undefined}
-              {item.cancelBorrow ? (
-                <CancelBorrow
-                  values={{
-                    ...item.cancelBorrow,
-                    name: item.name,
-                    mobile: item.mobile,
-                  }}
-                  onSubmit={async (data) => {
-                    const result =
-                      await telemarketingService.borrowCancellation(data);
-                    if (result.success) refetch();
-                    return result;
-                  }}
-                />
-              ) : undefined}
-            </div>
-          ),
           whetherAssigned: item.followUpPerson ? 'Yes' : 'No',
         }))}
         fields={[
@@ -269,7 +208,6 @@ export function TelemarketingNewCustomers() {
             width: 200,
           },
           { label: 'WHETHER IT HAS BEEN ASSIGNED', key: 'whetherAssigned' },
-          { label: 'OPERATION', key: 'operation' },
         ]}
       />
 

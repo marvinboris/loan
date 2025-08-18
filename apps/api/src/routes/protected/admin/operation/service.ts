@@ -1,7 +1,12 @@
 import { CreateUserInput, UserStatus } from '../../../../types';
 import bcrypt from 'bcryptjs';
 import { supabase } from '../../../../lib';
-import { CreateAccountInput, EditAccountInput } from './interfaces';
+import {
+  CreateAccountInput,
+  CreateGroupInput,
+  EditAccountInput,
+  EditGroupInput,
+} from './interfaces';
 
 export const operationService = {
   async createAccount(input: CreateAccountInput) {
@@ -50,12 +55,12 @@ export const operationService = {
       .from('users')
       .insert({
         email,
-        account,
+        account: email,
         work_number: workNum,
         name,
         password: hashedPassword,
         entry_date: entryTime,
-        group,
+        group_id: group ? +group : undefined,
         weights,
         role,
         voice_collection: voiceCollection || false,
@@ -108,7 +113,7 @@ export const operationService = {
         work_number: workNum,
         name,
         entry_date: entryTime,
-        group,
+        group_id: group ? +group : undefined,
         weights,
         role,
         voice_collection: voiceCollection || false,
@@ -144,6 +149,62 @@ export const operationService = {
     return {
       success: true,
       message: 'Account deleted successfully',
+    };
+  },
+
+  async createGroup(input: CreateGroupInput) {
+    const { name, features } = input;
+
+    // Créer l'utilisateur
+    const { data: user, error: createError } = await supabase
+      .from('groups')
+      .insert({
+        name,
+        features,
+      } satisfies CreateGroupInput)
+      .select('id, name, features, created_at')
+      .single();
+
+    if (createError) throw createError;
+
+    return {
+      success: true,
+      message: 'Group created successfully',
+    };
+  },
+
+  async editGroup(id: number, input: EditGroupInput) {
+    let { name, features } = input;
+
+    // Modifier l'utilisateur
+    const { error: createError } = await supabase
+      .from('groups')
+      .update({
+        name,
+        features,
+      })
+      .eq('id', id);
+
+    if (createError) throw createError;
+
+    return {
+      success: true,
+      message: 'Group updated successfully',
+    };
+  },
+
+  async deleteGroup(id: number) {
+    // Créer le groupe
+    const { error: createError } = await supabase
+      .from('groups')
+      .delete()
+      .eq('id', id);
+
+    if (createError) throw createError;
+
+    return {
+      success: true,
+      message: 'Group deleted successfully',
     };
   },
 };

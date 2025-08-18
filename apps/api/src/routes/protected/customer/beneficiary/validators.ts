@@ -42,12 +42,16 @@ export const verifyValidator = [
   body('mobile')
     .notEmpty()
     .withMessage('The phone number is required')
-    .custom(async (mobile) => {
+    .custom(async (mobile: string) => {
       // Formatage du numéro pour la vérification (supprime les espaces, etc.)
       const formattedMobile = mobile.replace(/\s+/g, '');
 
       // Vérification du format international si nécessaire
-      if (!isValidPhoneNumber(formattedMobile)) {
+      if (
+        !isValidPhoneNumber(
+          (mobile.startsWith('+') ? '' : '+') + formattedMobile
+        )
+      ) {
         throw new Error(
           'The number must be in international format (eg: +237612345678)'
         );
@@ -69,7 +73,7 @@ export const verifyValidator = [
       const { data: customer, error } = await supabase
         .from('customers')
         .select('verification_code, verification_code_expires')
-        .eq('mobile', mobile)
+        .in('mobile', [mobile, mobile.substring(1)])
         .single();
 
       if (error || !customer) {

@@ -42,11 +42,26 @@ export const authorize = (
             .maybeSingle()
         : await supabase
             .from('users')
-            .select('role')
+            .select('role, groups:group_id (features)')
             .eq('id', req.user.id)
             .maybeSingle();
 
-    if (error || !user || ('role' in user && role !== user.role)) {
+    if (
+      error ||
+      !user ||
+      ('role' in user &&
+        role !== user.role)
+        // ||
+        // !(
+        //   user.role === 'admin' &&
+        //   (req.path !== '/telemarketing/all-customers' ||
+        //     !user.groups ||
+        //     (user.groups?.features &&
+        //       !(req.path.split('/')[1] in Object(user.groups.features))))
+        // )
+    ) {
+      if ('groups' in user)
+        console.log(req.path, req.path.split('/')[1], user.groups?.features);
       return res.status(403).json({ success: false, message: 'Forbidden' });
     }
     next();

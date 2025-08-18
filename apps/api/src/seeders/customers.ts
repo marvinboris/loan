@@ -11,7 +11,7 @@ export async function seedCustomers() {
       .from('users')
       .select('id')
       .eq('role', 'telemarketer')
-      .order('created_at', { ascending: true });
+      .order('id', { ascending: true });
 
     if (telemarketersError || !telemarketers || telemarketers.length < 2) {
       throw new Error('Not enough telemarketers found. Seed users first.');

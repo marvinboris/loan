@@ -1,9 +1,16 @@
-import { i18n, languageState$ } from '@creditwave/utils';
+import { languageState$ } from '@creditwave/utils';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function useLanguage() {
-  const language = languageState$.get();
-  const setLanguage = languageState$.set;
-  languageState$.onChange((language) => i18n.changeLanguage(language.value));
+  const { i18n } = useTranslation();
 
-  return { language, setLanguage };
+  const [language, setLanguage] = React.useState(languageState$.get());
+
+  languageState$.onChange(({ value }) => {
+    setLanguage(value);
+    i18n.changeLanguage(value);
+  });
+
+  return { language, setLanguage: languageState$.set };
 }

@@ -1,11 +1,13 @@
 import { usePaginatedApi } from '@creditwave/hooks';
 import { Filter, Pagination, Table, useBreadcrumb } from '@creditwave/ui-web';
+import { cn } from '@creditwave/utils';
 import React from 'react';
 
 type Item = {
   mobile: string;
   name: string;
   loanNum: string;
+  loanStatus: string;
   loanOrderNum: string;
   stage: string;
   collector: string;
@@ -29,11 +31,13 @@ type Item = {
 export function CollectionCase() {
   useBreadcrumb(['Collection', 'Collection case']);
 
-  const { data, error, loading } = usePaginatedApi<Item>('/collection/case');
+  const { data, error, loading, refetch } =
+    usePaginatedApi<Item>('/collection/case');
 
   return (
     <>
       <Filter
+        refetch={refetch}
         className="grid-cols-3"
         fields={[
           {
@@ -107,6 +111,10 @@ export function CollectionCase() {
             label: 'Loan status',
             options: {
               '': 'Select a status',
+              pending: 'Pending',
+              accepted: 'Accepted',
+              failed: 'Failed',
+              repaid: 'Repaid',
             },
           },
           {
@@ -164,10 +172,28 @@ export function CollectionCase() {
       <Table
         error={error}
         loading={loading}
-        data={data?.items || []}
+        data={(data?.items || []).map((item) => ({
+          ...item,
+          loanStatus: (
+            <div
+              className={cn(
+                'capitalize',
+                {
+                  pending: 'text-yellow-600',
+                  accepted: 'text-blue-600',
+                  repaid: 'text-green-600',
+                  failed: 'text-red-600',
+                }[item.loanStatus]
+              )}
+            >
+              {item.loanStatus}
+            </div>
+          ),
+        }))}
         fields={[
           { label: 'LOAN NUMBER', key: 'loanNum' },
           { label: 'LOAN ORDER NUMBER', key: 'loanOrderNum' },
+          { label: 'LOAN STATUS', key: 'loanStatus' },
           { label: 'APP NAME', key: 'appName' },
           { label: 'NAME', key: 'name' },
           { label: 'MOBILE', key: 'mobile' },

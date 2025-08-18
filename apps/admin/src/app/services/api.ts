@@ -99,36 +99,6 @@ export const telemarketingService = {
     return results;
   },
 
-  async kycValidation(credentials: KycFormValues) {
-    const httpClient = getHttpClient();
-    const result = await httpClient.post<Response>(
-      '/admin/telemarketing/kyc-validation',
-      credentials
-    );
-
-    return result;
-  },
-
-  async borrowValidation(credentials: BorrowFormValues) {
-    const httpClient = getHttpClient();
-    const result = await httpClient.post<Response>(
-      '/admin/telemarketing/borrow-validation',
-      credentials
-    );
-
-    return result;
-  },
-
-  async borrowCancellation(credentials: CancelBorrowFormValues) {
-    const httpClient = getHttpClient();
-    const result = await httpClient.post<Response>(
-      '/admin/telemarketing/borrow-cancellation',
-      credentials
-    );
-
-    return result;
-  },
-
   async manualAssignment(credentials: ManualAssignmentFormValues) {
     const httpClient = getHttpClient();
     const result = await httpClient.post<Response>(
@@ -214,5 +184,66 @@ export const operationService = {
     );
 
     return editedAccount;
+  },
+
+  createGroup: async (groupData: any) => {
+    const httpClient = getHttpClient();
+    const createdGroup = await httpClient.post<Response>(
+      '/admin/operation/group',
+      groupData
+    );
+
+    return createdGroup;
+  },
+
+  editGroup: async (groupData: any) => {
+    const httpClient = getHttpClient();
+    const editedGroup = await httpClient.put<Response>(
+      '/admin/operation/group/' + groupData.id,
+      groupData
+    );
+
+    return editedGroup;
+  },
+
+  deleteGroup: async (groupData: any) => {
+    const httpClient = getHttpClient();
+    const editedGroup = await httpClient.delete<Response>(
+      '/admin/operation/group/' + groupData.id
+    );
+
+    return editedGroup;
+  },
+};
+
+export const validationService = {
+  async kycValidation(credentials: KycFormValues) {
+    const httpClient = getHttpClient();
+    const result = await httpClient.post<Response>(
+      '/admin/validation/kyc',
+      credentials
+    );
+
+    return result;
+  },
+
+  async borrowValidation(credentials: BorrowFormValues) {
+    const httpClient = getHttpClient();
+    const result = await httpClient.post<Response>(
+      '/admin/validation/borrow',
+      credentials
+    );
+
+    return result;
+  },
+
+  async borrowCancellation(credentials: CancelBorrowFormValues) {
+    const httpClient = getHttpClient();
+    const result = await httpClient.post<Response>(
+      '/admin/validation/borrow-cancellation',
+      credentials
+    );
+
+    return result;
   },
 };

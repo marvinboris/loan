@@ -9,6 +9,7 @@ import { supabase } from '../../../../lib';
 import { filter } from '../../../../utils';
 import { DistributionInput } from './interfaces';
 import { collectionService } from './service';
+import moment from 'moment';
 
 export class CollectionController {
   async getMonthlyPerformance(req: Request, res: Response, next: NextFunction) {
@@ -39,7 +40,7 @@ export class CollectionController {
       const [from, to] = filter(req.query);
       const { data: performances, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) {
         throw new Error(`Supabase error: ${error.message}`);
@@ -104,7 +105,7 @@ export class CollectionController {
       const [from, to] = filter(req.query);
       const { data: performances, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -172,7 +173,7 @@ export class CollectionController {
       const [from, to] = filter(req.query);
       const { data: performances, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -229,7 +230,7 @@ export class CollectionController {
       const [from, to] = filter(req.query);
       const { data: performances, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -327,7 +328,7 @@ export class CollectionController {
       const [from, to] = filter(req.query);
       const { data: loans, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -363,6 +364,7 @@ export class CollectionController {
             loanAmt: loan.loan_amount,
             loanTenure: loan.loan_tenure,
             loanType: loan.loan_type,
+            loanStatus: loan.loan_status,
             appStatus: loan.app_status,
           };
         }) || [];
@@ -414,11 +416,80 @@ export class CollectionController {
           collection_records:collection_records (*)
         `,
           { count: 'exact' }
-        )
-        .eq('loan_status', LoanStatus.ACCEPTED);
+        );
 
       // Appliquer les filtres
-      if (stage) query = query.eq('collection_stage', stage as string);
+      if (stage) {
+        const now = new Date();
+        const today = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate()
+        );
+
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        const day7Ago = new Date(today);
+        day7Ago.setDate(today.getDate() - 7);
+
+        const day8Ago = new Date(today);
+        day8Ago.setDate(today.getDate() - 8);
+
+        const day15Ago = new Date(today);
+        day15Ago.setDate(today.getDate() - 15);
+
+        const day16Ago = new Date(today);
+        day16Ago.setDate(today.getDate() - 16);
+
+        const day30Ago = new Date(today);
+        day30Ago.setDate(today.getDate() - 30);
+
+        const day31Ago = new Date(today);
+        day31Ago.setDate(today.getDate() - 31);
+
+        switch (stage) {
+          case 'S-1':
+            query = query
+              .gte('due_date', today.toISOString())
+              .lt(
+                'due_date',
+                new Date(tomorrow.getTime() + 24 * 60 * 60 * 1000).toISOString()
+              );
+            break;
+
+          case 'S0':
+            query = query
+              .gte('due_date', today.toISOString())
+              .lt('due_date', tomorrow.toISOString());
+            break;
+
+          case 'S1':
+            query = query
+              .gte('due_date', day7Ago.toISOString())
+              .lt('due_date', today.toISOString());
+            break;
+
+          case 'S3':
+            query = query
+              .gte('due_date', day15Ago.toISOString())
+              .lt('due_date', day8Ago.toISOString());
+            break;
+
+          case 'S4':
+            query = query
+              .gte('due_date', day30Ago.toISOString())
+              .lt('due_date', day16Ago.toISOString());
+            break;
+
+          case 'S5':
+            query = query.lt('due_date', day31Ago.toISOString());
+            break;
+        }
+      }
       if (collector) query = query.eq('collector_id', +(collector as string));
       if (product) query = query.eq('product_name', product as string);
       if (userSelect)
@@ -445,7 +516,7 @@ export class CollectionController {
       const [from, to] = filter(req.query);
       const { data: loans, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -465,8 +536,10 @@ export class CollectionController {
             name: loan.customers?.name,
             district: loan.customers?.district,
             mobile: loan.customers?.mobile,
-            dueDate: loan.due_date,
-            daysOverdue: loan.days_overdue,
+            dueDate: moment(loan.due_date).format('LL'),
+            daysOverdue: moment()
+              .startOf('day')
+              .diff(moment(loan.due_date).startOf('day'), 'days'),
             totalRepayment: loan.total_repayment,
             dailyTimes: dailyRecords.length,
             times: loan.collection_records?.length || 0,
@@ -561,7 +634,7 @@ export class CollectionController {
       const [from, to] = filter(req.query);
       const { data: records, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 

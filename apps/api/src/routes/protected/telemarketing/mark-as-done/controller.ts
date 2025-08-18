@@ -31,7 +31,7 @@ export class MarkAsDoneController {
           follow_up_results: input.remark,
           latest_follow_up_time: new Date().toISOString(),
         })
-        .eq('mobile', mobile)
+        .in('mobile', [mobile, mobile.substring(1)])
         .select()
         .single();
 

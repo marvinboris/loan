@@ -11,22 +11,17 @@
     "ios": "expo run:ios"
   },
   "dependencies": {
-    "@testing-library/jest-native": "*",
-    "@testing-library/react-native": "*",
+    "@legendapp/state": "*",
     "@react-native-async-storage/async-storage": "*",
     "@react-native-community/datetimepicker": "*",
     "expo": "*",
     "expo-asset": "*",
-    "expo-camera": "*",
     "expo-constants": "*",
     "expo-dev-client": "*",
-    "expo-document-picker": "*",
     "expo-image-picker": "*",
-    "expo-intent-launcher": "*",
     "expo-font": "*",
     "expo-linking": "*",
     "expo-router": "*",
-    "expo-screen-orientation": "*",
     "expo-sharing": "*",
     "expo-status-bar": "*",
     "react": "*",
@@ -36,7 +31,6 @@
     "react-native-reanimated": "*",
     "react-native-safe-area-context": "*",
     "react-native-screens": "*",
-    "react-native-svg": "*",
-    "react-native-web": "*"
+    "react-native-svg": "*"
   }
 }

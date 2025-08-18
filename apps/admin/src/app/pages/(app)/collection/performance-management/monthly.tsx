@@ -28,7 +28,7 @@ export function CollectionMonthlyReport() {
     'Collector stats monthly',
   ]);
 
-  const { data, error, loading } = usePaginatedApi<Item>(
+  const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/collection/performance-management/monthly'
   );
 
@@ -36,6 +36,7 @@ export function CollectionMonthlyReport() {
     <>
       <Filter
         exportable
+        refetch={refetch}
         className="grid-cols-2"
         fields={[
           {

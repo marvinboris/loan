@@ -8,7 +8,7 @@ export class ApplicationsController {
         .from('loans')
         .select()
         .eq('customer_id', req.user.id)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 

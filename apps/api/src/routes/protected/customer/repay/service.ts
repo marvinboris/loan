@@ -32,6 +32,7 @@ export const repayService = {
         trading_status: TradingStatus.SUCCESS,
         real_amount: input.amount,
         payment_channel: 'Mobile',
+        payment_company_serial_number: success,
       })
       .select()
       .single();

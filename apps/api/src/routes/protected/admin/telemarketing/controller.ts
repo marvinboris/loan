@@ -2,21 +2,13 @@ import {
   CustomerType,
   Kyc,
   KycStatus,
-  Loan,
-  LoanStatus,
   PerformanceType,
 } from '../../../../types';
 import { Request, Response, NextFunction } from 'express';
 import { validationResult } from 'express-validator';
 import { supabase } from '../../../../lib';
 import { filter } from '../../../../utils';
-import {
-  BorrowCancellationInput,
-  BorrowValidationInput,
-  KycValidationInput,
-  ManualAssignmentInput,
-  ReleaseInput,
-} from './interfaces';
+import { ManualAssignmentInput, ReleaseInput } from './interfaces';
 import { telemarketingService } from './service';
 
 export class TelemarketingController {
@@ -48,7 +40,7 @@ export class TelemarketingController {
       const [from, to] = filter(req.query);
       const { data: performances, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -111,7 +103,7 @@ export class TelemarketingController {
       const [from, to] = filter(req.query);
       const { data: performances, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -179,7 +171,7 @@ export class TelemarketingController {
       const [from, to] = filter(req.query);
       const { data: performances, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -236,7 +228,7 @@ export class TelemarketingController {
       const [from, to] = filter(req.query);
       const { data: performances, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -297,7 +289,16 @@ export class TelemarketingController {
       );
 
       // Appliquer les filtres
-      if (importDate) query = query.eq('created_at', importDate as string);
+      if (importDate) {
+        const importDay = new Date(importDate as string);
+
+        query = query
+          .gte('created_at', importDay.toISOString())
+          .lt(
+            'created_at',
+            new Date(importDay.getTime() + 24 * 60 * 60 * 1000).toISOString()
+          );
+      }
       if (userLabel) query = query.eq('user_label', userLabel as string);
       if (mobile) query = query.eq('mobile', mobile as string);
       if (telemarketer)
@@ -318,7 +319,7 @@ export class TelemarketingController {
       const [from, to] = filter(req.query);
       const { data: customers, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -397,7 +398,16 @@ export class TelemarketingController {
         .eq('type', 'new');
 
       // Appliquer les filtres
-      if (importDate) query = query.eq('created_at', importDate as string);
+      if (importDate) {
+        const importDay = new Date(importDate as string);
+
+        query = query
+          .gte('created_at', importDay.toISOString())
+          .lt(
+            'created_at',
+            new Date(importDay.getTime() + 24 * 60 * 60 * 1000).toISOString()
+          );
+      }
       if (userLabel) query = query.eq('user_label', userLabel as string);
       if (mobile) query = query.eq('mobile', mobile as string);
       if (telemarketer)
@@ -418,39 +428,9 @@ export class TelemarketingController {
       const [from, to] = filter(req.query);
       const { data: customers, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
-
-      const kyc = await supabase
-        .from('kyc')
-        .select()
-        .eq('status', KycStatus.PENDING);
-
-      if (kyc.error) throw kyc.error;
-
-      const kycRecord: Record<number, Kyc> = {};
-      kyc.data.forEach((item) => {
-        kycRecord[item.customer_id] = item as Kyc;
-      });
-
-      const borrow = await supabase
-        .from('loans')
-        .select('id, customer_id, loan_status, loan_amount')
-        .in('loan_status', [LoanStatus.PENDING, LoanStatus.ACCEPTED]);
-
-      if (borrow.error) throw borrow.error;
-
-      const borrowRecord: Record<number, Partial<Loan>> = {};
-      const cancelBorrowRecord: Record<number, Partial<Loan>> = {};
-      borrow.data.forEach((item) => {
-        (item.loan_status === LoanStatus.PENDING
-          ? borrowRecord
-          : cancelBorrowRecord)[item.customer_id] = {
-          ...item,
-          amount: item.loan_amount,
-        } as unknown as Loan;
-      });
 
       const items =
         customers?.map((customer) => ({
@@ -469,9 +449,6 @@ export class TelemarketingController {
           descFollowUp: customer.desc_follow_up,
           whetherAssigned: customer.whether_assigned,
           telemarketer: customer.telemarketers?.name,
-          kyc: kycRecord[customer.id],
-          borrow: borrowRecord[customer.id],
-          cancelBorrow: cancelBorrowRecord[customer.id],
         })) || [];
 
       res.json({
@@ -516,7 +493,16 @@ export class TelemarketingController {
         .eq('type', 'old');
 
       // Appliquer les filtres
-      if (importDate) query = query.eq('created_at', importDate as string);
+      if (importDate) {
+        const importDay = new Date(importDate as string);
+
+        query = query
+          .gte('created_at', importDay.toISOString())
+          .lt(
+            'created_at',
+            new Date(importDay.getTime() + 24 * 60 * 60 * 1000).toISOString()
+          );
+      }
       if (userLabel) query = query.eq('user_label', userLabel as string);
       if (mobile) query = query.eq('mobile', mobile as string);
       if (telemarketer)
@@ -537,27 +523,9 @@ export class TelemarketingController {
       const [from, to] = filter(req.query);
       const { data: customers, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
-
-      const borrow = await supabase
-        .from('loans')
-        .select('id, customer_id, loan_status, loan_amount')
-        .in('loan_status', [LoanStatus.PENDING, LoanStatus.ACCEPTED]);
-
-      if (borrow.error) throw borrow.error;
-
-      const borrowRecord: Record<number, Partial<Loan>> = {};
-      const cancelBorrowRecord: Record<number, Partial<Loan>> = {};
-      borrow.data.forEach((item) => {
-        (item.loan_status === LoanStatus.PENDING
-          ? borrowRecord
-          : cancelBorrowRecord)[item.customer_id] = {
-          ...item,
-          amount: item.loan_amount,
-        } as unknown as Loan;
-      });
 
       const items =
         customers?.map((customer) => ({
@@ -576,8 +544,6 @@ export class TelemarketingController {
           descFollowUp: customer.desc_follow_up,
           whetherAssigned: customer.whether_assigned,
           telemarketer: customer.telemarketers?.name,
-          borrow: borrowRecord[customer.id],
-          cancelBorrow: cancelBorrowRecord[customer.id],
         })) || [];
 
       res.json({
@@ -626,7 +592,16 @@ export class TelemarketingController {
         .eq('whether_apply', false);
 
       // Appliquer les filtres
-      if (importDate) query = query.eq('created_at', importDate as string);
+      if (importDate) {
+        const importDay = new Date(importDate as string);
+
+        query = query
+          .gte('created_at', importDay.toISOString())
+          .lt(
+            'created_at',
+            new Date(importDay.getTime() + 24 * 60 * 60 * 1000).toISOString()
+          );
+      }
       if (userLabel) query = query.eq('user_label', userLabel as string);
       if (mobile) query = query.eq('mobile', mobile as string);
       if (telemarketer)
@@ -645,27 +620,9 @@ export class TelemarketingController {
       const [from, to] = filter(req.query);
       const { data: customers, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
-
-      const borrow = await supabase
-        .from('loans')
-        .select('id, customer_id, loan_status, loan_amount')
-        .in('loan_status', [LoanStatus.PENDING, LoanStatus.ACCEPTED]);
-
-      if (borrow.error) throw borrow.error;
-
-      const borrowRecord: Record<number, Partial<Loan>> = {};
-      const cancelBorrowRecord: Record<number, Partial<Loan>> = {};
-      borrow.data.forEach((item) => {
-        (item.loan_status === LoanStatus.PENDING
-          ? borrowRecord
-          : cancelBorrowRecord)[item.customer_id] = {
-          ...item,
-          amount: item.loan_amount,
-        } as unknown as Loan;
-      });
 
       const items =
         customers?.map((customer) => ({
@@ -684,8 +641,6 @@ export class TelemarketingController {
           descFollowUp: customer.desc_follow_up,
           whetherAssigned: customer.whether_assigned,
           telemarketer: customer.telemarketers?.name,
-          borrow: borrowRecord[customer.id],
-          cancelBorrow: cancelBorrowRecord[customer.id],
         })) || [];
 
       res.json({
@@ -739,61 +694,6 @@ export class TelemarketingController {
         next(error);
       }
     };
-  }
-
-  async postKycValidation(req: Request, res: Response, next: NextFunction) {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-
-      const input: KycValidationInput = req.body;
-
-      const result = await telemarketingService.kycValidation(input);
-
-      res.status(result.success ? 200 : 400).json(result);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async postBorrowValidation(req: Request, res: Response, next: NextFunction) {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-
-      const input: BorrowValidationInput = req.body;
-
-      const result = await telemarketingService.borrowValidation(input);
-
-      res.status(result.success ? 200 : 400).json(result);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  async postBorrowCancellation(
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-      }
-
-      const input: BorrowCancellationInput = req.body;
-
-      const result = await telemarketingService.borrowCancellation(input);
-
-      res.status(result.success ? 200 : 400).json(result);
-    } catch (error) {
-      next(error);
-    }
   }
 
   async postManualAssignment(req: Request, res: Response, next: NextFunction) {

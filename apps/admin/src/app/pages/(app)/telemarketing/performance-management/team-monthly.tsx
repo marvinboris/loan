@@ -25,7 +25,7 @@ export function TelemarketingTeamMonthlyReport() {
     'Telemarketing team monthly report',
   ]);
 
-  const { data, error, loading } = usePaginatedApi<Item>(
+  const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/telemarketing/performance-management/team-monthly'
   );
 
@@ -33,6 +33,7 @@ export function TelemarketingTeamMonthlyReport() {
     <>
       <Filter
         exportable
+        refetch={refetch}
         className="grid-cols-2"
         fields={[
           {

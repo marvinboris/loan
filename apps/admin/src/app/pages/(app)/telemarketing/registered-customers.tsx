@@ -1,8 +1,6 @@
 import { useApi, usePaginatedApi } from '@creditwave/hooks';
 import {
-  Borrow,
   Button,
-  CancelBorrow,
   Filter,
   ManualAssignment,
   Pagination,
@@ -20,14 +18,6 @@ type Item = {
   prevRepaymentTime: string;
   appName: string;
   followUpPerson: string;
-  borrow?: {
-    id: number;
-    amount: number;
-  };
-  cancelBorrow?: {
-    id: number;
-    amount: number;
-  };
   whetherApply: string;
   appTime: string;
   allocationTime: string;
@@ -75,6 +65,7 @@ export function TelemarketingRegisteredCustomers() {
   return (
     <>
       <Filter
+        refetch={refetch}
         className="grid-cols-3"
         fields={[
           {
@@ -203,41 +194,7 @@ export function TelemarketingRegisteredCustomers() {
         }}
         data={(data?.items || []).map((item) => ({
           ...item,
-          operation: (
-            <div className="flex flex-wrap gap-2">
-              {item.borrow ? (
-                <Borrow
-                  values={{
-                    ...item.borrow,
-                    name: item.name,
-                    mobile: item.mobile,
-                  }}
-                  onSubmit={async (data) => {
-                    const result = await telemarketingService.borrowValidation(
-                      data
-                    );
-                    if (result.success) refetch();
-                    return result;
-                  }}
-                />
-              ) : undefined}
-              {item.cancelBorrow ? (
-                <CancelBorrow
-                  values={{
-                    ...item.cancelBorrow,
-                    name: item.name,
-                    mobile: item.mobile,
-                  }}
-                  onSubmit={async (data) => {
-                    const result =
-                      await telemarketingService.borrowCancellation(data);
-                    if (result.success) refetch();
-                    return result;
-                  }}
-                />
-              ) : undefined}
-            </div>
-          ),
+          whetherAssigned: item.followUpPerson ? 'Yes' : 'No',
         }))}
         fields={[
           { label: 'MOBILE', key: 'mobile', width: 100 },
@@ -245,7 +202,6 @@ export function TelemarketingRegisteredCustomers() {
           { label: 'PREVIOUS REPAYMENT TIME', key: 'prevRepaymentTime' },
           { label: 'APP NAME', key: 'appName' },
           { label: 'FOLLOW-UP PERSON', key: 'followUpPerson' },
-          // { label: '100', key: '100' },
           { label: 'WHETHER TO APPLY', key: 'whetherApply' },
           { label: 'APPLICATION TIME', key: 'appTime' },
           { label: 'ALLOCATION TIME', key: 'allocationTime' },
@@ -253,7 +209,6 @@ export function TelemarketingRegisteredCustomers() {
           { label: 'FOLLOW-UP RESULTS', key: 'followUpResults' },
           { label: 'DESCRIPTION OF FOLLOW-UP', key: 'descFollowUp' },
           { label: 'WHETHER IT HAS BEEN ASSIGNED', key: 'whetherAssigned' },
-          { label: 'OPERATION', key: 'operation' },
         ]}
       />
 

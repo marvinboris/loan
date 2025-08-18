@@ -42,7 +42,7 @@ export const beneficiaryService = {
       const { data: customer, error } = await supabase
         .from('customers')
         .select('*')
-        .eq('mobile', mobile)
+        .in('mobile', [mobile, mobile.substring(1)])
         .eq('verification_code', +code)
         .gt('verification_code_expires', new Date().toISOString())
         .single();

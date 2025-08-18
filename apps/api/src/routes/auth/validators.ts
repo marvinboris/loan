@@ -127,7 +127,7 @@ export const verifyCodeValidator = [
       const { data: customer, error } = await supabase
         .from('customers')
         .select('verification_code, verification_code_expires')
-        .eq('mobile', mobile)
+        .in('mobile', [mobile, mobile.substring(1)])
         .single();
 
       if (error || !customer) {

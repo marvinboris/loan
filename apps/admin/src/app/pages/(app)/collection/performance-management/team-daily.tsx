@@ -21,7 +21,7 @@ type Item = {
 export function CollectionTeamDailyReport() {
   useBreadcrumb(['Collection', 'Performance management', 'Group stats daily']);
 
-  const { data, error, loading } = usePaginatedApi<Item>(
+  const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/collection/performance-management/team-daily'
   );
 
@@ -29,6 +29,7 @@ export function CollectionTeamDailyReport() {
     <>
       <Filter
         exportable
+        refetch={refetch}
         className="grid-cols-2"
         fields={[
           {

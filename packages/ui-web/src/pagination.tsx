@@ -12,7 +12,7 @@ export function Pagination({ total: totalItems = 0 }: PaginationProps) {
   const [params, setParams] = useSearchParams();
 
   const page = +(params.get('_page') || '1');
-  const show = +(params.get('_show') || '10');
+  const show = +(params.get('_show') || '100');
 
   const total = totalItems ? Math.ceil(totalItems / show) : 1;
 

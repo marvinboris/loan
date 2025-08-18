@@ -17,7 +17,6 @@ export const resources = {
 } as const;
 
 i18n.use(initReactI18next).init({
-  compatibilityJSON: 'v4',
   fallbackLng: 'en',
   defaultNS,
   resources,
@@ -25,7 +24,7 @@ i18n.use(initReactI18next).init({
 
 // Listen for language changes and update moment locale
 i18n.on('languageChanged', (lng) => {
-  moment.locale(lng);
+  // moment.locale(lng);
 });
 
 export { i18n };

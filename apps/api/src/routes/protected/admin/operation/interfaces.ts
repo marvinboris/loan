@@ -20,3 +20,10 @@ export interface CreateAccountInput {
 export type EditAccountInput = Partial<CreateAccountInput> & {
   status?: UserStatus;
 };
+
+export interface CreateGroupInput {
+  name: string;
+  features: string[];
+}
+
+export type EditGroupInput = Partial<CreateGroupInput>;

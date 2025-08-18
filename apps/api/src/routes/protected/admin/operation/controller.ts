@@ -27,7 +27,13 @@ export class OperationController {
         role,
       } = req.query;
 
-      let query = supabase.from('users').select('*', { count: 'exact' });
+      let query = supabase.from('users').select(
+        `
+        *,
+        groups:group_id (name)
+        `,
+        { count: 'exact' }
+      );
 
       // Appliquer les filtres
       // if (account) query = query.eq('account', account as string);
@@ -55,7 +61,7 @@ export class OperationController {
       const [from, to] = filter(req.query);
       const { data: users, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -69,7 +75,7 @@ export class OperationController {
           workNum: user.work_number,
           creationTime: user.created_at,
           entryTime: user.entry_date,
-          group: user.group,
+          group: user.groups?.name,
           role: user.role,
           staffLvl: user.staff_level,
           collectionDistributionRules: user.collection_distribution_rules,
@@ -132,6 +138,98 @@ export class OperationController {
       }
 
       const result = await operationService.deleteAccount(+req.params.id);
+
+      res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getGroupsOptions(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { data, error } = await supabase.from('groups').select();
+
+      if (error) throw error;
+
+      const record: Record<string, string> = {};
+      data.forEach((item) => {
+        record[item.id] = item.name;
+      });
+
+      res.json(record);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getGroups(req: Request, res: Response, next: NextFunction) {
+    try {
+      let query = supabase.from('groups').select('*', { count: 'exact' });
+
+      const total = (await query).count;
+      const [from, to] = filter(req.query);
+      const { data: groups, error } = await query
+        .range(from, to)
+        .order('id', { ascending: false });
+
+      if (error) throw error;
+
+      const items =
+        groups?.map((user) => ({
+          id: user.id,
+          serialNum: user.id,
+          name: user.name,
+          features: user.features,
+        })) || [];
+
+      res.json({
+        success: true,
+        items,
+        total,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async createGroup(req: Request, res: Response, next: NextFunction) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const result = await operationService.createGroup(req.body);
+
+      res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async editGroup(req: Request, res: Response, next: NextFunction) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const result = await operationService.editGroup(+req.params.id, req.body);
+
+      res.status(result.success ? 200 : 400).json(result);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async deleteGroup(req: Request, res: Response, next: NextFunction) {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      const result = await operationService.deleteGroup(+req.params.id);
 
       res.status(result.success ? 200 : 400).json(result);
     } catch (error) {

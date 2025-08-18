@@ -23,12 +23,15 @@ type Item = {
 export function CollectionRecords() {
   useBreadcrumb(['Collection', 'Collection records']);
 
-  const { data, error, loading } = usePaginatedApi<Item>('/collection/records');
+  const { data, error, loading, refetch } = usePaginatedApi<Item>(
+    '/collection/records'
+  );
 
   return (
     <>
       <Filter
         exportable
+        refetch={refetch}
         className="grid-cols-3"
         fields={[
           {

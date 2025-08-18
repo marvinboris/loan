@@ -84,7 +84,7 @@ export class FinancialController {
       const [from, to] = filter(req.query);
       const { data: repayments, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -199,7 +199,7 @@ export class FinancialController {
       const [from, to] = filter(req.query);
       const { data: loans, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 
@@ -266,7 +266,7 @@ export class FinancialController {
       const [from, to] = filter(req.query);
       const { data: repayments, error } = await query
         .range(from, to)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 

@@ -22,13 +22,14 @@ type Item = {
 export function FinancialReconciliation() {
   useBreadcrumb(['Financial', 'Reconciliation']);
 
-  const { data, error, loading } = usePaginatedApi<Item>(
+  const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/financial/reconciliation'
   );
 
   return (
     <>
       <Filter
+        refetch={refetch}
         className="grid-cols-3"
         fields={[
           {

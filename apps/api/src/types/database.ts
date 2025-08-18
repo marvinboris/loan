@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
@@ -162,6 +162,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      groups: {
+        Row: {
+          created_at: string
+          features: Json | null
+          id: number
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          features?: Json | null
+          id?: number
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          features?: Json | null
+          id?: number
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       kyc: {
         Row: {
@@ -565,6 +589,7 @@ export type Database = {
           email: string
           entry_date: string | null
           group: string | null
+          group_id: number | null
           id: number
           last_login_ip: string | null
           name: string
@@ -587,6 +612,7 @@ export type Database = {
           email: string
           entry_date?: string | null
           group?: string | null
+          group_id?: number | null
           id?: number
           last_login_ip?: string | null
           name: string
@@ -609,6 +635,7 @@ export type Database = {
           email?: string
           entry_date?: string | null
           group?: string | null
+          group_id?: number | null
           id?: number
           last_login_ip?: string | null
           name?: string
@@ -624,7 +651,15 @@ export type Database = {
           weights?: number | null
           work_number?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

@@ -185,3 +185,29 @@ class IwomiPay {
 }
 
 export const iwomiPay = new IwomiPay();
+
+export const iwomiCash =
+  (type: 'momo' | 'om', op_type: 'debit' | 'credit') =>
+  async (tel: string, amount: number) => {
+    try {
+      const result = await iwomiPay.payment({
+        amount: amount.toString(),
+        motif: { debit: 'Loan approved', credit: 'Customer repaid' }[op_type],
+        op_type,
+        type,
+        tel,
+      });
+
+      let status = result.status;
+      while (status === '1000') {
+        await new Promise((resolve) => setTimeout(resolve, 10000));
+        const res = await iwomiPay.check(result.internal_id);
+        status = res.status;
+      }
+
+      return status === '01' ? result.external_id : undefined;
+    } catch (error) {
+      console.error(error);
+      return undefined;
+    }
+  };

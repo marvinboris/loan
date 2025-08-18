@@ -3,10 +3,12 @@ import { Breadcrumb, Profile, Sidebar, toastShow } from '@creditwave/ui-web';
 import React from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { authService } from '../../services';
+import { Bars3Icon } from '@heroicons/react/24/outline';
 
 export function AppLayout() {
   const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
+  const [show, setShow] = React.useState(true);
 
   React.useEffect(() => {
     if (!isAuthenticated || !user) navigate('/login');
@@ -14,10 +16,15 @@ export function AppLayout() {
 
   return (
     <div className="h-screen w-screen overflow-clip flex">
-      <Sidebar />
+      <Sidebar show={show} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-[60px] px-5 border-b border-stone-400 flex items-center">
+        <header className="h-[60px] px-5 gap-4 border-b border-stone-400 flex items-center">
+          <Bars3Icon
+            className="size-6 cursor-pointer"
+            onClick={() => setShow((s) => !s)}
+          />
+
           <Breadcrumb />
 
           <Profile

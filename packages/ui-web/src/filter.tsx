@@ -1,5 +1,9 @@
 import { cn } from '@creditwave/utils';
-import { ArrowsUpDownIcon, PlusIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowsUpDownIcon,
+  ArrowUturnUpIcon,
+  PlusIcon,
+} from '@heroicons/react/24/outline';
 import { Formik } from 'formik';
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -22,13 +26,20 @@ export type FilterField = (FilterFieldSelect | FilterFieldInput) & {
 };
 
 export type FilterProps = {
+  refetch: () => void;
   onAdd?: () => void;
   exportable?: boolean;
   className?: string;
   fields: (FilterField | null)[];
 };
 
-export function Filter({ className, exportable, fields, onAdd }: FilterProps) {
+export function Filter({
+  className,
+  exportable,
+  fields,
+  onAdd,
+  refetch,
+}: FilterProps) {
   const [params, setParams] = useSearchParams();
   const [collapsed, setCollapsed] = React.useState(true);
 
@@ -60,11 +71,22 @@ export function Filter({ className, exportable, fields, onAdd }: FilterProps) {
       {({ handleChange, handleSubmit, resetForm, values }) => (
         <div className="relative">
           <div
-            className="cursor-pointer z-50 absolute right-0 rounded-full bg-gray-200 size-10 flex items-center justify-center"
+            className="cursor-pointer z-10 absolute right-0 rounded-full bg-gray-200 size-10 flex items-center justify-center"
             onClick={() => setCollapsed((prev) => !prev)}
           >
             <ArrowsUpDownIcon className="size-5" />
           </div>
+
+          <div
+            onClick={refetch}
+            className={cn(
+              'cursor-pointer z-10 absolute rounded-full bg-gray-200 size-10 flex items-center justify-center',
+              collapsed ? 'top-0 right-12' : 'top-12 right-0'
+            )}
+          >
+            <ArrowUturnUpIcon className="size-5" />
+          </div>
+
           <form
             className={cn(
               'grid *:p-2.5 gap-2.5 transition-all',

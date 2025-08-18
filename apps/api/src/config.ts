@@ -42,4 +42,19 @@ export const config = {
       },
     },
   },
+
+  pixPay: {
+    url: process.env.PIXPAY_URL,
+    key: process.env.PIXPAY_KEY,
+    serviceIds: {
+      momo: {
+        cashin: +process.env.PIXPAY_MOMO_CASHIN_SERVICE_ID,
+        cashout: +process.env.PIXPAY_MOMO_CASHOUT_SERVICE_ID,
+      },
+      om: {
+        cashin: +process.env.PIXPAY_OM_CASHIN_SERVICE_ID,
+        cashout: +process.env.PIXPAY_OM_CASHOUT_SERVICE_ID,
+      },
+    },
+  },
 };

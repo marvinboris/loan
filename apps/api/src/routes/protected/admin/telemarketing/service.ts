@@ -171,8 +171,7 @@ export const telemarketingService = {
         telemarketer_id: input.id,
         allocation_time: new Date().toISOString(),
       })
-      .in('id', input.selected)
-      .select();
+      .in('id', input.selected);
 
     if (error) return { success: false, message: 'Manual assignment failed' };
 

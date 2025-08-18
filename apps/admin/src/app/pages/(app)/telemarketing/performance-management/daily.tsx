@@ -36,7 +36,7 @@ export function TelemarketingDailyReport() {
     'Telemarketing daily report',
   ]);
 
-  const { data, error, loading } = usePaginatedApi<Item>(
+  const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/telemarketing/performance-management/daily'
   );
 
@@ -44,6 +44,7 @@ export function TelemarketingDailyReport() {
     <>
       <Filter
         exportable
+        refetch={refetch}
         className="grid-cols-2"
         fields={[
           {

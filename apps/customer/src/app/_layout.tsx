@@ -9,31 +9,17 @@ import { Onboarding, Toast, toastShow } from '@creditwave/ui';
 import { i18n, initializeHttpClient, languageState$ } from '@creditwave/utils';
 import { useFonts } from 'expo-font';
 import { Slot } from 'expo-router';
-import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { I18nextProvider } from 'react-i18next';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-const onWeb = Platform.OS === 'web';
-
 export default function Layout() {
-  React.useEffect(() => {
-    if (Platform.OS === 'ios')
-      ScreenOrientation.lockPlatformAsync({
-        screenOrientationArrayIOS: [
-          ScreenOrientation.Orientation.PORTRAIT_UP,
-          ScreenOrientation.Orientation.LANDSCAPE_LEFT,
-          ScreenOrientation.Orientation.LANDSCAPE_RIGHT,
-        ],
-      });
-  }, []);
-
   return (
     <>
       <Bar />
@@ -115,7 +101,7 @@ function Content() {
     }
   }, [loaded, fontsError, appIsReady]);
 
-  if (isFirstUse && !onWeb) {
+  if (isFirstUse) {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <Onboarding

@@ -62,18 +62,6 @@ telemarketingRouter.post(
   telemarketingController.postImportCustomers(CustomerType.REGISTERED)
 );
 telemarketingRouter.post(
-  '/kyc-validation',
-  telemarketingController.postKycValidation
-);
-telemarketingRouter.post(
-  '/borrow-validation',
-  telemarketingController.postBorrowValidation
-);
-telemarketingRouter.post(
-  '/borrow-cancellation',
-  telemarketingController.postBorrowCancellation
-);
-telemarketingRouter.post(
   '/manual-assignment',
   telemarketingController.postManualAssignment
 );

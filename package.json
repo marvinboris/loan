@@ -16,7 +16,8 @@
     "deploy-admin": "nx build admin && cd apps/admin && firebase deploy && cd ../..",
     "build-customer": "cd apps/customer && pnpm android-prev && cd ../..",
     "build-telemarketing": "cd apps/telemarketing && pnpm android-prev && cd ../..",
-    "build-collection": "cd apps/collection && pnpm android-prev && cd ../.."
+    "build-collection": "cd apps/collection && pnpm android-prev && cd ../..",
+    "test:pixpay": "dotenv -e apps/api/.env -- tsx apps/api/src/scripts/test-pixpay.ts"
   },
   "private": true,
   "dependencies": {

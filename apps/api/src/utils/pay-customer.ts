@@ -1,4 +1,4 @@
-import { iwomiPay } from '../lib';
+import { iwomiCash, pixpayCash } from '../lib';
 import { providerDetection } from './provider-detection';
 
 export async function payCustomer(account: string, amount: number) {
@@ -8,29 +8,17 @@ export async function payCustomer(account: string, amount: number) {
 
     const tel = account.split(' ').join('');
 
-    const result = await iwomiPay.payment({
-      amount: amount.toString(),
-      motif: 'Loan approved',
-      op_type: 'debit',
-      type,
-      tel,
-    });
-    let status = result.status;
-    while (status === '1000') {
-      await new Promise((resolve) => setTimeout(resolve, 10000));
-      const res = await iwomiPay.check(result.internal_id);
-      status = res.status;
-    }
-    const success = status === '01';
+    // const success = await iwomiCash(type, 'debit')(tel, amount);
+    const success = await pixpayCash(type, 'cashin')(tel, amount);
+
     if (success)
       console.log(
         `An amount of "${amount} XAF" has been sent to the account "${tel}".`
       );
-    else throw new Error(result.message);
 
     return success;
   } catch (error) {
     console.error('Error paying customer:', error);
-    return false;
+    return undefined;
   }
 }

@@ -14,7 +14,7 @@ export class DashboardController {
         )
         .eq('telemarketer_id', req.user.id)
         .is('app_time', null)
-        .order('created_at', { ascending: false });
+        .order('id', { ascending: false });
 
       if (error) throw error;
 

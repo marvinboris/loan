@@ -23,7 +23,7 @@ export const authService = {
 
     const { data: user, error } = await supabase
       .from('users')
-      .select('*')
+      .select('*, groups:group_id (features)')
       .eq('email', email)
       .single();
 
@@ -48,6 +48,9 @@ export const authService = {
       user: {
         id: user.id,
         email: user.email,
+        ...(user.role === 'admin' && user.groups?.features
+          ? { features: user.groups.features }
+          : {}),
       },
     };
   },
@@ -173,7 +176,7 @@ export const authService = {
       const { data: existingCustomer, error } = await supabase
         .from('customers')
         .select('*')
-        .eq('mobile', mobile)
+        .in('mobile', [mobile, mobile.substring(1)])
         .single();
 
       if (error && !existingCustomer) {
@@ -248,7 +251,7 @@ export const authService = {
       const { data: customer, error } = await supabase
         .from('customers')
         .select('*')
-        .eq('mobile', mobile)
+        .in('mobile', [mobile, mobile.substring(1)])
         .eq('verification_code', +code)
         .gt('verification_code_expires', new Date().toISOString())
         .single();

@@ -1,4 +1,4 @@
-import { usePaginatedApi } from '@creditwave/hooks';
+import { useApi, usePaginatedApi } from '@creditwave/hooks';
 import {
   Button,
   Filter,
@@ -12,11 +12,11 @@ import {
   toastShow,
   useBreadcrumb,
 } from '@creditwave/ui-web';
+import { cn } from '@creditwave/utils';
 import { Formik } from 'formik';
 import moment from 'moment';
 import React from 'react';
 import { operationService } from '../../../services';
-import { cn } from '@creditwave/utils';
 
 type FormValues = {
   id?: string;
@@ -63,6 +63,10 @@ export function OperationAccount() {
   const { data, error, loading, refetch } =
     usePaginatedApi<Item>('/operation/account');
 
+  const { data: groups } = useApi<Record<string, string>>(
+    '/admin/operation/groups'
+  );
+
   const [adding, setAdding] = React.useState(false);
   const [editing, setEditing] = React.useState(false);
   const [freezing, setFreezing] = React.useState(false);
@@ -73,9 +77,15 @@ export function OperationAccount() {
 
   return (
     <>
-      <Create show={adding} setShow={setAdding} refetch={refetch} />
+      <Create
+        show={adding}
+        setShow={setAdding}
+        refetch={refetch}
+        groups={groups}
+      />
 
       <Filter
+        refetch={refetch}
         className="grid-cols-3"
         onAdd={() => setAdding(true)}
         fields={[
@@ -186,6 +196,7 @@ export function OperationAccount() {
                     setShow={setEditing}
                     user={user}
                     refetch={refetch}
+                    groups={groups}
                   />
                 )}
                 <Button
@@ -281,7 +292,6 @@ export function OperationAccount() {
           { label: 'VOICE COLLECTION', key: 'voiceCollection' },
           { label: 'UPDATE TIME', key: 'updateTime' },
           { label: 'LOGIN IP', key: 'loginIp' },
-          { label: 'CHANGE PASSWORD', key: 'changePwd', width: 100 },
           { label: 'OPERATION', key: 'operation', width: 180 },
         ]}
       />
@@ -296,6 +306,7 @@ function Create(props: {
   setShow: (show: boolean) => void;
   refetch(): void;
   user?: FormValues;
+  groups?: Record<string, string>;
 }) {
   const initialValues: FormValues = props.user || {
     email: '',
@@ -309,6 +320,7 @@ function Create(props: {
     rulesApprovingDistribution: '',
   };
 
+  if (!props.groups) return null;
   return (
     <Modal title={props.user ? 'Edit account' : 'Create account'} {...props}>
       <Formik
@@ -402,19 +414,6 @@ function Create(props: {
               onChange={handleChange('entryTime')}
             />
 
-            <Select
-              inline
-              required
-              name="group"
-              id="create-group"
-              label="Which group"
-              error={errors.group}
-              value={values.group}
-              onChange={handleChange('group')}
-              labelClassName="w-1/3 text-right"
-              options={{ '': 'Select a group', default: 'Default group' }}
-            />
-
             <Input
               inline
               required
@@ -463,6 +462,21 @@ function Create(props: {
                 collector: 'Collector',
               }}
             />
+
+            {values.role === 'admin' && (
+              <Select
+                inline
+                required
+                name="group"
+                id="create-group"
+                label="Which group"
+                error={errors.group}
+                value={values.group}
+                onChange={handleChange('group')}
+                labelClassName="w-1/3 text-right"
+                options={{ '': 'Select a group', ...props.groups }}
+              />
+            )}
 
             <Switch
               inline

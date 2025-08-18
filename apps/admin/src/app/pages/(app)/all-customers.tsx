@@ -35,13 +35,14 @@ export function AllCustomers() {
 
   const [selected, setSelected] = React.useState<number[]>([]);
 
-  const { data, error, loading } = usePaginatedApi<Item>(
+  const { data, error, loading, refetch } = usePaginatedApi<Item>(
     '/telemarketing/all-customers'
   );
 
   return (
     <>
       <Filter
+        refetch={refetch}
         className="grid-cols-3"
         fields={[
           {

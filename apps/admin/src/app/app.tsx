@@ -20,6 +20,7 @@ import {
   Forgot,
   Login,
   OperationAccount,
+  OperationGroup,
   Reset,
   TelemarketingDailyReport,
   TelemarketingMonthlyReport,
@@ -28,6 +29,8 @@ import {
   TelemarketingRegisteredCustomers,
   TelemarketingTeamDailyReport,
   TelemarketingTeamMonthlyReport,
+  ValidationBorrow,
+  ValidationKyc,
 } from './pages';
 
 export function App() {
@@ -53,7 +56,13 @@ export function App() {
 
       <Routes>
         <Route element={<AppLayout />}>
+          <Route path="/validation/borrow" element={<ValidationBorrow />} />
+
+          <Route path="/validation/kyc" element={<ValidationKyc />} />
+
           <Route path="/all-customers" element={<AllCustomers />} />
+
+          <Route path="/operation/group" element={<OperationGroup />} />
 
           <Route path="/operation/account" element={<OperationAccount />} />
 
@@ -131,7 +140,7 @@ export function App() {
           <Route
             path="/"
             element={
-              <Navigate to="/telemarketing/performance-management/monthly" />
+              <Navigate to="/all-customers" />
             }
           />
         </Route>

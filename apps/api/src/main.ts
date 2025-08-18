@@ -2,7 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import { config } from './config';
-import { authRouter, protectedRouter } from './routes';
+import { authRouter, protectedRouter, testRouter } from './routes';
 import { cleanCustomers } from './scripts';
 import { seedAll } from './seeders';
 
@@ -20,6 +20,7 @@ app.use('/uploads', express.static(config.uploadsPath));
 
 // Routes
 app.use('/api/auth', authRouter);
+// app.use('/api/test', testRouter);
 app.use('/api', protectedRouter);
 
 // Test endpoint

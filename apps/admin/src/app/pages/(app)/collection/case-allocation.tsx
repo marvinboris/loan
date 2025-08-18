@@ -52,13 +52,22 @@ export function CollectionCaseAllocation() {
   return (
     <>
       <Filter
+        refetch={refetch}
         className="grid-cols-3"
         fields={[
           {
             type: 'select',
             key: 'stage',
             label: 'Stage',
-            options: { '': 'Select a stage' },
+            options: {
+              '': 'Select a stage',
+              'S-1': '1 day to pay',
+              S0: 'Due date',
+              S1: 'Overdue day 1-7',
+              S3: 'Overdue day 8-15',
+              S4: 'Overdue day 16-30',
+              S5: 'Overdue day 31+',
+            },
           },
           {
             type: 'select',
