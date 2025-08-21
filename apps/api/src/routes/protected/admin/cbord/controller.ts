@@ -25,7 +25,7 @@ export class CbordController {
       const { data: borrow } = await supabase
         .from('loans')
         .select()
-        .eq('loan_status', LoanStatus.ACCEPTED);
+        .in('loan_status', [LoanStatus.ACCEPTED, LoanStatus.REPAID]);
 
       kyc.forEach((item) => {
         const date = moment(item.updated_at).format('YYYY-MM-DD');
