@@ -34,7 +34,9 @@ export class CbordController {
       });
 
       borrow.forEach((item) => {
-        const date = moment(item.updated_at).format('YYYY-MM-DD');
+        const date = moment(item.due_date)
+          .subtract(1, 'week')
+          .format('YYYY-MM-DD');
         if (!(date in result)) result[date] = { kyc: 0, borrow: 0, amount: 0 };
         result[date].borrow++;
         result[date].amount += item.total_repayment;
