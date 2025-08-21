@@ -340,6 +340,7 @@ export class TelemarketingController {
           id: customer.id,
           mobile: customer.mobile,
           name: customer.name,
+          account: customer.account,
           prevRepaymentTime: customer.prev_repayment_time,
           appName: customer.app_name,
           followUpPerson: customer.telemarketers?.name,

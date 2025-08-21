@@ -11,8 +11,6 @@ export default function Page() {
     []
   );
 
-  console.log(uploadsUrl + collection?.kyc.selfie);
-
   if (!collection) return null;
   return (
     <Section borderless={false} style={{ paddingVertical: 16 }}>

@@ -177,9 +177,11 @@ export const authService = {
         .from('customers')
         .select('*')
         .in('mobile', [mobile, mobile.substring(1)])
-        .single();
+        .order('created_at', { ascending: false });
 
-      if (error && !existingCustomer) {
+      if (error) throw error;
+
+      if (!existingCustomer.length) {
         // Création d'un nouveau customer si non trouvé
         const newCustomer: Omit<Customer, 'id' | 'created_at' | 'updated_at'> =
           {
@@ -197,6 +199,7 @@ export const authService = {
           .single();
 
         if (createError || !createdCustomer) {
+          console.error(createError);
           throw new Error('Customer creation failed');
         }
 
@@ -216,7 +219,7 @@ export const authService = {
             verification_code: +verificationCode,
             verification_code_expires: codeExpiresAt.toISOString(),
           })
-          .eq('id', existingCustomer.id);
+          .eq('id', existingCustomer[0].id);
       }
 
       // Envoi du code

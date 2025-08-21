@@ -70,6 +70,7 @@ export const fr = {
       orange: 'Orange Cameroun',
     },
     save: 'Enregistrer',
+    current_account: 'Votre numéro actuel est',
   },
   applications: { title: 'Historique des demandes' },
   borrow: {
@@ -88,7 +89,7 @@ export const fr = {
     title: 'Tableau de bord',
     pending: 'Validation du prêt en attente...',
     accepted:
-      "Votre demande de prêt a été validée. Remboursez avant d'en demander un nouveau.",
+      "Votre demande de prêt a été validée. Vous devriez recevoir l'argent moins de 24 heures après validation. Si ce n'est pas, veuillez contacter le service client. Remboursez avant d'en demander un nouveau.",
     stuck: 'Coincé et besoin de faire un petit paiement mobile rapide ?',
     borrow: 'Emprunter maintenant',
     history: 'Historique',
@@ -96,8 +97,8 @@ export const fr = {
     customer_service: {
       title: 'Infos du service client',
       email: 'E-mail',
-      phone: 'Téléphone'
-    }
+      phone: 'Téléphone',
+    },
   },
   privacy_policy: {
     title: 'Politique de confidentialité',

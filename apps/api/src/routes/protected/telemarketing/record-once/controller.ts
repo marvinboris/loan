@@ -12,16 +12,18 @@ export class RecordOnceController {
     try {
       const { mobile, ...input }: RecordOnceInput = req.body;
 
-      const { data: customer, error } = await supabase
+      const { data: customers, error } = await supabase
         .from('customers')
         .update({
           latest_follow_up_time: new Date().toISOString(),
         })
         .in('mobile', [mobile, mobile.substring(1)])
         .select()
-        .single();
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
+
+      const customer = customers[0];
 
       const insert = await supabase.from('marketing_records').insert({
         connected: input.callSituation === '1',

@@ -69,6 +69,7 @@ export const en = {
       orange: 'Orange Cameroon',
     },
     save: 'Save',
+    current_account: 'Your current account number is',
   },
   applications: { title: 'Request history' },
   borrow: {
@@ -87,7 +88,7 @@ export const en = {
     title: 'Dashboard',
     pending: 'Loan validation pending...',
     accepted:
-      'Your loan application was validated. Repay before requesting a new one.',
+      'Your loan application was validated. You should receive the money less than 24 hours after validation. If not, please contact customer service. Repay before requesting a new one.',
     stuck: 'Stuck and need to make a little quick mobile payment ?',
     borrow: 'Borrow now',
     history: 'History',
@@ -95,8 +96,8 @@ export const en = {
     customer_service: {
       title: 'Customer service info',
       email: 'E-mail',
-      phone: 'Phone'
-    }
+      phone: 'Phone',
+    },
   },
   privacy_policy: {
     title: 'Privacy policy',

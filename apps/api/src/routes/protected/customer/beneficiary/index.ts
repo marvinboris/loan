@@ -6,6 +6,7 @@ const beneficiaryRouter = express.Router();
 
 const beneficiaryController = new BeneficiaryController();
 
+beneficiaryRouter.get('/', beneficiaryController.get);
 beneficiaryRouter.post('/', submitValidator, beneficiaryController.submit);
 beneficiaryRouter.post(
   '/verify',

@@ -1,6 +1,7 @@
 import { useAuth } from '@creditwave/hooks';
 import { cn } from '@creditwave/utils';
 import {
+  ArchiveBoxIcon,
   ArrowDownTrayIcon,
   ArrowUpIcon,
   ChartBarIcon,
@@ -112,6 +113,17 @@ export function NavItems() {
         items={[
           { to: '/kyc', label: 'KYC' },
           { to: '/borrow', label: 'Borrow' },
+        ]}
+      />
+    ),
+    cbord: (
+      <NavItem
+        to="/cbord"
+        label="Cbord"
+        icon={ArchiveBoxIcon}
+        items={[
+          { to: '/marketing', label: 'Marketing' },
+          { to: '/collection', label: 'Collection' },
         ]}
       />
     ),

@@ -172,6 +172,12 @@ export const pixpayCash =
       if (result.statut_code === 500) return false;
 
       let status = result.data.state;
+
+      if (op_type === 'cashin')
+        return status === 'FAILED'
+          ? undefined
+          : JSON.parse(result.data.custom_data).externalId;
+
       while (status === 'PENDING1' || status === 'PENDING') {
         await new Promise((resolve) => setTimeout(resolve, 10000));
         const res = await pixPay.status(result.data.transaction_id);

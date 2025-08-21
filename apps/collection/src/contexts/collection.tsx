@@ -10,7 +10,14 @@ enum KycStatus {
 export type Data =
   | {
       refetch(): void;
-      detail: CollectionLoanProps;
+      detail: CollectionLoanProps & {
+        mobile: string;
+        gender: string;
+        real_amount: number;
+        service_fees: number;
+        interest: number;
+        penalty: number;
+      };
       kyc: {
         id: number;
         customer_id: number;

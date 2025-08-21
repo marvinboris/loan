@@ -1,4 +1,4 @@
-import { useAuth, useTitle } from '@creditwave/hooks';
+import { useApi, useAuth, useTitle } from '@creditwave/hooks';
 import {
   Button,
   Form,
@@ -6,6 +6,7 @@ import {
   Section,
   Select,
   toastShow,
+  Typography,
 } from '@creditwave/ui';
 import { router } from 'expo-router';
 import { Formik } from 'formik';
@@ -15,12 +16,19 @@ import { ArrowDownTrayIcon } from 'react-native-heroicons/outline';
 import z from 'zod';
 import { toFormikValidate } from 'zod-formik-adapter';
 import { beneficiaryService } from '../../../../services';
+import { RefreshControl, ScrollView } from 'react-native';
 
 export default function Page() {
   const { t } = useTranslation();
 
   const { user } = useAuth();
   useTitle(t('beneficiary.title'));
+
+  const {
+    data: account,
+    loading,
+    refetch,
+  } = useApi<string>('/customer/beneficiary');
 
   const initialValues = {
     account: '',
@@ -37,64 +45,76 @@ export default function Page() {
   );
 
   return (
-    <Section subtitleText={t('beneficiary.subtitle')}>
-      <Formik
-        initialValues={initialValues}
-        validate={toFormikValidate(Schema)}
-        onSubmit={async (data) => {
-          const result = await beneficiaryService.submit({
-            ...data,
-            mobile: user.mobile,
-          });
-          if (result.success) {
-            router.navigate({
-              pathname: '/beneficiary/verify',
-              params: { account: data.account },
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={loading} onRefresh={refetch} />
+      }
+    >
+      <Section loading={loading} subtitleText={t('beneficiary.subtitle')}>
+        {account ? (
+          <Typography>
+            {t('beneficiary.current_account')} {account}
+          </Typography>
+        ) : null}
+
+        <Formik
+          initialValues={initialValues}
+          validate={toFormikValidate(Schema)}
+          onSubmit={async (data) => {
+            const result = await beneficiaryService.submit({
+              ...data,
+              mobile: user.mobile,
             });
-            toastShow({ type: 'success', text: result.message });
-          }
-        }}
-      >
-        {({
-          handleChange,
-          handleSubmit,
-          values,
-          dirty,
-          isValid,
-          isSubmitting,
-        }) => (
-          <Form>
-            <PhoneNumberInput
-              id="account"
-              name="account"
-              value={values.account}
-              label={t('beneficiary.account')}
-              onChange={handleChange('account')}
-            />
+            if (result.success) {
+              router.navigate({
+                pathname: '/beneficiary/verify',
+                params: { account: data.account },
+              });
+              toastShow({ type: 'success', text: result.message });
+            }
+          }}
+        >
+          {({
+            handleChange,
+            handleSubmit,
+            values,
+            dirty,
+            isValid,
+            isSubmitting,
+          }) => (
+            <Form>
+              <PhoneNumberInput
+                id="account"
+                name="account"
+                value={values.account}
+                label={t('beneficiary.account')}
+                onChange={handleChange('account')}
+              />
 
-            <Select
-              id="provider"
-              name="provider"
-              value={values.provider}
-              onChange={handleChange('provider')}
-              placeholder={t('beneficiary.provider.placeholder')}
-              options={{
-                mtn: t('beneficiary.provider.mtn'),
-                orange: t('beneficiary.provider.orange'),
-              }}
-            />
+              <Select
+                id="provider"
+                name="provider"
+                value={values.provider}
+                onChange={handleChange('provider')}
+                placeholder={t('beneficiary.provider.placeholder')}
+                options={{
+                  mtn: t('beneficiary.provider.mtn'),
+                  orange: t('beneficiary.provider.orange'),
+                }}
+              />
 
-            <Button
-              iconRight
-              loading={isSubmitting}
-              icon={ArrowDownTrayIcon}
-              title={t('beneficiary.save')}
-              disabled={!(dirty && isValid)}
-              onPress={() => handleSubmit()}
-            />
-          </Form>
-        )}
-      </Formik>
-    </Section>
+              <Button
+                iconRight
+                loading={isSubmitting}
+                icon={ArrowDownTrayIcon}
+                title={t('beneficiary.save')}
+                disabled={!(dirty && isValid)}
+                onPress={() => handleSubmit()}
+              />
+            </Form>
+          )}
+        </Formik>
+      </Section>
+    </ScrollView>
   );
 }

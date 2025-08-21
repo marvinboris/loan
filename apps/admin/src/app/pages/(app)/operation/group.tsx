@@ -35,6 +35,7 @@ const options = {
   collection: 'Collection',
   operation: 'Operation',
   validation: 'Validation',
+  cbord: 'Cbord',
 };
 
 export function OperationGroup() {
@@ -42,8 +43,6 @@ export function OperationGroup() {
 
   const { data, error, loading, refetch } =
     usePaginatedApi<Item>('/operation/group');
-
-  console.log(data?.items.map((item) => item.features));
 
   const [adding, setAdding] = React.useState(false);
   const [editing, setEditing] = React.useState(false);
@@ -144,10 +143,15 @@ function Create(props: {
   refetch(): void;
   group?: FormValues;
 }) {
-  const initialValues: FormValues = props.group || {
-    name: '',
-    features: [],
-  };
+  const initialValues: FormValues = props.group
+    ? {
+        ...props.group,
+        features: Object.keys(props.group.features),
+      }
+    : {
+        name: '',
+        features: [],
+      };
 
   return (
     <Modal title={props.group ? 'Edit group' : 'Create group'} {...props}>
@@ -196,8 +200,8 @@ function Create(props: {
             />
 
             <Features
-              value={values.features}
               label="Features"
+              value={values.features}
               onChange={(value) => setFieldValue('features', value)}
             />
 
@@ -301,7 +305,7 @@ function Features({
             name={'features[' + index + ']'}
             onChange={(e) =>
               onChange(
-                features.map((f, i) => (i === index ? e.target.value : f))
+                features?.map((f, i) => (i === index ? e.target.value : f))
               )
             }
           />

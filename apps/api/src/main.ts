@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { config } from './config';
 import { authRouter, protectedRouter, testRouter } from './routes';
-import { cleanCustomers } from './scripts';
+import { cleanCustomers, cleanLoans } from './scripts';
 import { seedAll } from './seeders';
 
 process.env.TZ = 'UTC';
@@ -57,5 +57,10 @@ app.listen(port, () => {
   // Optionnel: Nettoyer les clients au démarrage
   if (process.env.CLEAN_CUSTOMERS === 'true') {
     cleanCustomers().then(() => console.log('Customers cleaned successfully'));
+  }
+
+  // Optionnel: Nettoyer les demandes d'emprunt au démarrage
+  if (process.env.CLEAN_LOANS === 'true') {
+    cleanLoans().then(() => console.log('Loans cleaned successfully'));
   }
 });

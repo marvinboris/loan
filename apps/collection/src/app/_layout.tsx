@@ -2,36 +2,23 @@ import {
   useAuthWatcher,
   useConfig,
   useIsFirstUse,
+  useLanguage,
   useRequest,
 } from '@creditwave/hooks';
 import { Onboarding, Toast, toastShow } from '@creditwave/ui';
-import { initializeHttpClient } from '@creditwave/utils';
+import { initializeHttpClient, languageState$ } from '@creditwave/utils';
 import { useFonts } from 'expo-font';
 import { Slot } from 'expo-router';
-import * as ScreenOrientation from 'expo-screen-orientation';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 
-const onWeb = Platform.OS === 'web';
-
 export default function Layout() {
-  React.useEffect(() => {
-    if (Platform.OS === 'ios')
-      ScreenOrientation.lockPlatformAsync({
-        screenOrientationArrayIOS: [
-          ScreenOrientation.Orientation.PORTRAIT_UP,
-          ScreenOrientation.Orientation.LANDSCAPE_LEFT,
-          ScreenOrientation.Orientation.LANDSCAPE_RIGHT,
-        ],
-      });
-  }, []);
-
   return (
     <>
       <Bar />
@@ -67,6 +54,9 @@ SplashScreen.preventAutoHideAsync();
 
 function Content() {
   useAuthWatcher();
+
+  const { setLanguage } = useLanguage();
+
   const { theme } = useConfig();
   const { isFirstUse, setIsFirstUse } = useIsFirstUse();
   const { error } = useRequest();
@@ -87,6 +77,7 @@ function Content() {
         // Artificially delay for two seconds to simulate a slow loading
         // experience. Please remove this if you copy and paste the code!
         await new Promise((resolve) => setTimeout(resolve, 2000));
+        setLanguage(languageState$.get());
       } catch (e) {
         console.warn(e);
       } finally {
@@ -109,7 +100,7 @@ function Content() {
     }
   }, [loaded, fontsError, appIsReady]);
 
-  if (isFirstUse && !onWeb) {
+  if (isFirstUse) {
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <Onboarding

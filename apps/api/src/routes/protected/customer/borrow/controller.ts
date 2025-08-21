@@ -31,6 +31,7 @@ export class BorrowController {
         success: true,
         hasKyc: Boolean(data.length),
         hasAccount: Boolean(data.at(0)?.customers?.account),
+        minAmount: 10000,
         maxAmount: 10000 + 5000 * repaidLoans,
       });
     } catch (error) {

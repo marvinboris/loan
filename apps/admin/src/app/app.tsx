@@ -7,6 +7,8 @@ import {
   AllCustomers,
   AppLayout,
   AuthLayout,
+  CbordCollection,
+  CbordMarketing,
   CollectionCase,
   CollectionCaseAllocation,
   CollectionDailyReport,
@@ -56,6 +58,10 @@ export function App() {
 
       <Routes>
         <Route element={<AppLayout />}>
+          <Route path="/cbord/collection" element={<CbordCollection />} />
+
+          <Route path="/cbord/marketing" element={<CbordMarketing />} />
+
           <Route path="/validation/borrow" element={<ValidationBorrow />} />
 
           <Route path="/validation/kyc" element={<ValidationKyc />} />
@@ -137,12 +143,7 @@ export function App() {
             element={<TelemarketingMonthlyReport />}
           />
 
-          <Route
-            path="/"
-            element={
-              <Navigate to="/all-customers" />
-            }
-          />
+          <Route path="/" element={<Navigate to="/all-customers" />} />
         </Route>
 
         <Route element={<AuthLayout />}>

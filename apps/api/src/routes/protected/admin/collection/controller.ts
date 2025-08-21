@@ -303,7 +303,7 @@ export class CollectionController {
       );
 
       // Appliquer les filtres
-      if (mobile) query = query.eq('customers.mobile', mobile as string);
+      if (mobile) query = query.ilike('customers.mobile', `%${mobile}%`);
       if (name) query = query.ilike('customers.name', `%${name}%`);
       if (loanNum) query = query.eq('loan_number', loanNum as string);
       if (loanOrderNum)

@@ -4,6 +4,7 @@ import {
   BorrowValidationInput,
   KycValidationInput,
 } from './interfaces';
+import moment from 'moment';
 import { config } from '../../../../config';
 import { supabase } from '../../../../lib';
 import { payCustomer, sendSms } from '../../../../utils';
@@ -70,10 +71,14 @@ export const validationService = {
       `
       )
       .eq('id', input.id)
+      .eq('loan_status', LoanStatus.PENDING)
       .single();
 
     if (loanError)
-      return { success: false, message: 'Borrow request not found' };
+      return {
+        success: false,
+        message: 'Borrow request not found or not pending',
+      };
 
     let error;
     if (input.validated) {
@@ -88,6 +93,7 @@ export const validationService = {
           .update({
             loan_status: LoanStatus.ACCEPTED,
             loan_order_number: externalId,
+            due_date: moment().add(1, 'week').toISOString(),
           })
           .eq('id', input.id);
         error = updated.error;

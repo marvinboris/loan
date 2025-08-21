@@ -30,13 +30,6 @@ export default function Page() {
                 refetch();
               }
             }}
-            onRecordOnce={async (data) => {
-              const result = await telemarketingService.recordOnce(data);
-              if (result.success) {
-                toastShow({ type: 'success', text: result.message });
-                refetch();
-              }
-            }}
           />
         ))}
       </Section>

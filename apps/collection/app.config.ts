@@ -67,33 +67,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     },
     plugins: [
       'expo-router',
-      [
-        'expo-camera',
-        {
-          cameraPermission: 'Allow $(PRODUCT_NAME) to access your camera',
-          microphonePermission:
-            'Allow $(PRODUCT_NAME) to access your microphone',
-          recordAudioAndroid: true,
-        },
-      ],
-      [
-        'expo-screen-orientation',
-        {
-          initialOrientation: 'DEFAULT',
-        },
-      ],
       'expo-asset',
-      [
-        'expo-font',
-        {
-          fonts: [
-            './assets/fonts/Inter_18pt-Bold.ttf',
-            './assets/fonts/Inter_18pt-Medium.ttf',
-            './assets/fonts/Inter_18pt-Regular.ttf',
-            './assets/fonts/Inter_18pt-SemiBold.ttf',
-          ],
-        },
-      ],
       [
         'expo-build-properties',
         {
@@ -125,7 +99,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 export const getDynamicAppConfig = (
   environment: 'development' | 'preview' | 'production'
 ) => {
-  if (environment === 'production') {
+  if (environment === 'production' || environment === 'preview') {
     return {
       name: APP_NAME,
       bundleIdentifier: BUNDLE_IDENTIFIER,
@@ -136,16 +110,16 @@ export const getDynamicAppConfig = (
     };
   }
 
-  if (environment === 'preview') {
-    return {
-      name: `${APP_NAME} (Preview)`,
-      bundleIdentifier: `${BUNDLE_IDENTIFIER}.preview`,
-      packageName: `${PACKAGE_NAME}.preview`,
-      icon: './assets/icon.png',
-      adaptiveIcon: './assets/adaptive-icon.png',
-      scheme: `${SCHEME}-prev`,
-    };
-  }
+  // if (environment === 'preview') {
+  //   return {
+  //     name: `${APP_NAME} (Preview)`,
+  //     bundleIdentifier: `${BUNDLE_IDENTIFIER}.preview`,
+  //     packageName: `${PACKAGE_NAME}.preview`,
+  //     icon: './assets/icon.png',
+  //     adaptiveIcon: './assets/adaptive-icon.png',
+  //     scheme: `${SCHEME}-prev`,
+  //   };
+  // }
 
   return {
     name: `${APP_NAME} (Dev)`,

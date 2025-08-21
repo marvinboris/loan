@@ -1,4 +1,5 @@
 import { usePaginatedApi } from '@creditwave/hooks';
+import { LoanStatus } from '@creditwave/types';
 import { Filter, Pagination, Table, useBreadcrumb } from '@creditwave/ui-web';
 import { cn } from '@creditwave/utils';
 import React from 'react';
@@ -7,7 +8,7 @@ type Item = {
   mobile: string;
   name: string;
   loanNum: string;
-  loanStatus: string;
+  loanStatus: LoanStatus;
   loanOrderNum: string;
   stage: string;
   collector: string;
@@ -113,7 +114,7 @@ export function CollectionCase() {
               '': 'Select a status',
               pending: 'Pending',
               accepted: 'Accepted',
-              failed: 'Failed',
+              denied: 'Denied',
               repaid: 'Repaid',
             },
           },
@@ -182,7 +183,7 @@ export function CollectionCase() {
                   pending: 'text-yellow-600',
                   accepted: 'text-blue-600',
                   repaid: 'text-green-600',
-                  failed: 'text-red-600',
+                  denied: 'text-red-600',
                 }[item.loanStatus]
               )}
             >

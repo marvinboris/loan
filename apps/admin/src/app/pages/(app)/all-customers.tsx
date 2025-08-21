@@ -12,6 +12,7 @@ import React from 'react';
 type Item = {
   mobile: string;
   name: string;
+  account: string;
   prevRepaymentTime: string;
   appName: string;
   followUpPerson: string;
@@ -140,6 +141,7 @@ export function AllCustomers() {
         fields={[
           { label: 'MOBILE', key: 'mobile', width: 100 },
           { label: 'NAME', key: 'name' },
+          { label: 'ACCOUNT', key: 'account' },
           { label: 'PREVIOUS REPAYMENT TIME', key: 'prevRepaymentTime' },
           { label: 'OTP', key: 'otp' },
           { label: 'APP NAME', key: 'appName' },

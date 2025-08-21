@@ -177,7 +177,7 @@ export const operationService = {
     let { name, features } = input;
 
     // Modifier l'utilisateur
-    const { error: createError } = await supabase
+    const { error: updateError } = await supabase
       .from('groups')
       .update({
         name,
@@ -185,7 +185,7 @@ export const operationService = {
       })
       .eq('id', id);
 
-    if (createError) throw createError;
+    if (updateError) throw updateError;
 
     return {
       success: true,
@@ -195,12 +195,12 @@ export const operationService = {
 
   async deleteGroup(id: number) {
     // Créer le groupe
-    const { error: createError } = await supabase
+    const { error: updateError } = await supabase
       .from('groups')
       .delete()
       .eq('id', id);
 
-    if (createError) throw createError;
+    if (updateError) throw updateError;
 
     return {
       success: true,

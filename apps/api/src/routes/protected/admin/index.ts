@@ -1,4 +1,5 @@
 import express from 'express';
+import { cbordRouter } from './cbord';
 import { collectionRouter } from './collection';
 import { financialRouter } from './financial';
 import { operationRouter } from './operation';
@@ -12,5 +13,6 @@ adminRouter.use('/financial', financialRouter);
 adminRouter.use('/collection', collectionRouter);
 adminRouter.use('/operation', operationRouter);
 adminRouter.use('/validation', validationRouter);
+adminRouter.use('/cbord', cbordRouter);
 
 export { adminRouter };

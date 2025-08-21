@@ -26,11 +26,12 @@ export default function Page() {
     success: boolean;
     hasKyc: boolean;
     hasAccount: boolean;
+    minAmount: number;
     maxAmount: number;
   }>('/customer/borrow');
 
   const initialValues = {
-    amount: 0,
+    amount: 10000,
     photo: '',
   };
 
@@ -40,10 +41,11 @@ export default function Page() {
         amount: z
           .number()
           .positive()
+          .min(data?.minAmount || 10000)
           .max(data?.maxAmount || 10000),
         photo: z.string().nonempty(),
       }),
-    [data?.maxAmount]
+    [data?.minAmount, data?.maxAmount]
   );
 
   React.useEffect(() => {
@@ -87,10 +89,10 @@ export default function Page() {
             }) => (
               <Form>
                 <NumberInput
-                  min={0}
                   id="amount"
                   step={1000}
                   name="amount"
+                  min={data.minAmount}
                   max={data.maxAmount}
                   value={values.amount}
                   label={t('borrow.amount')}

@@ -70,15 +70,17 @@ export const verifyValidator = [
       const { mobile } = req.body;
 
       // Vérification que le code correspond au mobile
-      const { data: customer, error } = await supabase
+      const { data: customers, error } = await supabase
         .from('customers')
         .select('verification_code, verification_code_expires')
         .in('mobile', [mobile, mobile.substring(1)])
-        .single();
+        .order('created_at', { ascending: false });
 
-      if (error || !customer) {
+      if (error || !customers.length) {
         throw new Error('No account associated with this number');
       }
+
+      const customer = customers[0];
 
       if (+customer.verification_code !== +code) {
         throw new Error('Incorrect verification code');

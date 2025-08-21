@@ -40,9 +40,10 @@ export class DetailController {
       const days_overdue = moment(detail.due_date).isBefore() ? 0 : 0;
       const canAddRemark =
         detail.loan_status === LoanStatus.ACCEPTED &&
-        moment(mark.at(-1).created_at).isBefore(
-          moment().subtract(10, 'minutes')
-        );
+        (!mark.length ||
+          moment(mark.at(-1)?.created_at).isBefore(
+            moment().subtract(10, 'minutes')
+          ));
 
       res.json({
         success: true,

@@ -3,6 +3,8 @@ import { useConfig } from '@creditwave/hooks';
 import { Card } from '../card';
 import { TextLine } from '../text-line';
 
+export { CollectionRecordProps };
+
 export function CollectionRecord({ ...item }: CollectionRecordProps) {
   const { theme } = useConfig();
 

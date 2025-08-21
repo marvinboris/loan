@@ -1,4 +1,5 @@
 export * from './all-customers';
+export * from './cbord';
 export * from './collection';
 export * from './financial';
 export * from './layout';

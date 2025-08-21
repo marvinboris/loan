@@ -12,7 +12,7 @@ export class MarkAsDoneController {
     try {
       const { mobile, ...input }: MarkAsDoneInput = req.body;
 
-      const { data: customer, error } = await supabase
+      const { data: customers, error } = await supabase
         .from('customers')
         .update({
           // type: 'registered',
@@ -33,9 +33,11 @@ export class MarkAsDoneController {
         })
         .in('mobile', [mobile, mobile.substring(1)])
         .select()
-        .single();
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
+
+      const customer = customers[0];
 
       const insert = await supabase.from('marketing_records').insert({
         connected: input.callSituation === '1',
